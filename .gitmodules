@@ -1,0 +1,6 @@
+[submodule "3rdParty/SDL"]
+	path = 3rdParty/SDL
+	url = git@github.com:libsdl-org/SDL.git
+[submodule "3rdParty/glm"]
+	path = 3rdParty/glm
+	url = git@github.com:g-truc/glm.git
