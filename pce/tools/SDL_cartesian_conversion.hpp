@@ -1,5 +1,5 @@
-#ifndef SDL_cartesian_conversion_cpp
-#define SDL_cartesian_conversion_cpp
+#ifndef SDL_cartesian_conversion_hpp
+#define SDL_cartesian_conversion_hpp
 
 /*----------------------------------------------------------------|
 --------------------- Module Description -------------------------|
@@ -31,4 +31,4 @@ glm::vec2 convertSDLCoordinatesToCartesian(glm::vec2 point) {
 
 
 
-#endif /* SDL_cartesian_conversion_cpp */
+#endif /* SDL_cartesian_conversion_hpp */

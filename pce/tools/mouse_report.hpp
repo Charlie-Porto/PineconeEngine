@@ -1,5 +1,5 @@
-#ifndef mouse_report_cpp
-#define mouse_report_cpp
+#ifndef mouse_report_hpp
+#define mouse_report_hpp
 
 
 namespace pce {
@@ -17,4 +17,4 @@ struct MouseReport{
 }
 
 
-#endif /* mouse_report_cpp */
+#endif /* mouse_report_hpp */

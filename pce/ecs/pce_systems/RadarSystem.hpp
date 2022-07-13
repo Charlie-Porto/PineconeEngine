@@ -1,5 +1,5 @@
-#ifndef RadarSystem_cpp
-#define RadarSystem_cpp
+#ifndef RadarSystem_hpp
+#define RadarSystem_hpp
 
 /*----------------------------------------------------------------|
 --------------------- Module Description -------------------------|
@@ -22,19 +22,12 @@ system to reliably detect the positions of entities
 extern ControlPanel control;
 
 namespace pce{
+class RadarSystem : public ISystem {
+public:
 
-void RadarSystem::UpdateEntityRadar() {
-  for (auto const& entity : entities) {
-    auto const& position = control.GetComponent<pce::Position>(entity);
-    auto& radar = control.GetComponent<pce::Radar>(entity);
+  void UpdateEntityRadar();
 
-    radar.view_sphere_hitpoint = glm::normalize((position.rotated));
-    radar.hitpoint_corresponding_pixel = -pce::pix_map::fastconvertPointOnViewSphereToPixel(
-      radar.view_sphere_hitpoint, glm::dvec3(0, 0, 0)
-    )
-    
-  }
+private:
+};
 }
-
-}
-#endif /* RadarSystem_cpp */
+#endif /* RadarSystem_hpp */

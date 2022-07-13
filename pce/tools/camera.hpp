@@ -1,5 +1,5 @@
-#ifndef camera_cpp
-#define camera_cpp
+#ifndef camera_hpp
+#define camera_hpp
 
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp> 
@@ -22,4 +22,4 @@ struct Camera {
 
 
 
-#endif /* camera_cpp */
+#endif /* camera_hpp */

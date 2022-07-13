@@ -1,5 +1,5 @@
-#ifndef simple_framerate_timer_cpp
-#define simple_framerate_timer_cpp
+#ifndef simple_framerate_timer_hpp
+#define simple_framerate_timer_hpp
 
 #include <iostream>
 
@@ -40,4 +40,4 @@ private:
     int avg_loops_per_second;
 };
 
-#endif /* simple_framerate_timer_cpp */
+#endif /* simple_framerate_timer_hpp */

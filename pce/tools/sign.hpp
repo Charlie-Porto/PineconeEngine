@@ -1,5 +1,5 @@
-#ifndef sign_cpp
-#define sign_cpp
+#ifndef sign_hpp
+#define sign_hpp
 
 namespace pce {
 namespace math {
@@ -13,4 +13,4 @@ namespace math {
 
 
 
-#endif /* sign_cpp */
+#endif /* sign_hpp */

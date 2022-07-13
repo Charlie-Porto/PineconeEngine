@@ -1,5 +1,5 @@
-#ifndef joystick_report_cpp
-#define joystick_report_cpp
+#ifndef joystick_report_hpp
+#define joystick_report_hpp
 
 
 namespace pce {
@@ -22,4 +22,4 @@ struct JoystickReport{
 
 }
 
-#endif /* joystick_report_cpp */
+#endif /* joystick_report_hpp */

@@ -1,5 +1,5 @@
-#ifndef virtual_keyboard_h
-#define virtual_keyboard_h
+#ifndef virtual_keyboard_hpp
+#define virtual_keyboard_hpp
 
 #include <iostream>
 
@@ -7,7 +7,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "../core/Simulation.h"      // for events 
-#include "joystick_report.cpp"
+#include "joystick_report.hpp"
 
 namespace pce {
 
@@ -24,4 +24,4 @@ private:
 }
 
 
-#endif /* virtual_keyboard_h */
+#endif /* virtual_keyboard_hpp */

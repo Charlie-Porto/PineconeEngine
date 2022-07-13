@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "virtual_keyboard.h"
+#include "../virtual_keyboard.hpp"
 
 namespace pce {
 

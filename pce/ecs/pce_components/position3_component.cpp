@@ -12,7 +12,7 @@ namespace pce {
 
 struct Position3 {
   glm::dvec3 actual;
-  glm::dvec3 rotated_by_camera_versor;
+  glm::dvec3 camera_relative;
 };
 
 }

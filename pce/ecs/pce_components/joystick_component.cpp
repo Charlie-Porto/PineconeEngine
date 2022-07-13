@@ -6,8 +6,8 @@
 component for storing the state of keyboard and mouse inputs
 -----------------------------------------------------------------*/
 
-#include "../../tools/virtual_keyboard.h"
-#include "../../tools/mouse_controller.cpp"
+#include "../../tools/virtual_keyboard.hpp"
+#include "../../tools/mouse_controller.hpp"
 
 namespace pce {
 

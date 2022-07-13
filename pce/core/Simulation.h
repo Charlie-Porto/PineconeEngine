@@ -15,6 +15,7 @@ class Simulation {
 public:
 
   void Init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
+  void Init(const char* title, int width, int height);
   void Init(const char* title);
 
   void HandleEvents();

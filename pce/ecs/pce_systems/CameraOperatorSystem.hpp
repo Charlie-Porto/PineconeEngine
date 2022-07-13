@@ -10,8 +10,8 @@ class for operating the camera
 
 #include "../ecs_implementation/System.cpp"
 
-#include "../../tools/virtual_keyboard.cpp"
-#include "../../tools/camera.cpp"
+#include "../../tools/virtual_keyboard.hpp"
+#include "../../tools/camera.hpp"
 
 
 namespace pce {
@@ -24,6 +24,9 @@ public:
   const double ProvideCameraPositionScalar() const;
 
   void UpdateCamera();
+
+  static glm::dquat camera_versor;
+  static glm::dvec3 camera_transformation;
 
 private:
   Camera camera_;

@@ -1,5 +1,5 @@
-#ifndef mouse_controller_cpp
-#define mouse_controller_cpp
+#ifndef mouse_controller_hpp
+#define mouse_controller_hpp
 
 /*----------------------------------------------------------------|
 --------------------- Module Description -------------------------|
@@ -7,7 +7,7 @@ struct & class to track the mouse
 -----------------------------------------------------------------*/
 
 #include "../core/Simulation.h"      // for events 
-#include "mouse_report.cpp"
+#include "mouse_report.hpp"
 
 
 namespace pce {
@@ -64,4 +64,4 @@ private:
 }
 
 
-#endif /* mouse_controller_cpp */
+#endif /* mouse_controller_hpp */

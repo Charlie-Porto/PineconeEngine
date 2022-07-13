@@ -7,11 +7,13 @@
 #include "ecs/EcsManager.cpp"
 
 /* tools */
-#include "tools/quickdraw.cpp"
-#include "tools/camera.cpp"
-#include "tools/virtual_keyboard.cpp"
-#include "tools/quickdraw.cpp"
-#include "tools/tool_deps/render_functions.cpp"
+#include "tools/implementations/quickdraw.cpp"
+#include "tools/camera.hpp"
+#include "tools/implementations/virtual_keyboard.cpp"
+#include "tools/implementations/quickdraw.cpp"
+#include "tools/implementations/render_functions.cpp"
+#include "tools/implementations/raster_functions.cpp"
+#include "tools/implementations/quaternion_functions.cpp"
 
 /* systems */
 #include "ecs/pce_systems/implementations/CameraOperatorSystem.cpp"

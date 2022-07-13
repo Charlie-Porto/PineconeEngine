@@ -31,6 +31,10 @@ void Simulation::Init(const char* title, int xpos, int ypos, int width, int heig
   }
 }
 
+void Simulation::Init(const char* title, int width, int height) {
+  Simulation::Init(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, false);
+}
+
 void Simulation::Init(const char* title) {
   Simulation::Init(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 672, false);
 }

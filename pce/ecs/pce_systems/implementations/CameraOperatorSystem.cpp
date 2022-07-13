@@ -10,6 +10,9 @@ class for operating the camera
 #include "functions/camera_functions.cpp"
 
 namespace pce {
+
+glm::dquat pce::CameraOperatorSystem::camera_versor = glm::dquat(1.0, 0, 0, 0);
+glm::dvec3 pce::CameraOperatorSystem::camera_transformation = glm::dvec3(0, 0, 0);
   
 
 void CameraOperatorSystem::Init() {
@@ -47,6 +50,8 @@ void CameraOperatorSystem::UpdateCamera() {
     // pce::camera::updateCameraPositionFreeRoam(camera_, keyboard_);
   }
   ezp::print_labeled_item("camera position scalar: ", camera_.position_scalar);
+  camera_versor = camera_.rotation_versor;
+  camera_transformation = camera_.position;
 }
 
 
