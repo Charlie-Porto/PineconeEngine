@@ -1,7 +1,7 @@
 #ifndef CoreManager_cpp
 #define CoreManager_cpp
 
-#include "../CoreManager.h"
+#include "CoreManager.h"
 
 namespace pce {
 

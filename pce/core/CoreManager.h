@@ -6,8 +6,7 @@
 class to handle all function calls to the Simulation class
 -----------------------------------------------------------------*/
 
-#include "core/Simulation.h"
-#include <ezprint.cpp>
+#include "Simulation.h"
 
 namespace pce {
 

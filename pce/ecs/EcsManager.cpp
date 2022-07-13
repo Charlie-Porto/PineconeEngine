@@ -2,7 +2,7 @@
 #define EcsManager_cpp
 
 #include <glm/vec3.hpp>
-#include "../EcsManager.h"
+#include "EcsManager.h"
 
 namespace pce {
 EcsManager::EcsManager() {
