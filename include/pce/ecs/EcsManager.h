@@ -7,6 +7,8 @@ class to manage the entity component system
 -----------------------------------------------------------------*/
 #include "ecs_implementation/ControlPanel.cpp"
 
+
+/* pce components */
 #include "pce_components/entity_type_component.cpp"
 #include "pce_components/position3_component.cpp"
 #include "pce_components/position2_component.cpp"
@@ -17,6 +19,8 @@ class to manage the entity component system
 #include "pce_components/surface_component.cpp"
 #include "pce_components/radar_component.cpp"
 #include "pce_components/joystick_component.cpp"
+#include "pce_components/rigid_body3_component.cpp"
+#include "pce_components/rigid_body2_component.cpp"
 
 extern ControlPanel control;
 

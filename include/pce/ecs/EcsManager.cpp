@@ -5,6 +5,9 @@
 #include "EcsManager.h"
 
 namespace pce {
+
+ControlPanel control;
+
 EcsManager::EcsManager() {
   control.Init();
 }

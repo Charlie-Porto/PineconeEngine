@@ -6,7 +6,7 @@ an engine and library for 3D graphics (and my learn-how-to-make-a-library attemp
 - simple event loop setup
 - entity component system
 - a handful of pre-implemented components and systems available for use in projects as well as boilerplates for custom components and systems
-- access to functionalities of the [SDL2](https://github.com/libsdl-org/SDL) and [glm](https://github.com/g-truc/glm) libraries
+- access to all functionalities of the [SDL2](https://github.com/libsdl-org/SDL) and [glm](https://github.com/g-truc/glm) libraries (note these are also dependencies)
 <br/>
 
 
@@ -33,7 +33,6 @@ int main(int argc, const char* argv[]) {
 
 
   delete core_manager;
-  delete ecs_manager;
   return 0;
 }
 
@@ -43,8 +42,7 @@ int main(int argc, const char* argv[]) {
 
 ## Requirements
 - C++17 compiler (any should work)
-- As the library is still under development, the [SDL2](https://github.com/libsdl-org/SDL) and [glm](https://github.com/g-truc/glm) libraries will need to be obtained and built separately
-  - Note: one of the primary goals of this project is to create a CMakeLists.txt file that can snag and build these dependencies as a side-effect of building the library. This functionality should be available soon.
+- The [SDL2](https://github.com/libsdl-org/SDL) and [glm](https://github.com/g-truc/glm) libraries will need to be obtained and built separately. Fortunately, the SDL library contains robust build instructions, and the glm library is header-only.
 <br/>
 
 
