@@ -1,59 +1,14 @@
 # Pinecone Engine
-an engine and library for 3D graphics (and my learn-how-to-make-a-library attempt)
-<br/>
-
-## Features
-- simple event loop setup
-- entity component system
-- a handful of pre-implemented components and systems available for use in projects as well as boilerplates for custom components and systems
-- access to all functionalities of the [SDL2](https://github.com/libsdl-org/SDL) and [glm](https://github.com/g-truc/glm) libraries (note these are also dependencies)
-<br/>
-
-
-## Basic Example
-```c++
-#include <pce/core.hpp>
-#include <pce/tools/simple_framerate_timer.cpp>
-
-
-ControlPanel control;
-int main(int argc, const char* argv[]) {
-
-  auto core_manager = new pce::CoreManager();
-  simple_framerate_timer timer = simple_framerate_timer();
-
-
-  while (core_manager->Running()) {
-    core_manager->DoCorePreUpdate();
-
-    timer.update_timer(int(core_manager->getFrameStartTime()));
-
-    core_manager->DoCorePostUpdate();
-  }
-
-
-  delete core_manager;
-  return 0;
-}
-
-```
+a three-unit library for 3D graphics and games (and my introduction to library authoring)
+- unit 1: SDL2 event loop wrapper 
+- unit 2: entity component system 
+- unit 3: 3D rendering tools
 <br/>
 
 
 ## Requirements
 - C++17 compiler (any should work)
 - The [SDL2](https://github.com/libsdl-org/SDL) and [glm](https://github.com/g-truc/glm) libraries will need to be obtained and built separately. Fortunately, the SDL library contains robust build instructions, and the glm library is header-only.
-<br/>
-
-
-## Compiling a project that uses the **Pinecone Engine**
-- to compile your project, include the path to **pce.cpp** in the compilation source file inputs. I can compile like this using gcc:
-```zsh
-g++ src/main.cpp -o main.o -std=c++17 \
-    /Path_to_PinceconeEngine/pce/pce.cpp \
-    -lSDL2-2.0.0 \ # sdl include
-    -lSDL2_image-2.0.0 \ #sdl image include
-```
 <br/>
 
 
