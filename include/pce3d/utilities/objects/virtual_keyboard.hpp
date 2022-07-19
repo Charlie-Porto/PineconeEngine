@@ -3,7 +3,7 @@
 
 #include <iostream>
 /* include Simulation.h so that the renderer can be accessed */
-#include "PineconeSDL2/core/Simulation.hpp"
+#include "../../../pceSDL/core/Simulation.hpp"
 #include "joystick_report.hpp"
 
 namespace pce {

@@ -1,5 +1,5 @@
-#ifndef Core3D_hpp
-#define Core3D_hpp
+#ifndef pce3d_hpp
+#define pce3d_hpp
 
 #include <pcecs/pcecs.hpp>
 
@@ -49,4 +49,4 @@ private:
 
 
 
-#endif /* Core3D_hpp */
+#endif /* pce3d_hpp */

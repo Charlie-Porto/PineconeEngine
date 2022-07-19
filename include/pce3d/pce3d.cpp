@@ -1,7 +1,7 @@
-#ifndef Core3D_cpp
-#define Core3D_cpp
+#ifndef pce3d_cpp
+#define pce3d_cpp
 
-#include "Core3D.hpp"
+#include "pce3d.hpp"
 
 
 /***** not yet included *****/
@@ -77,4 +77,4 @@ void Core3D::UpdateCore3D() {
 }
 
 
-#endif /* Core3D_cpp */
+#endif /* pce3d_cpp */

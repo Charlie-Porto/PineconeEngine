@@ -10,7 +10,7 @@ functions to render things
 #include <glm/vec2.hpp>
 
 /* include Simulation.h so that the renderer can be accessed */
-#include "PineconeSDL2/core/Simulation.hpp"
+#include "../../../pceSDL/core/Simulation.hpp"
 
 namespace pce {
 namespace render {

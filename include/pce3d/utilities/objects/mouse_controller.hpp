@@ -6,7 +6,7 @@
 struct & class to track the mouse
 -----------------------------------------------------------------*/
 
-#include "../core/Simulation.h"      // for events 
+#include "../../../pceSDL/core/Simulation.hpp"
 #include "mouse_report.hpp"
 
 
