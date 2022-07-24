@@ -22,11 +22,20 @@ public:
 
   void UpdateEntities(const glm::dvec3& transform_vector, const glm::dquat& versor) {
     for (auto const& entity : entities) {
-
+      auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
+
+      /* update position */
       const glm::dvec3 transformed_position = position.actual_center_of_mass - transform_vector;
       position.center_of_mass_relative_to_camera 
           = pce::rotateVector3byQuaternion(transformed_position, versor);
+      
+      // /* update vertices */
+      for (auto const& [id, vertex] : rigid_object.vertices) {
+        rigid_object.camera_transformed_vertices[id] = vertex - transform_vector;
+        rigid_object.camera_transformed_vertices[id] = 
+          pce::rotateVector3byQuaternion(rigid_object.camera_transformed_vertices.at(id), versor);
+      }
       
     }
   }

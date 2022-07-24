@@ -13,10 +13,16 @@ public:
 
   void UpdateEntities() {
     for (auto const& entity : entities) {
-      ezp::print_labeled_item("updating render for: ", entity);
+      auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& surface = control.GetComponent<pce::Surface>(entity);
-      pce::quickdraw::drawCircle(position.center_of_mass_radar_pixel, 100.0/(position.distance_from_camera/3.0), surface.color, 10.0);
+      pce::quickdraw::drawCircle(position.center_of_mass_radar_pixel, 10.0/(position.distance_from_camera/3.0), surface.color, 10.0);
+
+      for (auto const& [id, pixel] : rigid_object.vertex_pixels) {
+        pce::quickdraw::drawCircle(pixel, 10.0/(position.distance_from_camera/3.0), surface.color, 10.0);
+      }
+
+
     }
   }
 

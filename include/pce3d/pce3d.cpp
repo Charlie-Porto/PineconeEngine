@@ -8,6 +8,7 @@
 
 /* maths */
 #include "maths/functions/implementations/quaternion_functions.cpp"
+#include "maths/functions/implementations/plane_functions.cpp"
 #include "maths/functions/sign.hpp"
 
 /* utilities */
@@ -21,6 +22,9 @@
 #include "systems/functions/implementations/orderForRenderFunctions.cpp"
 #include "systems/functions/implementations/cameraOperatorFunctions.cpp"
 
+/* entity forging */
+#include "entity_forging/implementations/sphere_forging.cpp"
+#include "entity_forging/implementations/rectangular_prism_forging.cpp"
 
 namespace pce3d {
 
@@ -52,13 +56,13 @@ void Core3D::RegisterCoreSystems() {
   camera_operator_system_ = control.RegisterSystem<pce3d::CameraOperatorSystem>();
 
   camera_transform_system_ = control.RegisterSystem<pce3d::CameraTransformSystem>();
-  control.AssignSystemComponents<pce3d::CameraTransformSystem, pce::Position>();
+  control.AssignSystemComponents<pce3d::CameraTransformSystem, pce::Position, pce::RigidObject>();
 
   radar_system_ = control.RegisterSystem<pce3d::RadarSystem>();
-  control.AssignSystemComponents<pce3d::RadarSystem, pce::Position>();
+  control.AssignSystemComponents<pce3d::RadarSystem, pce::Position, pce::RigidObject>();
 
   render_system_ = control.RegisterSystem<pce3d::RenderSystem>();
-  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface>();
+  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface, pce::RigidObject>();
 
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
   control.AssignSystemComponents<pce3d::RenderSystem, pce::Position>();

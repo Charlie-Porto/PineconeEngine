@@ -20,7 +20,8 @@ void calculateUpdatedCameraRotationVersor(const double y_angle, const double xz_
       y_angle, x_axis_unit_vector);
   const glm::dquat horizontal_rotation_versor = pce::convertAngleAxisToQuaternion(
       xz_angle, y_axis_unit_vector);
-  rotation_versor = vertical_rotation_versor * horizontal_rotation_versor;
+  // rotation_versor = vertical_rotation_versor * horizontal_rotation_versor;
+  rotation_versor = horizontal_rotation_versor * vertical_rotation_versor;
 }
 
 
@@ -67,6 +68,10 @@ void moveCameraPositionLaterally(glm::dvec3& position, const glm::dvec3& view_di
 }
 
 
+void moveCameraPositionUpDown(glm::dvec3& position, const double direction, const double speed) {
+  position.y += direction * speed;
+}
+
 
 void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
                          pce3d::CameraTrolley& trolley) {
@@ -81,11 +86,11 @@ void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
                                        camera.focus_distance, camera.position);
   }
   if (report.Up_pressed) { 
-    rotateCameraViewDirectionVertically(trolley, 1.0, camera.view_direction, 
+    rotateCameraViewDirectionVertically(trolley, -1.0, camera.view_direction, 
                                         camera.focus_distance, camera.position);
   }
   if (report.Down_pressed) { 
-    rotateCameraViewDirectionVertically(trolley, -1.0, camera.view_direction, 
+    rotateCameraViewDirectionVertically(trolley, 1.0, camera.view_direction, 
                                         camera.focus_distance, camera.position);
   }
   if (report.A_pressed) { 
@@ -103,6 +108,12 @@ void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
   if (report.S_pressed) { 
     moveCameraPositionLaterally(camera.position, camera.view_direction, 
                                 glm::dvec3(0, 0, 1), trolley.movement_speed);
+  }
+  if (report.r_pressed) { 
+    moveCameraPositionUpDown(camera.position, -1.0, trolley.movement_speed);
+  }
+  if (report.F_pressed) { 
+    moveCameraPositionUpDown(camera.position, 1.0, trolley.movement_speed);
   }
 
 
