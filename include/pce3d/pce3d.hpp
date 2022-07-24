@@ -10,6 +10,7 @@
 #include "components/position_component.cpp"
 #include "components/local_rotation_component.cpp"
 #include "components/surface_component.cpp"
+#include "components/face_shade_component.cpp"
 
 /* systems */
 #include "systems/CameraTransformSystem.cpp"
@@ -17,6 +18,7 @@
 #include "systems/RenderSystem.cpp"
 #include "systems/OrderForRenderSystem.cpp"
 #include "systems/CameraOperatorSystem.cpp"
+#include "systems/ShadeSystem.cpp"
 
 
 extern ControlPanel control;
@@ -38,6 +40,7 @@ private:
   std::shared_ptr<pce3d::CameraOperatorSystem> camera_operator_system_;
   std::shared_ptr<pce3d::RadarSystem> radar_system_;
   std::shared_ptr<pce3d::RenderSystem> render_system_;
+  std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::OrderForRenderSystem> render_order_system_;
 
    

@@ -36,6 +36,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
     .face_vertex_map = e_face_vertex_map
   });
   control.AddComponent(new_entity, pce::Surface{.color = color});
+  control.AddComponent(new_entity, pce::FaceShade{});
 
   return new_entity;
 }

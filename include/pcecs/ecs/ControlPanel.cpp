@@ -129,6 +129,19 @@ public:
 		SetSystemSignature<T0>(sig);
 	}
 
+	template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
+	void AssignSystemComponents()
+  {
+		Signature sig;
+		sig.set(GetComponentType<T1>());
+		sig.set(GetComponentType<T2>());
+		sig.set(GetComponentType<T3>());
+		sig.set(GetComponentType<T4>());
+		sig.set(GetComponentType<T5>());
+		SetSystemSignature<T0>(sig);
+	}
+
+
 private:
     std::unique_ptr<EntityMgr> mEntityManager;
     std::unique_ptr<ComponentMgr> mComponentManager;

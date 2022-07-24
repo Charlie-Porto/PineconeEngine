@@ -20,8 +20,10 @@
 
 /* system functions */
 #include "systems/functions/implementations/radarFunctions.cpp"
+#include "systems/functions/implementations/renderFunctions.cpp"
 #include "systems/functions/implementations/orderForRenderFunctions.cpp"
 #include "systems/functions/implementations/cameraOperatorFunctions.cpp"
+#include "systems/functions/implementations/shadeFunctions.cpp"
 
 /* entity forging */
 #include "entity_forging/implementations/sphere_forging.cpp"
@@ -50,6 +52,7 @@ void Core3D::RegisterCoreComponents() {
   control.RegisterComponent<pce::Position>();
   control.RegisterComponent<pce::LocalRotation>();
   control.RegisterComponent<pce::Surface>();
+  control.RegisterComponent<pce::FaceShade>();
 }
 
 
@@ -63,10 +66,13 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::RadarSystem, pce::Position, pce::RigidObject>();
 
   render_system_ = control.RegisterSystem<pce3d::RenderSystem>();
-  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface, pce::RigidObject>();
+  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface, pce::RigidObject, pce::FaceShade>();
+
+  shade_system_ = control.RegisterSystem<pce3d::ShadeSystem>();
+  control.AssignSystemComponents<pce3d::ShadeSystem, pce::RigidObject, pce::Position, pce::FaceShade>();
 
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
-  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position>();
+  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position>();
 }
 
 
@@ -74,6 +80,7 @@ void Core3D::UpdateCore3D() {
   camera_operator_system_->UpdateCamera(camera_);
   camera_transform_system_->UpdateEntities(-camera_.position, camera_.rotation_versor);
   radar_system_->UpdateEntities();
+  shade_system_->UpdateEntities();
   // render_order_system_->UpdateEntities();
   render_system_->UpdateEntities();
 }
