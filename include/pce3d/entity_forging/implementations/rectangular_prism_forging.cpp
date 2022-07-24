@@ -16,6 +16,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   /* create new entity's major attributes */
   VertexMap e_vertex_map = calculateRectPrismOriginalVertexLocations(w, h, l, center);
   FaceVertexMap e_face_vertex_map = assignVerticesToFaces();
+  EdgeMap e_edge_map = assignEdgesToVertices();
 
   /* adjust vertex points based on rotation and center point */
   // TODO: add local rotation calculation
@@ -31,6 +32,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .vertices = e_vertex_map,
+    .edges = e_edge_map,
     .face_vertex_map = e_face_vertex_map
   });
   control.AddComponent(new_entity, pce::Surface{.color = color});
@@ -49,6 +51,8 @@ VertexMap calculateRectPrismOriginalVertexLocations(const double w, const double
   const std::vector<double> h_halfs = {half_h, -half_h};
   const std::vector<double> w_halfs = {half_w, -half_w};
   const std::vector<double> l_halfs = {half_l, -half_l};
+
+
 
   VertexMap vertex_map = {};
   uint32_t vertex_id = 1;
@@ -84,6 +88,21 @@ FaceVertexMap assignVerticesToFaces() {
   };
   return face_vertex_map;
 }
+
+
+
+EdgeMap assignEdgesToVertices() {
+  EdgeMap edge_map = {
+    {1, 3}, {1, 2}, {1, 5}, 
+    {4, 2}, {4, 3}, {4, 8},
+    {7, 5}, {7, 3}, {7, 8},
+    {6, 5}, {6, 8}, {6, 2}
+  };
+
+  return edge_map;
+}
+
+
 
 
 }

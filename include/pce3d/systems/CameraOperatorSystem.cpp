@@ -15,7 +15,7 @@ public:
   CameraOperatorSystem() {
     keyboard_ = pce::VirtualKeyboard();
     trolley_ = pce3d::CameraTrolley{
-      .movement_speed = 1.0,
+      .movement_speed = 0.5,
       .swivel_speed = 1.0,
       .y_angle = 0.0,
       .xz_angle = 180.0,

@@ -15,6 +15,7 @@
 #include "utilities/functions/implementations/quickdraw.cpp"
 #include "utilities/functions/implementations/raster_functions.cpp"
 #include "utilities/functions/implementations/render_functions.cpp"
+#include "utilities/functions/implementations/triangle_raster_functions.cpp"
 #include "utilities/objects/implementations/virtual_keyboard.cpp"
 
 /* system functions */

@@ -4,6 +4,8 @@
 #include "../quickdraw.hpp"
 #include "../SDL_cartesian_conversion.hpp"
 #include "../render_functions.hpp"
+#include "../../../maths/objects/Triangle.hpp"
+#include "../triangle_raster_functions.hpp"
 
 
 namespace pce {
@@ -86,6 +88,24 @@ void drawFilledRect(const glm::dvec2& top_L_corner, const glm::dvec2& lower_R_co
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
+
+
+void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
+                             const std::vector<int>& color, double zoom_ratio) {
+  auto tri_a = pce3d::maths::Triangle{.A=q.A, .B=q.B, .C=q.C};
+  auto tri_b = pce3d::maths::Triangle{.A=q.A, .B=q.D, .C=q.C};
+
+  /* TEMPORARY PRINT */
+  // drawCircle(q.A, 1.0, {255, 0, 0, 255}, 10.0);
+  // drawCircle(q.B, 1.0, {0, 255, 0, 255}, 10.0);
+  // drawCircle(q.C, 1.0, {0, 0, 255, 255}, 10.0);
+  // drawCircle(q.D, 1.0, {255, 255, 255, 255}, 10.0);
+
+  pce3d::raster::rasterizeAndRenderTriangle(tri_a, color);
+  pce3d::raster::rasterizeAndRenderTriangle(tri_b, color);
+  /* finish this function */
+
+}
 
 }
 }

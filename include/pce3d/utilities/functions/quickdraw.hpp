@@ -8,6 +8,7 @@ functions to render simple objects easily
 
 #include <vector>
 #include <glm/vec2.hpp>
+#include "../../maths/objects/Quadrilateral.hpp"
 
 namespace pce {
 namespace quickdraw {
@@ -25,6 +26,9 @@ void drawSetOfEdges(const std::vector<std::pair<glm::dvec2, glm::dvec2>>& edges,
    
 void drawFilledRect(const glm::dvec2& top_L_corner, const glm::dvec2& lower_R_corner, 
                     const std::vector<int>& color, double zoom_ratio);
+
+void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& quadrilateral,
+                             const std::vector<int>& color, double zoom_ratio);
 
 }
 }
