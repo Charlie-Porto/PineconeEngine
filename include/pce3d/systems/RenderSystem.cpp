@@ -24,10 +24,15 @@ public:
       auto const& surface = control.GetComponent<pce::Surface>(entity);
       auto const& shade = control.GetComponent<pce::FaceShade>(entity);
 
-      if (   abs(position.center_of_mass_radar_pixel.y) >= 1000 
-          || abs(position.center_of_mass_radar_pixel.x) >= 1000) {
+      // std::cout << "------------------" << '\n';
+      
+      if (position.center_of_mass_radar_pixel == glm::dvec2(0, 0)) {
+        std::cout << "continuing" << '\n';
+        std::cout << "center of mass pixel: " << position.center_of_mass_radar_pixel.x << ", "
+                                              << position.center_of_mass_radar_pixel.y << '\n';
         continue;
       }
+      // std::cout << "******************" << '\n';
 
       std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
           rigid_object.face_vertex_map, rigid_object.vertex_distance_map);

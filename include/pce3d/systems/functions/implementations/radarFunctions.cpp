@@ -4,6 +4,7 @@
 #include <cmath>
 #include "../radarFunctions.hpp"
 #include "../../../maths/functions/sign.hpp"
+#include <vezprint.cpp>
 
 namespace pce3d {
 namespace radar {
@@ -13,11 +14,15 @@ const double PIXEL_ANGLE = 1.0;
 
 const double PI = 3.14159265;
 
-glm::dvec2 convertPointOnViewSphereToPixel(glm::dvec3 point) {
+glm::dvec2 convertPointOnViewSphereToPixel(glm::dvec3 point, bool is_center_of_gravity) {
 
-  /* if point is behind camera, render offscreen */
-  if (point.z <= 0.3) {
-    return glm::dvec2(900 * pce::math::sign(point.x) , 900 * pce::math::sign(point.y));
+  if (point.z < -0.2) {
+    if (is_center_of_gravity) {return glm::dvec2(0, 0); }
+    else {return glm::dvec2(point.x, point.y) * 200.0; }
+  }
+  if (abs(atan(point.x/point.z) / PI * 180.0) > 70.0) {
+    if (is_center_of_gravity) {return glm::dvec2(0, 0); }
+    else {return glm::dvec2(point.x, point.y) * 200.0; }
   }
 
   /* calculate y pixel */ 
