@@ -31,10 +31,10 @@ public:
 
       std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
           rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
+      
 
       for (size_t i = 0; i < faces_in_render_order.size(); ++i) {
         uint32_t face = faces_in_render_order[i].first;
-        // if (face != 2) {continue;}
         glm::dvec2 vertex_a = rigid_object.vertex_pixels.at(rigid_object.face_vertex_map.at(face)[0]);
         glm::dvec2 vertex_b = rigid_object.vertex_pixels.at(rigid_object.face_vertex_map.at(face)[1]);
         glm::dvec2 vertex_c = rigid_object.vertex_pixels.at(rigid_object.face_vertex_map.at(face)[2]);
@@ -48,17 +48,6 @@ public:
         auto quad = pce3d::maths::Quadrilateral{vertex_a, vertex_b, vertex_c, vertex_d};
         pce::quickdraw::drawFilledQuadrilateral(quad, face_color, 10.0);
       }
-      
-
-      /* TEMPORARY: draw all lines */
-      // for (auto const& edge : rigid_object.edges) {
-      //   pce::quickdraw::drawLine(
-      //     rigid_object.vertex_pixels.at(edge.first),
-      //     rigid_object.vertex_pixels.at(edge.second),
-      //     {0, 0, 0, 255},
-      //     10.0
-      //   );
-      // }
 
 
     }
