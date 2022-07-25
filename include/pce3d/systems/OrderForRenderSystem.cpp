@@ -27,17 +27,17 @@ public:
       auto const& position = control.GetComponent<pce::Position>(entity);
       uint32_t centity = entity;
       std::pair<uint32_t, double> entity_with_distance = std::make_pair(centity, position.distance_from_camera);
-      pce3d::render_order::insertEntityIntoRenderOrderVector(
+      pce3d::render_order::insertEntityIntoRenderOrderVectorLinear(
         entity_with_distance, order_of_render_);
     }
 
-    PrintOrderVector();
+    // PrintOrderVector();
   }
-
 
   std::vector<std::pair<uint32_t, double>> order_of_render_;
 
 };
+
 
 
 }

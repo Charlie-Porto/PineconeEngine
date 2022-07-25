@@ -16,8 +16,8 @@ const double PI = 3.14159265;
 glm::dvec2 convertPointOnViewSphereToPixel(glm::dvec3 point) {
 
   /* if point is behind camera, render offscreen */
-  if (point.z <= 0) {
-    return glm::dvec2(2000, 2000);
+  if (point.z <= 0.3) {
+    return glm::dvec2(900 * pce::math::sign(point.x) , 900 * pce::math::sign(point.y));
   }
 
   /* calculate y pixel */ 

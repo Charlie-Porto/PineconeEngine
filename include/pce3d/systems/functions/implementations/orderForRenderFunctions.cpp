@@ -7,6 +7,23 @@
 namespace pce3d {
 namespace render_order {
 
+void insertEntityIntoRenderOrderVectorLinear(const std::pair<uint32_t, double>& entity, 
+                                             std::vector<std::pair<uint32_t, double>>& order_vector) {
+  size_t i = 0;
+  while (i < order_vector.size()+1) {
+    if (i == order_vector.size()) {
+      order_vector.push_back(entity);
+      break;
+    }
+    if (entity.second > order_vector[i].second) {
+      order_vector.insert(order_vector.begin()+i, entity);
+      break;
+    }
+    ++i;
+  }
+
+}
+
 void insertEntityIntoRenderOrderVector(const std::pair<uint32_t, double>& entity, 
                                        std::vector<std::pair<uint32_t, double>>& order_vector) {
 

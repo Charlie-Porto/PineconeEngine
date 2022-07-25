@@ -81,8 +81,8 @@ void Core3D::UpdateCore3D() {
   camera_transform_system_->UpdateEntities(-camera_.position, camera_.rotation_versor);
   radar_system_->UpdateEntities();
   shade_system_->UpdateEntities();
-  // render_order_system_->UpdateEntities();
-  render_system_->UpdateEntities();
+  render_order_system_->UpdateEntities();
+  render_system_->UpdateEntities(render_order_system_->order_of_render_);
 }
 
 

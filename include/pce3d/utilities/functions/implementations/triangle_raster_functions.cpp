@@ -2,6 +2,7 @@
 #define triangle_raster_functions_cpp
 
 #include <cmath>
+#include <algorithm>
 #include <glm/geometric.hpp>
 #include "../triangle_raster_functions.hpp"
 #include "../../../maths/functions/sign.hpp"
@@ -13,6 +14,7 @@ namespace pce3d {
 namespace raster {
 
 const double zoom_ratio = 10.0;
+const double PI = 3.14159265;
 
 
 void rasterizeAndRenderTriangle(maths::Triangle& triangle, const std::vector<int>& color) {
@@ -21,11 +23,21 @@ void rasterizeAndRenderTriangle(maths::Triangle& triangle, const std::vector<int
   triangle.C *= zoom_ratio;
   sortTriangleVertices(triangle);
   
-  if (triangle.A == triangle.B) { --triangle.B; }
-
-  rasterizeAndRenderTriangleTopHalf(triangle, color);
-  if (triangle.B.y != triangle.C.y) {
-    rasterizeAndRenderTriangleLowerHalf(triangle, color);
+  if (abs(triangle.A.y - triangle.B.y) < (0.5 * zoom_ratio )
+      && abs(triangle.A.y - triangle.C.y) < (0.5 * zoom_ratio )
+      && abs(triangle.B.y - triangle.C.y) < (0.5 * zoom_ratio )
+  ) { 
+    pce::quickdraw::drawLine(triangle.A, triangle.B, color, 1.0);
+    pce::quickdraw::drawLine(triangle.C, triangle.B, color, 1.0);
+    pce::quickdraw::drawLine(triangle.A, triangle.C, color, 1.0);
+  } else {
+    // pce::quickdraw::drawCircle(triangle.A, 5.0, {0, 200, 20, 255}, 1.0);
+    // pce::quickdraw::drawCircle(triangle.B, 5.0, {0, 200, 20, 255}, 1.0);
+    // pce::quickdraw::drawCircle(triangle.C, 5.0, {0, 200, 20, 255}, 1.0);
+    rasterizeAndRenderTriangleTopHalf(triangle, color);
+    if (abs(triangle.B.y - triangle.C.y) > 0.5 * zoom_ratio ) {
+      rasterizeAndRenderTriangleLowerHalf(triangle, color);
+    }
   }
 }
 
@@ -53,6 +65,7 @@ void sortTriangleVertices(maths::Triangle& triangle) {
 }
 
 
+
 void rasterizeAndRenderTriangleTopHalf(maths::Triangle& triangle, const std::vector<int>& color) {
 
   const glm::dvec2 height_vector = glm::dvec2(0, 1);
@@ -70,8 +83,9 @@ void rasterizeAndRenderTriangleTopHalf(maths::Triangle& triangle, const std::vec
   const double long_angle_sign = pce::math::sign(triangle.C.x - triangle.A.x);
   const double short_angle_sign = pce::math::sign(triangle.B.x - triangle.A.x);
   
-  double long_side_x_crawl_distance = tan(long_angle);
-  double short_side_x_crawl_distance = tan(short_angle);
+  double long_side_x_crawl_distance = std::min(tan(long_angle), sqrt(glm::dot(triangle.A - triangle.C, triangle.A - triangle.C)));
+  double short_side_x_crawl_distance = std::min(tan(short_angle), sqrt(glm::dot(triangle.A - triangle.B, triangle.A - triangle.B)));
+
   double crawl_number = 0;
 
   for (int i = triangle.A.y; i > triangle.B.y; --i) {
@@ -79,9 +93,11 @@ void rasterizeAndRenderTriangleTopHalf(maths::Triangle& triangle, const std::vec
         = glm::dvec2(triangle.A.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, i);
     auto const short_side_crawl_point 
         = glm::dvec2(triangle.A.x + short_side_x_crawl_distance * crawl_number * short_angle_sign, i);
+ 
     pce::quickdraw::drawLine(long_side_crawl_point, short_side_crawl_point, color, 1.0);
     ++crawl_number;
   }
+
   const glm::dvec2 final_long_crawl = glm::dvec2(triangle.A.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, triangle.B.y);
   pce::quickdraw::drawLine(triangle.B, final_long_crawl, color, 1.0);
 

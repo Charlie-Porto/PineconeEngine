@@ -28,7 +28,7 @@ std::vector<std::pair<uint32_t, double>> orderFacesByCameraProximity(
     if (faces_furthest_to_closest.size() == 0) { 
       faces_furthest_to_closest.push_back(std::make_pair(face, closest_vertex)); 
       averages.push_back(average_vertex);
-      std::cout << "first added: " << face << '\n';
+      // std::cout << "first added: " << face << '\n';
       continue;
     }
     else {
