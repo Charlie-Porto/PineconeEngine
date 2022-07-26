@@ -17,24 +17,24 @@ std::vector<std::pair<uint32_t, double>> orderFacesByCameraProximity(
   std::vector<double> averages{};
   for (auto const& [face, vertices] : face_vertex_map) {
     
-    const double average_vertex = (vertex_distance_map.at(vertices[0])
-                                + vertex_distance_map.at(vertices[1])
-                                + vertex_distance_map.at(vertices[2])
-                                + vertex_distance_map.at(vertices[3]))
-                                / 4.0;
+    double average_vertex = 0.0;
+    double count = 0;
+    for (auto const& vertex : vertices) {
+      average_vertex += vertex_distance_map.at(vertex);
+      ++count;
+    }
+    average_vertex = average_vertex/count;
 
-    const std::vector<double> faces_vertex_distances = {
-      vertex_distance_map.at(vertices[0]),
-      vertex_distance_map.at(vertices[1]),
-      vertex_distance_map.at(vertices[2]),
-      vertex_distance_map.at(vertices[3])
-    };
+    std::vector<double> faces_vertex_distances;
+    for (int i = 0; i < count; ++i) {
+      faces_vertex_distances.push_back(vertex_distance_map.at(vertices[i]));
+    }
+   
     const double closest_vertex = *std::min_element(faces_vertex_distances.begin(), faces_vertex_distances.end());
 
     if (faces_furthest_to_closest.size() == 0) { 
       faces_furthest_to_closest.push_back(std::make_pair(face, closest_vertex)); 
       averages.push_back(average_vertex);
-      // std::cout << "first added: " << face << '\n';
       continue;
     }
     else {
@@ -46,18 +46,16 @@ std::vector<std::pair<uint32_t, double>> orderFacesByCameraProximity(
           break;
         }
         if (closest_vertex == faces_furthest_to_closest[i].second) {
-          if (average_vertex > averages[i]) {
+          if (average_vertex >= averages[i]) {
             faces_furthest_to_closest.insert(faces_furthest_to_closest.begin()+i, std::make_pair(face, closest_vertex));
             averages.insert(averages.begin()+i, average_vertex);
             break;
           }
         }
         if (closest_vertex > faces_furthest_to_closest[i].second) {
-          // if (average_vertex > averages[i]) {
             faces_furthest_to_closest.insert(faces_furthest_to_closest.begin()+i, std::make_pair(face, closest_vertex));
             averages.insert(averages.begin()+i, average_vertex);
             break;
-          // }
         }
         ++i;
       }

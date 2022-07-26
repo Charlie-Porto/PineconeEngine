@@ -95,16 +95,13 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
   auto tri_a = pce3d::maths::Triangle{.A=q.A, .B=q.B, .C=q.C};
   auto tri_b = pce3d::maths::Triangle{.A=q.A, .B=q.D, .C=q.C};
 
-  /* TEMPORARY PRINT */
-  // drawCircle(q.A, 1.0, {255, 0, 0, 255}, 10.0);
-  // drawCircle(q.B, 1.0, {0, 255, 0, 255}, 10.0);
-  // drawCircle(q.C, 1.0, {0, 0, 255, 255}, 10.0);
-  // drawCircle(q.D, 1.0, {255, 255, 255, 255}, 10.0);
-
   pce3d::raster::rasterizeAndRenderTriangle(tri_a, color);
   pce3d::raster::rasterizeAndRenderTriangle(tri_b, color);
-  /* finish this function */
+}
 
+void drawFilledTriangle(const pce3d::maths::Triangle& triangle,
+                        const std::vector<int>& color, double zoom_ratio) {
+  pce3d::raster::rasterizeAndRenderTriangle(triangle, color);
 }
 
 }

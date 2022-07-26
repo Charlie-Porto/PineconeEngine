@@ -29,6 +29,7 @@
 #include "entity_forging/implementations/sphere_forging.cpp"
 #include "entity_forging/implementations/sheet_forging.cpp"
 #include "entity_forging/implementations/rectangular_prism_forging.cpp"
+#include "entity_forging/implementations/triangle_pyramid_forging.cpp"
 
 namespace pce3d {
 

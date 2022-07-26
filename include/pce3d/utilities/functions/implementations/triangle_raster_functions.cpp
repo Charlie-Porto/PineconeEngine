@@ -17,7 +17,8 @@ const double zoom_ratio = 10.0;
 const double PI = 3.14159265;
 
 
-void rasterizeAndRenderTriangle(maths::Triangle& triangle, const std::vector<int>& color) {
+void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<int>& color) {
+  auto triangle = tri;
   triangle.A *= zoom_ratio;
   triangle.B *= zoom_ratio;
   triangle.C *= zoom_ratio;
@@ -68,7 +69,7 @@ void sortTriangleVertices(maths::Triangle& triangle) {
 
 
 
-void rasterizeAndRenderTriangleTopHalf(maths::Triangle& triangle, const std::vector<int>& color) {
+void rasterizeAndRenderTriangleTopHalf(const maths::Triangle& triangle, const std::vector<int>& color) {
 
   const glm::dvec2 height_vector = glm::dvec2(0, 1);
   const glm::dvec2 long_side = triangle.A - triangle.C; 
@@ -105,7 +106,7 @@ void rasterizeAndRenderTriangleTopHalf(maths::Triangle& triangle, const std::vec
 
 }
 
-void rasterizeAndRenderTriangleLowerHalf(maths::Triangle& triangle, const std::vector<int>& color) {
+void rasterizeAndRenderTriangleLowerHalf(const maths::Triangle& triangle, const std::vector<int>& color) {
   const glm::dvec2 height_vector = glm::dvec2(0, -1);
   const glm::dvec2 long_side = triangle.C - triangle.A; 
   const glm::dvec2 short_side = triangle.C - triangle.B; 
