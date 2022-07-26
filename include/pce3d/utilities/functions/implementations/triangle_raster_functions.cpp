@@ -23,6 +23,7 @@ void rasterizeAndRenderTriangle(maths::Triangle& triangle, const std::vector<int
   triangle.C *= zoom_ratio;
   sortTriangleVertices(triangle);
   
+  pce::render::setRendererColor(color);
   if (abs(triangle.A.y - triangle.B.y) < (0.5 * zoom_ratio )
       && abs(triangle.A.y - triangle.C.y) < (0.5 * zoom_ratio )
       && abs(triangle.B.y - triangle.C.y) < (0.5 * zoom_ratio )
@@ -38,6 +39,7 @@ void rasterizeAndRenderTriangle(maths::Triangle& triangle, const std::vector<int
     if (abs(triangle.B.y - triangle.C.y) > 0.5 * zoom_ratio ) {
       rasterizeAndRenderTriangleLowerHalf(triangle, color);
     }
+    pce::render::setRendererColor({0, 0, 0, 255});
   }
 }
 
@@ -87,19 +89,18 @@ void rasterizeAndRenderTriangleTopHalf(maths::Triangle& triangle, const std::vec
   double short_side_x_crawl_distance = std::min(tan(short_angle), sqrt(glm::dot(triangle.A - triangle.B, triangle.A - triangle.B)));
 
   double crawl_number = 0;
-
   for (int i = triangle.A.y; i > triangle.B.y; --i) {
     auto const long_side_crawl_point 
         = glm::dvec2(triangle.A.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, i);
     auto const short_side_crawl_point 
         = glm::dvec2(triangle.A.x + short_side_x_crawl_distance * crawl_number * short_angle_sign, i);
  
-    pce::quickdraw::drawLine(long_side_crawl_point, short_side_crawl_point, color, 1.0);
+    pce::render::renderLineAsRendererIs(long_side_crawl_point, short_side_crawl_point);
     ++crawl_number;
   }
 
   const glm::dvec2 final_long_crawl = glm::dvec2(triangle.A.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, triangle.B.y);
-  pce::quickdraw::drawLine(triangle.B, final_long_crawl, color, 1.0);
+  pce::render::renderLineAsRendererIs(triangle.B, final_long_crawl);
 
 
 }
@@ -129,7 +130,7 @@ void rasterizeAndRenderTriangleLowerHalf(maths::Triangle& triangle, const std::v
         = glm::dvec2(triangle.C.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, i);
     auto const short_side_crawl_point 
         = glm::dvec2(triangle.C.x + short_side_x_crawl_distance * crawl_number * short_angle_sign, i);
-    pce::quickdraw::drawLine(long_side_crawl_point, short_side_crawl_point, color, 1.0);
+    pce::render::renderLineAsRendererIs(long_side_crawl_point, short_side_crawl_point);
     ++crawl_number;
   }
 }

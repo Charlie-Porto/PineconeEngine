@@ -9,7 +9,7 @@
 
 // Entity alii and constants
 using Entity = uint32_t;
-const int MAX_ENTITIES = 5000;
+const int MAX_ENTITIES = 8000;
 
 // Component alii and constants
 using ComponentType = std::uint8_t;

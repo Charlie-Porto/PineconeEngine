@@ -11,6 +11,7 @@ namespace radar {
 
 const double LENSE_INDEX = 0.1;
 const double PIXEL_ANGLE = 1.0;
+const double Y_PIXEL_STRETCH = 90.0;
 
 const double PI = 3.14159265;
 
@@ -24,12 +25,16 @@ glm::dvec2 convertPointOnViewSphereToPixel(glm::dvec3 point, bool is_center_of_g
     if (is_center_of_gravity) {return glm::dvec2(0, 0); }
     else {return glm::dvec2(point.x, point.y) * 200.0; }
   }
+  if (abs(atan(point.y/point.z) / PI * 180.0) > 50.0) {
+    if (is_center_of_gravity) {return glm::dvec2(0, 0); }
+    else {return glm::dvec2(point.x, point.y) * 200.0; }
+  }
 
   /* calculate y pixel */ 
-  const double y_point_angle = abs(atan(point.y/point.z));
+  const double y_point_angle = abs(atan(point.y/(sqrt(pow(point.z, 2.0) + pow(point.x, 2.0)))));
   const double y_pix_angle_arc_length = abs((PIXEL_ANGLE * PI/180.0)); 
   const double y_point_arc_length = y_point_angle * (PIXEL_ANGLE * PI/180.0);
-  const double y_pixel = 90.0 * y_point_arc_length/y_pix_angle_arc_length * pce::math::sign(point.y);
+  const double y_pixel = Y_PIXEL_STRETCH * y_point_arc_length/y_pix_angle_arc_length * pce::math::sign(point.y);
 
   /* calculate x pixel */
   const double x_point_angle = abs(atan(point.x / point.z));

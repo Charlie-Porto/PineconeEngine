@@ -24,7 +24,6 @@ public:
   void UpdateEntities() {
     for (auto const& entity : entities) {
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
-      auto const& position = control.GetComponent<pce::Position>(entity);
       auto& face_shade = control.GetComponent<pce::FaceShade>(entity); 
 
       for (auto& [face, vertices] : rigid_object.face_vertex_map) {

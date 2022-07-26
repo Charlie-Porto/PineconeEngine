@@ -63,7 +63,7 @@ void moveCameraPositionLaterally(glm::dvec3& position, const glm::dvec3& view_di
     (direction.x * -orthogonal_view_direction.x + direction.z * view_direction.x),
     0.0,
     (direction.z * view_direction.z + -direction.x * orthogonal_view_direction.z)
-  ) * speed;
+  ) * speed * 6.0;
   position += movement_vector;
 }
 
@@ -103,11 +103,11 @@ void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
   }
   if (report.W_pressed) { 
     moveCameraPositionLaterally(camera.position, camera.view_direction, 
-                                glm::dvec3(0, 0, -1), trolley.movement_speed/3.0);
+                                glm::dvec3(0, 0, -1), trolley.movement_speed/10.0);
   }
   if (report.S_pressed) { 
     moveCameraPositionLaterally(camera.position, camera.view_direction, 
-                                glm::dvec3(0, 0, 1), trolley.movement_speed/3.0);
+                                glm::dvec3(0, 0, 1), trolley.movement_speed/10.0);
   }
   if (report.r_pressed) { 
     moveCameraPositionUpDown(camera.position, -1.0, trolley.movement_speed);

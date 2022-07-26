@@ -40,6 +40,16 @@ void renderLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std:
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255); 
 }
 
+void renderLineAsRendererIs(const glm::dvec2& point_a, const glm::dvec2& point_b) {
+  const glm::dvec2 sdl_pixel_a = pce::convert::convertCartesianCoordinatesToSDL(point_a);
+  const glm::dvec2 sdl_pixel_b = pce::convert::convertCartesianCoordinatesToSDL(point_b);
+  SDL_RenderDrawLine(Simulation::renderer, sdl_pixel_a.x, sdl_pixel_a.y,
+                                           sdl_pixel_b.x, sdl_pixel_b.y);
+}
+
+void setRendererColor(std::vector<int> color) {
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+}
 
 }
 }
