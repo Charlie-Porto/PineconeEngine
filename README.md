@@ -49,9 +49,8 @@ int main(int argc, const char* argv[]) {
   -lSDL2-2.0.0 \
   -lSDL2_image-2.0.0 \
 ```
-
-
 <br/>
+
 ## Acknowledgements
 - Thank you to Austin Morland for his Entity Component System design accompanied by fantastic documentation which can be found [here](https://austinmorlan.com/posts/entity_component_system/)
 - Thank you to Lazy Foo' Productions for their SDL2 tutorial which can be found [here](https://lazyfoo.net/tutorials/SDL/)
