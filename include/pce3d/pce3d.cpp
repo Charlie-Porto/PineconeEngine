@@ -3,6 +3,10 @@
 
 #include "pce3d.hpp"
 
+glm::dvec3 pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.1, -0.9, -0.2);
+double pce3d::Core3D::LENSE_CURVE_ = 0.1;
+double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 10.0;
+
 
 /***** not yet included *****/
 
@@ -34,19 +38,28 @@
 
 namespace pce3d {
 
-Core3D::Core3D() {
+
+
+Core3D::Core3D(const glm::dvec3 light_flow_direction,
+               const double lense_curve_index,
+               const double ordinary_zoom_index) {
+
   camera_ = Camera{
     .position = glm::dvec3(0.0, 0.0, 0.0),
-    .view_direction = glm::dvec3(0.0, 0.0, 1.0),
+    .view_direction = glm::dvec3(0.0, 0.0, -1.0),
     .focus_distance = 20.0,
     .zoom_amount = 1.0,
-    .lense_curvature = 1.0,
+    .lense_curvature = lense_curve_index,
     .lense_width = 1.0,
     .rotation_versor = glm::dquat(1.0, 0, 0, 0)
   };
 
   RegisterCoreComponents();
   RegisterCoreSystems();
+
+  pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = light_flow_direction;
+  pce3d::Core3D::LENSE_CURVE_ = lense_curve_index;
+  pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = ordinary_zoom_index;
 }
 
 

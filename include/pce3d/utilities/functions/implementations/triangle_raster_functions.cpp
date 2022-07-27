@@ -1,19 +1,14 @@
 #ifndef triangle_raster_functions_cpp
 #define triangle_raster_functions_cpp
 
-#include <cmath>
-#include <algorithm>
-#include <glm/geometric.hpp>
+
 #include "../triangle_raster_functions.hpp"
-#include "../../../maths/functions/sign.hpp"
-#include "../quickdraw.hpp"
-#include <vezprint.cpp>
 
 
 namespace pce3d {
 namespace raster {
 
-const double zoom_ratio = 10.0;
+const double zoom_ratio = pce3d::Core3D::ORDINARY_ZOOM_INDEX_;
 const double PI = 3.14159265;
 
 
@@ -29,9 +24,9 @@ void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<in
       && abs(triangle.A.y - triangle.C.y) < (0.5 * zoom_ratio )
       && abs(triangle.B.y - triangle.C.y) < (0.5 * zoom_ratio )
   ) { 
-    pce::quickdraw::drawLine(triangle.A, triangle.B, color, 1.0);
-    pce::quickdraw::drawLine(triangle.C, triangle.B, color, 1.0);
-    pce::quickdraw::drawLine(triangle.A, triangle.C, color, 1.0);
+    // pce::quickdraw::drawLine(triangle.A, triangle.B, color, 1.0);
+    // pce::quickdraw::drawLine(triangle.C, triangle.B, color, 1.0);
+    // pce::quickdraw::drawLine(triangle.A, triangle.C, color, 1.0);
   } else {
     // pce::quickdraw::drawCircle(triangle.A, 5.0, {0, 200, 20, 255}, 1.0);
     // pce::quickdraw::drawCircle(triangle.B, 5.0, {0, 200, 20, 255}, 1.0);

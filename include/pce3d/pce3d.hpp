@@ -22,15 +22,23 @@
 
 
 extern ControlPanel control;
+
 namespace pce3d {
 
 class Core3D {
 public:
-  Core3D();
+  Core3D(const glm::dvec3 light_flow_direction = glm::dvec3(-0.1, -0.9, -0.2), 
+         const double lense_curve_index = 0.1,
+         const double ordinary_zoom_index = 10.0);
 
   void RegisterCoreComponents();
   void RegisterCoreSystems();
   void UpdateCore3D();
+
+  /* pce3d statics */
+  static glm::dvec3 LIGHT_FLOW_DIRECTION_;
+  static double LENSE_CURVE_;
+  static double ORDINARY_ZOOM_INDEX_;
 
 private:
   Camera camera_;
@@ -43,7 +51,6 @@ private:
   std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::OrderForRenderSystem> render_order_system_;
 
-   
 
 };
 

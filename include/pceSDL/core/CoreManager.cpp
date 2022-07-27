@@ -22,20 +22,21 @@ CoreManager::CoreManager() {
 
 CoreManager::CoreManager(const char* title) {
   simulation_ = new Simulation();
-  simulation_->Init("title", SCREEN_X, SCREEN_Y);
+  simulation_->Init(title, SCREEN_X, SCREEN_Y);
   FPS_ = 60;
   frameDelay_ = 1000 / FPS_;
+  USE_TIMER = true;
   SetScreenParameters(1000, 672);
 }
 
 
 CoreManager::CoreManager(const char* title, int screen_x, int screen_y) {
   simulation_ = new Simulation();
-  simulation_->Init("title", screen_x, screen_y);
+  simulation_->Init(title, screen_x, screen_y);
   FPS_ = 60;
   frameDelay_ = 1000 / FPS_;
+  USE_TIMER = true;
   SetScreenParameters(screen_x, screen_y);
-  time_ = 0.0;
 }
 
 

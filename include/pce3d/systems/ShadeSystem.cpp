@@ -19,8 +19,6 @@ namespace pce3d {
 class ShadeSystem : public ISystem {
 public:
 
-
-
   void UpdateEntities() {
     for (auto const& entity : entities) {
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);

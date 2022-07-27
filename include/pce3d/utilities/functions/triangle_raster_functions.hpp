@@ -6,10 +6,17 @@
 functions for rasterizing triangles 
 -----------------------------------------------------------------*/
 
+#include <cmath>
+#include <algorithm>
+#include <glm/geometric.hpp>
+#include "../../maths/functions/sign.hpp"
+#include "quickdraw.hpp"
 #include "../../maths/objects/Triangle.hpp"
 
 /* include Simulation.hpp for access to the renderer */
 #include "../../../pceSDL/core/Simulation.hpp"
+
+
 
 namespace pce3d {
 namespace raster {

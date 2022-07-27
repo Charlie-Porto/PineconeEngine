@@ -57,11 +57,11 @@ public:
         if (face_vertex_count == 4) {
           auto quad = pce3d::maths::Quadrilateral{render_vertices[0], render_vertices[1], 
                                                   render_vertices[2],render_vertices[3]};
-          pce::quickdraw::drawFilledQuadrilateral(quad, face_color, 10.0);
+          pce::quickdraw::drawFilledQuadrilateral(quad, face_color);
         }
         if (face_vertex_count == 3) {
           auto tri = pce3d::maths::Triangle{render_vertices[0], render_vertices[1], render_vertices[2]};
-          pce::quickdraw::drawFilledTriangle(tri, face_color, 10.0);
+          pce::quickdraw::drawFilledTriangle(tri, face_color);
         }
 
       }
