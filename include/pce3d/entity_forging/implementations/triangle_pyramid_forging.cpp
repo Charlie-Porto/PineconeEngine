@@ -37,6 +37,13 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
     {4, {1, 4, 3}},
   };
 
+  VertexVertexMap vvmap = {
+    {1, {2, 3, 4}},
+    {2, {1, 3, 4}},
+    {3, {1, 2, 4}},
+    {4, {1, 2, 3}}
+  };
+
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
   control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
@@ -45,6 +52,7 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .vertices = vertices,
+    .vertex_vertex_map = vvmap,
     .edges = edge_map,
     .face_vertex_map = face_vertex_map
   });

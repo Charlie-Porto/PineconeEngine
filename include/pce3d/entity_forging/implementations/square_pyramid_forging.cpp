@@ -37,6 +37,15 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
     {5, {4, 5, 3}}
   };
 
+  VertexVertexMap vvmap = {
+    {1, {2, 5, 4}},
+    {2, {1, 5, 3}},
+    {3, {2, 5, 4}},
+    {4, {1, 5, 3}},
+    {5, {1, 2, 3, 4}}
+  };
+
+
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
   control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
@@ -45,6 +54,7 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .vertices = vertices,
+    .vertex_vertex_map = vvmap,
     .edges = edge_map,
     .face_vertex_map = face_vertex_map
   });

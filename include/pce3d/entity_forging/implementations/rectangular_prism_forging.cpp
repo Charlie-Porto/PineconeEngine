@@ -17,6 +17,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   VertexMap e_vertex_map = calculateRectPrismOriginalVertexLocations(w, h, l, center);
   FaceVertexMap e_face_vertex_map = assignVerticesToFaces();
   EdgeMap e_edge_map = assignEdgesToVertices();
+  VertexVertexMap vvmap = assignVerticestoVertices();
 
   /* adjust vertex points based on rotation and center point */
   // TODO: add local rotation calculation
@@ -32,6 +33,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .vertices = e_vertex_map,
+    .vertex_vertex_map = vvmap,
     .edges = e_edge_map,
     .face_vertex_map = e_face_vertex_map
   });
@@ -104,6 +106,20 @@ EdgeMap assignEdgesToVertices() {
 }
 
 
+
+VertexVertexMap assignVerticestoVertices() {
+  VertexVertexMap vvmap = {
+    {1, {4, 2, 5}},
+    {2, {1, 3, 6}},
+    {3, {1, 4, 7}},
+    {4, {2, 8, 7}},
+    {5, {1, 7, 6}},
+    {6, {2, 5, 8}},
+    {7, {5, 3, 8}},
+    {8, {7, 4, 6}}
+  };
+  return vvmap;
+}
 
 
 }

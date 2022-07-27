@@ -20,6 +20,7 @@ namespace forge {
 using Entity = uint32_t;
 using VertexMap = std::unordered_map<uint32_t, glm::dvec3>;
 using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
+using VertexVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 
 Entity forgeRectPrismEntity(const double w, const double h, const double l,
@@ -35,6 +36,7 @@ FaceVertexMap assignVerticesToFaces();
 
 EdgeMap assignEdgesToVertices();
 
+VertexVertexMap assignVerticestoVertices();
 
 
 

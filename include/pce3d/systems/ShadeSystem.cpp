@@ -36,7 +36,7 @@ public:
   }
 
 private:
-  const glm::dvec3 LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.2, -1.0, -0.5);
+  const glm::dvec3 LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.1, -1.0, -0.2);
 
 };
 }
