@@ -37,6 +37,8 @@ public:
         pce::quickdraw::drawFilledCircle(position.center_of_mass_radar_pixel, 
                                          rigid_object.radius * 20.0 / rigid_object.vertex_distance_map.at(1),
                                          surface.color);
+        std::cout << "RENDER: " << entity << " | " << "location: " << position.center_of_mass_relative_to_camera.x << ", " << position.center_of_mass_relative_to_camera.y << ", " << position.center_of_mass_relative_to_camera.z << '\n';
+      
       }
 
       
