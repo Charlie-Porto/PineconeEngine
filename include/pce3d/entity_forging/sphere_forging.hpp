@@ -5,14 +5,19 @@
 --------------------- Module Description -------------------------|
 functions for creating sphere entities
 -----------------------------------------------------------------*/
+#include <cmath>
 #include <vector>
+#include <utility>
+#include <unordered_map>
+#include <glm/vec3.hpp>
+#include <glm/ext/quaternion_double.hpp>
+#include "../components/rigid_object_component.cpp"
 
 extern ControlPanel control;
 
 namespace pce3d {
 namespace forge {
 
-using Entity = uint32_t;
 
 Entity forgeSphereEntity(const double radius, const glm::dvec3 location,  const std::vector<int> color);
   

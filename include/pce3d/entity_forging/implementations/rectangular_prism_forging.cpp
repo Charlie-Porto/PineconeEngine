@@ -32,6 +32,8 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
+    .mass = w * h * l,
+    .is_deadbod = false,
     .vertices = e_vertex_map,
     .vertex_vertex_map = vvmap,
     .edges = e_edge_map,

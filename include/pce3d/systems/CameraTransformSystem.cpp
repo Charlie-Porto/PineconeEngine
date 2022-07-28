@@ -29,6 +29,11 @@ public:
       const glm::dvec3 transformed_position = position.actual_center_of_mass - transform_vector;
       position.center_of_mass_relative_to_camera 
           = pce::rotateVector3byQuaternion(transformed_position, versor);
+
+      // std::cout << "entity: " << entity << " | " << "position: " << position.center_of_mass_relative_to_camera.x << ", " 
+      //                                                            << position.center_of_mass_relative_to_camera.y << ", "
+      //                                                            << position.center_of_mass_relative_to_camera.z 
+      //                                                            << '\n';
       
       // /* update vertices */
       for (auto const& [id, vertex] : rigid_object.vertices) {

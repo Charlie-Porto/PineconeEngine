@@ -18,10 +18,15 @@ using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 
 struct RigidObject {
   double radius;  // if == 0, then not a sphere
+
+  double mass;
+  bool is_deadbod;
+
   VertexMap vertices;
   VertexVertexMap vertex_vertex_map;
   EdgeMap edges;
   FaceVertexMap face_vertex_map;
+
   VertexMap camera_transformed_vertices;
   VertexPixelMap vertex_pixels;
   VertexDistanceMap vertex_distance_map;

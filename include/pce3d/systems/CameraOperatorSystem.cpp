@@ -18,7 +18,7 @@ public:
       .movement_speed = 0.5,
       .swivel_speed = 3.0,
       .y_angle = 0.0,
-      .xz_angle = 180.0,
+      .xz_angle = 0.0
     };
   }
 

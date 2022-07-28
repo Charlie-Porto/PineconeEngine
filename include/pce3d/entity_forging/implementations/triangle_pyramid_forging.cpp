@@ -51,6 +51,8 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
   control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
+    .mass = 10.0,
+    .is_deadbod = true,
     .vertices = vertices,
     .vertex_vertex_map = vvmap,
     .edges = edge_map,

@@ -25,6 +25,8 @@ void drawLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::v
 
 void drawCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
 
+void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
+
 void drawSetOfEdges(const std::vector<std::pair<glm::dvec2, glm::dvec2>>& edges, 
                     const std::vector<int>& color);
    

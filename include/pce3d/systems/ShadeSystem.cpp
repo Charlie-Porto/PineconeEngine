@@ -23,12 +23,14 @@ public:
     for (auto const& entity : entities) {
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& face_shade = control.GetComponent<pce::FaceShade>(entity); 
-
-      for (auto& [face, vertices] : rigid_object.face_vertex_map) {
-        glm::dvec3 vertex_a = rigid_object.vertices.at(vertices[1]) - rigid_object.vertices.at(vertices[0]);
-        glm::dvec3 vertex_b = rigid_object.vertices.at(vertices[2]) - rigid_object.vertices.at(vertices[0]);
-        const glm::dvec3 normal_vect = glm::cross(vertex_a, vertex_b);
-        face_shade.face_shade_map[face] = shade::calculateFaceBrightness(LIGHT_FLOW_DIRECTION_, normal_vect);
+      
+      if (rigid_object.radius == 0) {
+        for (auto& [face, vertices] : rigid_object.face_vertex_map) {
+          glm::dvec3 vertex_a = rigid_object.vertices.at(vertices[1]) - rigid_object.vertices.at(vertices[0]);
+          glm::dvec3 vertex_b = rigid_object.vertices.at(vertices[2]) - rigid_object.vertices.at(vertices[0]);
+          const glm::dvec3 normal_vect = glm::cross(vertex_a, vertex_b);
+          face_shade.face_shade_map[face] = shade::calculateFaceBrightness(LIGHT_FLOW_DIRECTION_, normal_vect);
+        }
       }
     }
   }

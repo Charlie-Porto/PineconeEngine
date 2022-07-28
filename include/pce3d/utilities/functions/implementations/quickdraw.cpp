@@ -46,6 +46,14 @@ void drawCircle(const glm::dvec2& center_point, double radius, const std::vector
 }
 
 
+void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color) {
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  pce::render::renderFilledCircle(center_point.x, center_point.y, radius, color);
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
+}
+
+
+
 void drawSetOfEdges(const std::vector<std::pair<glm::dvec2, glm::dvec2>>& edges, 
                     const std::vector<int>& color) {
    

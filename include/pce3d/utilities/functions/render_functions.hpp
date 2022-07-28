@@ -21,6 +21,8 @@ void renderPixel(const glm::dvec2& pixel, const std::vector<int>& color);
 
 void renderCircle(int xc, int yc, int r, const std::vector<int>& color);
 
+void renderFilledCircle(int xc, int yc, int r, const std::vector<int>& color);
+
 void renderLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::vector<int>& color);
 
 void renderLineAsRendererIs(const glm::dvec2& point_a, const glm::dvec2& point_b);

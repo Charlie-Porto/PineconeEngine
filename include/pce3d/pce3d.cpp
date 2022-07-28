@@ -5,7 +5,8 @@
 
 glm::dvec3 pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.1, -0.9, -0.2);
 double pce3d::Core3D::LENSE_CURVE_ = 0.1;
-double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 10.0;
+// double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 10.0;
+double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 13.0;
 
 
 /***** not yet included *****/
@@ -28,6 +29,7 @@ double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 10.0;
 #include "systems/functions/implementations/orderForRenderFunctions.cpp"
 #include "systems/functions/implementations/cameraOperatorFunctions.cpp"
 #include "systems/functions/implementations/shadeFunctions.cpp"
+#include "systems/functions/implementations/spaceMapFunctions.cpp"
 
 /* entity forging */
 #include "entity_forging/implementations/sphere_forging.cpp"
@@ -46,7 +48,7 @@ Core3D::Core3D(const glm::dvec3 light_flow_direction,
 
   camera_ = Camera{
     .position = glm::dvec3(0.0, 0.0, 0.0),
-    .view_direction = glm::dvec3(0.0, 0.0, -1.0),
+    .view_direction = glm::dvec3(0.0, 0.0, 1.0),
     .focus_distance = 20.0,
     .zoom_amount = 1.0,
     .lense_curvature = lense_curve_index,
@@ -89,7 +91,16 @@ void Core3D::RegisterCoreSystems() {
 
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
   control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position>();
+  
+  space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
+  control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();
 }
+
+
+void Core3D::PrepareForAllSystemsGo() {
+  space_map_system_->DoPreLoopSetup();  
+}
+
 
 
 void Core3D::UpdateCore3D() {
@@ -99,6 +110,7 @@ void Core3D::UpdateCore3D() {
   shade_system_->UpdateEntities();
   render_order_system_->UpdateEntities();
   render_system_->UpdateEntities(render_order_system_->order_of_render_);
+  // space_map_system_->UpdateEntities();
 }
 
 

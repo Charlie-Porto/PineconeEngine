@@ -19,6 +19,7 @@
 #include "systems/OrderForRenderSystem.cpp"
 #include "systems/CameraOperatorSystem.cpp"
 #include "systems/ShadeSystem.cpp"
+#include "systems/SpaceMapSystem.cpp"
 
 
 extern ControlPanel control;
@@ -33,6 +34,7 @@ public:
 
   void RegisterCoreComponents();
   void RegisterCoreSystems();
+  void PrepareForAllSystemsGo();
   void UpdateCore3D();
 
   /* pce3d statics */
@@ -50,6 +52,7 @@ private:
   std::shared_ptr<pce3d::RenderSystem> render_system_;
   std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::OrderForRenderSystem> render_order_system_;
+  std::shared_ptr<pce3d::SpaceMapSystem> space_map_system_;
 
 
 };
