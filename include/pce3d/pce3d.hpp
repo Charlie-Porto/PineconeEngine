@@ -11,6 +11,8 @@
 #include "components/local_rotation_component.cpp"
 #include "components/surface_component.cpp"
 #include "components/face_shade_component.cpp"
+#include "components/force_component.cpp"
+#include "components/motion_component.cpp"
 
 /* systems */
 #include "systems/CameraTransformSystem.cpp"
@@ -20,6 +22,7 @@
 #include "systems/CameraOperatorSystem.cpp"
 #include "systems/ShadeSystem.cpp"
 #include "systems/SpaceMapSystem.cpp"
+#include "systems/PhysicsSystem.cpp"
 
 
 extern ControlPanel control;
@@ -53,6 +56,7 @@ private:
   std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::OrderForRenderSystem> render_order_system_;
   std::shared_ptr<pce3d::SpaceMapSystem> space_map_system_;
+  std::shared_ptr<pce3d::PhysicsSystem> physics_system_;
 
 
 };

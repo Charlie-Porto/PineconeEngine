@@ -47,9 +47,10 @@ void drawCircle(const glm::dvec2& center_point, double radius, const std::vector
 
 
 void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color) {
-  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
-  pce::render::renderFilledCircle(center_point.x, center_point.y, radius, color);
-  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
+  // SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  const glm::vec2 ncenter_point = pce::convert::convertCartesianCoordinatesToSDL(center_point * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  pce::render::renderFilledCircle(ncenter_point.x, ncenter_point.y, radius, color);
+  // SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
 

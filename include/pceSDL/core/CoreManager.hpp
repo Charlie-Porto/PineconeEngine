@@ -27,8 +27,8 @@ public:
   /* static items */
   static int SCREEN_X;
   static int SCREEN_Y;
+  static double time_;
    
-  double time_;
   bool USE_TIMER;
 
 private:

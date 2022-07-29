@@ -67,9 +67,9 @@ glm::dvec3 interpolateViewSphereIntersectionPoint(const glm::dvec3& point, const
   glm::dvec3 psuedo_intersection_point = glm::dvec3(point.x + t * direction.x, point.y + t * direction.y, z_target);
   glm::dvec3 unit_psuedo_int_point = glm::normalize(psuedo_intersection_point);
 
-  const double x = point.x + t * direction.x;
-  double y = point.y + t * direction.y;
-  const double z = z_target;
+  // const double x = point.x + t * direction.x;
+  // double y = point.y + t * direction.y;
+  // const double z = z_target;
   // if (x < 1.0) {
     // y = sqrt(1.0 - pow(x, 2.0) * pow(z, 2.0));
     // return glm::dvec3(x, y, z);

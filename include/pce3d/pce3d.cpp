@@ -30,6 +30,7 @@ double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 13.0;
 #include "systems/functions/implementations/cameraOperatorFunctions.cpp"
 #include "systems/functions/implementations/shadeFunctions.cpp"
 #include "systems/functions/implementations/spaceMapFunctions.cpp"
+#include "systems/functions/implementations/physicsFunctions.cpp"
 
 /* entity forging */
 #include "entity_forging/implementations/sphere_forging.cpp"
@@ -71,6 +72,8 @@ void Core3D::RegisterCoreComponents() {
   control.RegisterComponent<pce::LocalRotation>();
   control.RegisterComponent<pce::Surface>();
   control.RegisterComponent<pce::FaceShade>();
+  control.RegisterComponent<pce::Force>();
+  control.RegisterComponent<pce::Motion>();
 }
 
 
@@ -94,6 +97,9 @@ void Core3D::RegisterCoreSystems() {
   
   space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
   control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();
+
+  physics_system_ = control.RegisterSystem<pce3d::PhysicsSystem>();
+  control.AssignSystemComponents<pce3d::PhysicsSystem, pce::RigidObject, pce::Force, pce::Motion, pce::Position>();
 }
 
 
@@ -102,15 +108,16 @@ void Core3D::PrepareForAllSystemsGo() {
 }
 
 
-
 void Core3D::UpdateCore3D() {
   camera_operator_system_->UpdateCamera(camera_);
   camera_transform_system_->UpdateEntities(-camera_.position, camera_.rotation_versor);
+  space_map_system_->UpdateEntities();
+  physics_system_->UpdateEntities(space_map_system_->potential_colliding_entities_);
+
   radar_system_->UpdateEntities();
   shade_system_->UpdateEntities();
   render_order_system_->UpdateEntities();
   render_system_->UpdateEntities(render_order_system_->order_of_render_);
-  space_map_system_->UpdateEntities();
 }
 
 

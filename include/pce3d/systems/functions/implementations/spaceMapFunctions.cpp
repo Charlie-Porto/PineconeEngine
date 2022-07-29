@@ -8,15 +8,15 @@ namespace space_map {
 
 
 glm::ivec3 findIndexOfPoint(const glm::dvec3& point, const glm::ivec3& mdim, const double mir) {
-  glm::dvec3 p = point + (glm::dvec3(mdim.x, mdim.y, mdim.z) / 2.0);
-  p = p / mir;
+  glm::dvec3 p = point / mir;
+  p = p + ((glm::dvec3(mdim.x, mdim.y, mdim.z) / mir) / 2.0);
   return glm::ivec3(p.x, p.y, p.z);
 }
 
 
 glm::dvec3 findPointOfIndex(const glm::ivec3& index, const glm::ivec3& mdim, const double mir) {
-  glm::ivec3 p = index * int(mir);
-  p = p - (mdim / 2);
+  glm::ivec3 p = index - (mdim / int(mir)) / 2;
+  p = p * int(mir);
   return glm::dvec3(p.x, p.y, p.z);
 }
 

@@ -31,26 +31,14 @@ void renderCircle(int xc, int yc, int r, const std::vector<int>& color) {
 }
 
 
-// void renderFilledCircle(int xc, int yc, int r, const std::vector<int>& color) {
-//   glm::dvec2 adjusted_center = glm::dvec2(xc, yc) * pce3d::Core3D::ORDINARY_ZOOM_INDEX_;
-//   const std::vector<glm::dvec2> points = raster::getCircleRasterizationPoints(adjusted_center.x, adjusted_center.y, r); 
-//   adjusted_center = pce::convert::convertCartesianCoordinatesToSDL(adjusted_center);
-
-//   for (auto const& point : points) {
-//     const glm::dvec2 adjusted_point = pce::convert::convertCartesianCoordinatesToSDL(point);
-//     SDL_RenderDrawLine(Simulation::renderer, adjusted_point.x, adjusted_point.y, adjusted_center.x, adjusted_center.y);
-//   }
-// }
-
 void renderFilledCircle(int xc, int yc, int r, const std::vector<int>& color) {
-  xc *= pce3d::Core3D::ORDINARY_ZOOM_INDEX_;
-  yc *= pce3d::Core3D::ORDINARY_ZOOM_INDEX_;
-  const std::vector<glm::dvec2> points = raster::getCircleRasterizationPoints(xc, yc, r); 
-  const glm::dvec2 adjusted_center = pce::convert::convertCartesianCoordinatesToSDL(glm::dvec2(xc, yc));
+  // const std::vector<glm::dvec2> points = raster::getCircleRasterizationPoints(xc, yc, int(r * pce3d::Core3D::ORDINARY_ZOOM_INDEX_)); 
+  const std::vector<glm::dvec2> points = raster::getCircleRasterizationPoints(xc, yc, int(r)); 
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
   for (auto const& point : points) {
-    const glm::dvec2 adjusted_point = pce::convert::convertCartesianCoordinatesToSDL(point);
-    SDL_RenderDrawLine(Simulation::renderer, adjusted_point.x, adjusted_point.y, adjusted_center.x, adjusted_center.y);
+    SDL_RenderDrawLine(Simulation::renderer, int(point.x), int(point.y), xc, yc);
   }
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255); 
 }
 
 

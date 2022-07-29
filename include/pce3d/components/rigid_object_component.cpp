@@ -21,6 +21,7 @@ struct RigidObject {
 
   double mass;
   bool is_deadbod;
+  bool is_restingbod;
 
   VertexMap vertices;
   VertexVertexMap vertex_vertex_map;

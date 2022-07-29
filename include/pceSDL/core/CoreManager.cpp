@@ -8,6 +8,7 @@ namespace pce {
 
 int pce::CoreManager::SCREEN_X = 1000;
 int pce::CoreManager::SCREEN_Y = 672;
+double pce::CoreManager::time_ = 0.0;
 
 
 CoreManager::CoreManager() {
@@ -51,7 +52,7 @@ void CoreManager::DoCorePreUpdate() {
   simulation_->HandleEvents();
   simulation_->ClearRenderer();
   if (USE_TIMER) { UpdateFramerateTimer(); }
-  time_ = double(frameStart_) / 1000.0;
+  pce::CoreManager::time_ = double(frameStart_) / 1000.0;
 }
 
 
