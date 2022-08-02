@@ -33,22 +33,20 @@ if (!is_first_pass) {
     else {return glm::dvec2(point.x * 100.0, point.y * 200.0); }
   }
 }
-
-  /* calculate y pixel */ 
-  // const double y_point_angle = abs(atan(point.y/(sqrt(pow(point.z, 2.0) + pow(point.x, 2.0)))));
-  const double y_point_angle = abs(atan(point.y/(point.z)));
-  const double y_pix_angle_arc_length = abs((PIXEL_ANGLE * PI/180.0)); 
-  const double y_point_arc_length = y_point_angle * (PIXEL_ANGLE * PI/180.0);
-  const double y_pixel = Y_PIXEL_STRETCH * y_point_arc_length/y_pix_angle_arc_length * pce::math::sign(point.y);
-
-  /* calculate x pixel */
-  const double x_point_angle = abs(atan(point.x / point.z));
-  const double x_pix_angle_arc_length = abs(LENSE_INDEX * (PIXEL_ANGLE * PI/180.0));
-  const double x_point_arc_length = abs(x_point_angle * LENSE_INDEX);
-  const double x_pixel = x_point_arc_length/x_pix_angle_arc_length * pce::math::sign(point.x);
-
+  const double y_pixel = Y_PIXEL_STRETCH * atan(point.y / point.z);
+  const double x_pixel = atan(point.x / point.z) / (PIXEL_ANGLE * PI / 180.0);
   return glm::dvec2(x_pixel, y_pixel);
 }
+
+
+glm::dvec3 convertPixelToPointOnViewSphere(const glm::dvec2& pixel) {
+  const double z = 1.0 / (1.0 + tan(double(pixel.y) / Y_PIXEL_STRETCH) - tan(double(pixel.x) * (PIXEL_ANGLE * PI / 180.0)));
+  const double x = z * tan(pixel.x * (PIXEL_ANGLE * PI / 180.0));
+  const double y = z * tan(pixel.y / Y_PIXEL_STRETCH);
+  // std::cout << "viewsphere point: " << x << ", " << y << ", " << z << "\n";
+  return glm::dvec3(x, y, z);
+}
+
 
 
 glm::dvec3 interpolateViewSphereIntersectionPoint(const glm::dvec3& point, const double z_target,

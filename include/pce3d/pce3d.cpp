@@ -14,6 +14,7 @@ double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 13.0;
 /* maths */
 #include "maths/functions/implementations/quaternion_functions.cpp"
 #include "maths/functions/implementations/plane_functions.cpp"
+#include "maths/functions/implementations/sphere_functions.cpp"
 #include "maths/functions/sign.hpp"
 
 /* utilities */
@@ -21,6 +22,7 @@ double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 13.0;
 #include "utilities/functions/implementations/raster_functions.cpp"
 #include "utilities/functions/implementations/render_functions.cpp"
 #include "utilities/functions/implementations/triangle_raster_functions.cpp"
+#include "utilities/functions/implementations/SDL_cartesian_conversion.cpp"
 #include "utilities/objects/implementations/virtual_keyboard.cpp"
 
 /* system functions */
@@ -115,7 +117,7 @@ void Core3D::UpdateCore3D() {
   physics_system_->UpdateEntities(space_map_system_->potential_colliding_entities_);
 
   radar_system_->UpdateEntities();
-  shade_system_->UpdateEntities();
+  shade_system_->UpdateEntities(camera_.rotation_versor);
   render_order_system_->UpdateEntities();
   render_system_->UpdateEntities(render_order_system_->order_of_render_);
 }

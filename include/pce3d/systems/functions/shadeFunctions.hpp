@@ -6,7 +6,13 @@
 functions to assist the shade system
 -----------------------------------------------------------------*/
 
+#include <iostream>
+#include <cmath>
 #include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
+#include "radarFunctions.hpp"
+#include "../../maths/functions/sphere_functions.hpp"
+#include "../../utilities/functions/SDL_cartesian_conversion.hpp"
 
 namespace pce3d {
 namespace shade {
@@ -17,7 +23,14 @@ double calculateFaceBrightness(const glm::dvec3& light_direction, const glm::dve
 /* 1 = pure natural color */
 /* 2 = white */
 
+using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
 
+
+void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
+                                            const glm::dvec3& sphere_center,
+                                            const double sphere_radius,
+                                            const PixelMap& outline_pixels,
+                                            pce::PixelShadeMap& pixel_shades);
 
 }
 }

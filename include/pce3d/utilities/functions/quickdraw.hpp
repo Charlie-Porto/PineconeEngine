@@ -6,10 +6,15 @@
 functions to render simple objects easily 
 -----------------------------------------------------------------*/
 
+
 #include <vector>
 #include <glm/vec2.hpp>
-#include "../../maths/objects/Quadrilateral.hpp"
+#include "SDL_cartesian_conversion.hpp"
+#include "render_functions.hpp"
+#include "raster_functions.hpp"
 #include "../../maths/objects/Triangle.hpp"
+#include "triangle_raster_functions.hpp"
+#include "../../maths/objects/Quadrilateral.hpp"
 
 /* include primary .hpp file for access to global vars */
 #include "../../pce3d.hpp"
@@ -26,6 +31,9 @@ void drawLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::v
 void drawCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
 
 void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
+
+void drawFilledCircleClean(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
+
 
 void drawSetOfEdges(const std::vector<std::pair<glm::dvec2, glm::dvec2>>& edges, 
                     const std::vector<int>& color);

@@ -2,8 +2,6 @@
 #define render_functions_cpp
 
 #include "../render_functions.hpp"
-#include "../raster_functions.hpp"
-#include "../SDL_cartesian_conversion.hpp"
 
 namespace pce {
 namespace render {
@@ -32,13 +30,24 @@ void renderCircle(int xc, int yc, int r, const std::vector<int>& color) {
 
 
 void renderFilledCircle(int xc, int yc, int r, const std::vector<int>& color) {
-  // const std::vector<glm::dvec2> points = raster::getCircleRasterizationPoints(xc, yc, int(r * pce3d::Core3D::ORDINARY_ZOOM_INDEX_)); 
   const std::vector<glm::dvec2> points = raster::getCircleRasterizationPoints(xc, yc, int(r)); 
   SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
   for (auto const& point : points) {
     SDL_RenderDrawLine(Simulation::renderer, int(point.x), int(point.y), xc, yc);
   }
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255); 
+}
+
+void renderFilledCircleShaded(const PixelShadeMap& pixel_shade_map, const std::vector<int>& color) {
+  for (auto const& [pixel, shade_amount] : pixel_shade_map) {
+    SDL_SetRenderDrawColor(Simulation::renderer, int(double(color[0]) * pixel_shade_map.at(pixel)),
+                                                 int(double(color[1]) * pixel_shade_map.at(pixel)),
+                                                 int(double(color[2]) * pixel_shade_map.at(pixel)),
+                                                 255);
+    const glm::dvec2 p = convert::convertCartesianCoordinatesToSDL(pixel);
+    SDL_RenderDrawPoint(Simulation::renderer, int(p.x), int(p.y));
+  }
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
 

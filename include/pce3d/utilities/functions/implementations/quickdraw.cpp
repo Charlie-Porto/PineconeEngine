@@ -2,10 +2,6 @@
 #define quickdraw_cpp
 
 #include "../quickdraw.hpp"
-#include "../SDL_cartesian_conversion.hpp"
-#include "../render_functions.hpp"
-#include "../../../maths/objects/Triangle.hpp"
-#include "../triangle_raster_functions.hpp"
 
 
 namespace pce {
@@ -53,6 +49,16 @@ void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::
   // SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
+void drawFilledCircleClean(const glm::dvec2& center_point, double radius, const std::vector<int>& color) {
+  const glm::vec2 ncenter_point = pce::convert::convertCartesianCoordinatesToSDL(center_point * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  const std::unordered_map<glm::dvec2, glm::dvec2> points = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x, ncenter_point.y, int(radius));
+  
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  for (auto const& [A, B] : points) {
+    SDL_RenderDrawLine(Simulation::renderer, int(A.x), int(A.y), int(B.x), int(B.y));
+  }
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
+}
 
 
 void drawSetOfEdges(const std::vector<std::pair<glm::dvec2, glm::dvec2>>& edges, 

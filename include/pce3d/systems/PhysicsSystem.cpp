@@ -53,11 +53,6 @@ public:
               b_motion.velocity, b_rigid_object.mass
           );
         
-        const glm::dvec3 va = new_velocity_vectors.first;
-        const glm::dvec3 vb = new_velocity_vectors.second;
-        // std::cout << "va: " << va.x << ", " << va.y << ", " << va.z << '\n';
-        // std::cout << "vb: " << vb.x << ", " << vb.y << ", " << va.z << '\n';
-
         a_motion.velocity += new_velocity_vectors.second;
         a_motion.velocity -= new_velocity_vectors.first;
         a_motion.direction = glm::normalize(a_motion.velocity);
@@ -76,8 +71,6 @@ public:
         }
 
       }
-      
-      // std::cout << entity_a << ", " << entity_b << ": " << are_colliding << '\n';
       
     }
   }
