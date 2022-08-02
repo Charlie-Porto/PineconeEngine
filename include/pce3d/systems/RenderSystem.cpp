@@ -34,8 +34,11 @@ public:
 
       /* check if entity is a sphere */ 
       if (rigid_object.radius != 0) {
-        // pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), surface.color);
-        pce::render::renderFilledCircleShaded(shade.pixel_shade_map, surface.color);
+        if (rigid_object.vertex_distance_map.at(1) < 15.0) {
+          pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), surface.color);
+        } else {
+          pce::render::renderFilledCircleShaded(shade.pixel_shade_map, surface.color);
+        }
       }
 
       

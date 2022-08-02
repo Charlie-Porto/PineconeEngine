@@ -42,7 +42,7 @@ public:
       }
 
       else {
-        // std::cout << "*******************" << '\n';
+        if (rigid_object.vertex_distance_map.at(1) < 15.0) { continue; }
         /* do pixel color calculation */
         using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
 
