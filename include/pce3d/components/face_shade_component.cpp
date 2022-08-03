@@ -12,6 +12,7 @@ using PixelShadeMap = std::unordered_map<glm::dvec2, double>;
 struct FaceShade {
   FaceShadeMap face_shade_map;
   PixelShadeMap pixel_shade_map;
+  double center_point_shade;
 };
 
 }

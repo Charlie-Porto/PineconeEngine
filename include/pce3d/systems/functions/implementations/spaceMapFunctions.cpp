@@ -30,12 +30,44 @@ std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, cons
 }
 
 
-std::vector<glm::ivec3> findIndicesOfFaceMidpoints(const std::vector<uint32_t>& face,
-                                                   const VertexMap& vertices, const glm::dvec3& mdim, 
-                                                   const double mir) {
+// std::vector<glm::ivec3> findIndicesOfFaceMidpoints(const std::vector<uint32_t>& face,
+//                                                    const VertexMap& vertices, const glm::dvec3& mdim, 
+//                                                    const double mir) {
   
+// }
+
+
+std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
+                                        const VertexMap& vertices, const glm::dvec3& mdim,
+                                        const double mir) {
+  std::vector<glm::ivec3> face_indices{};
+  switch (face.size()) {
+    case 3:
+      break;
+    case 4:
+      break;
+    default:
+      break;
+  }
+  return face_indices;
 }
+
+
+std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
+                                                const VertexMap& vertices, const glm::dvec3& mdim,
+                                                const double mir) {
+  std::vector<glm::ivec3> tri_face_indices{};
+  const std::vector<uint32_t> sorted_face = pce::maths::sortVerticesByDistance(vertices, face);
+  const glm::dvec3 face_crawl_direction = pce::maths::determineCrawlDirection(vertices, sorted_face);
+  const glm::dvec3 line_crawl_direction = glm::normalize(vertices.at(sorted_face[0]) 
+                                                       - vertices.at(sorted_face[2]));
   
+  glm::dvec3 current_line_point = vertices.at(sorted_face[2]);
+  /* PICK UP HERE */
+}
+
+
+
 
 
 }

@@ -35,7 +35,12 @@ public:
       /* check if entity is a sphere */ 
       if (rigid_object.radius != 0) {
         if (rigid_object.vertex_distance_map.at(1) < 15.0) {
-          pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), surface.color);
+          const std::vector<int> ncolor = {int(surface.color[0] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel * 13.0)),
+                                           int(surface.color[1] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel * 13.0)),
+                                           int(surface.color[2] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel * 13.0)),
+                                           255};
+          // pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), surface.color);
+          pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), ncolor);
         } else {
           pce::render::renderFilledCircleShaded(shade.pixel_shade_map, surface.color);
         }

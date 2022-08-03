@@ -12,6 +12,7 @@ mdim = map dimensions
 #include <unordered_map>
 #include <vector>
 #include <glm/vec3.hpp>
+#include "../../maths/functions/triangle_functions.hpp"
 
 namespace pce3d {
 namespace space_map {
@@ -27,6 +28,21 @@ std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, cons
 std::vector<glm::ivec3> findIndicesOfFaceMidpoints(const std::vector<uint32_t>& face,
                                                    const VertexMap& vertices, const glm::dvec3& mdim, 
                                                    const double mir);
+
+
+std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
+                                        const VertexMap& vertices, const glm::dvec3& mdim,
+                                        const double mir);
+
+
+std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
+                                                const VertexMap& vertices, const glm::dvec3& mdim,
+                                                const double mir);
+
+std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
+                                            const VertexMap& vertices, const glm::dvec3& mdim,
+                                            const double mir);
+
 
 }
 }

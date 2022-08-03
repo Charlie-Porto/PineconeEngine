@@ -32,11 +32,10 @@ void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
                                             pce::PixelShadeMap& pixel_shades) {
   pixel_shades.clear();
   for (auto const& [A, B] : outline_pixels) {
-    for (int i_x = int(A.x); i_x <= int(B.x); ++i_x) {
+    for (double i_x = A.x; i_x <= B.x; ++i_x) {
       const glm::dvec2 p = glm::dvec2(i_x, A.y);
-      pixel_shades[p] = ((i_x - A.x) / (B.x - A.x));
 
-      const glm::dvec3 viewsphere_point = glm::normalize(radar::convertPixelToPointOnViewSphere(p / 10.0));
+      const glm::dvec3 viewsphere_point = glm::normalize(radar::convertPixelToPointOnViewSphere(p / 13.0));
       glm::dvec3 entity_sphere_point;
 
       try {

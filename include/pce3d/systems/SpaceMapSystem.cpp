@@ -37,8 +37,8 @@ public:
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
 
       const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
-
       
+
       if (rigid_object.is_deadbod) {
         /* put deadbod location -> entity mapping into map */
         for (auto const& index : indices) {

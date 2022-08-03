@@ -42,11 +42,20 @@ public:
       }
 
       else {
-        if (rigid_object.vertex_distance_map.at(1) < 15.0) { continue; }
+        if (rigid_object.vertex_distance_map.at(1) < 15.0) { 
+          std::unordered_map<glm::dvec2, glm::dvec2> center_pixel = {{position.center_of_mass_radar_pixel * 13.0,
+                                                                      position.center_of_mass_radar_pixel * 13.0}};
+          shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
+                                                        position.center_of_mass_relative_to_camera,
+                                                        rigid_object.radius,
+                                                        center_pixel,
+                                                        face_shade.pixel_shade_map);
+          continue;
+        } 
         /* do pixel color calculation */
         using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
 
-        const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * 10.0;
+        const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * 13.0;
 
         PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
                                                                           ncenter_point.y,
