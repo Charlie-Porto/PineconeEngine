@@ -2,10 +2,9 @@
 #define PhysicsSystem_cpp
 
 /*----------------------------------------------------------------|
---------------------- Module Description -------------------------|
+--------------------- System Description -------------------------|
 system for handling physics
 -----------------------------------------------------------------*/
-
 
 #include <algorithm>
 #include <iostream>
@@ -21,6 +20,7 @@ extern ControlPanel control;
 namespace pce3d {
 class PhysicsSystem : public ISystem {
 public:
+
   PhysicsSystem() { 
     std::cout << "setting up Physics System" << '\n';
     entities_updated_ = {};
@@ -28,7 +28,6 @@ public:
 
 
   void checkPotentialCollisions(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities_) {
-    // std::cout << "potential collisions: " << '\n';
     for (auto const& [entity_a, entity_b] : potential_colliding_entities_) { 
       if (std::find(entities_updated_.begin(), entities_updated_.end(), entity_a) != entities_updated_.end()) {
         continue;
@@ -45,13 +44,12 @@ public:
         b_position.actual_center_of_mass, b_rigid_object.radius);
 
       if (are_colliding) {
-        std::pair<glm::dvec3, glm::dvec3> new_velocity_vectors = 
-          physics::calculateVelocityVectorsAfterTwoParticleCollision(
+        std::pair<glm::dvec3, glm::dvec3> new_velocity_vectors 
+          = physics::calculateVelocityVectorsAfterTwoParticleCollision(
               a_position.actual_center_of_mass, a_rigid_object.radius,
               a_motion.velocity, a_rigid_object.mass,
               b_position.actual_center_of_mass, b_rigid_object.radius,
-              b_motion.velocity, b_rigid_object.mass
-          );
+              b_motion.velocity, b_rigid_object.mass);
         
         a_motion.velocity += new_velocity_vectors.second;
         a_motion.velocity -= new_velocity_vectors.first;
@@ -69,9 +67,7 @@ public:
         if (!b_rigid_object.is_deadbod) {
           entities_updated_.push_back(entity_b);
         }
-
       }
-      
     }
   }
 
@@ -97,7 +93,6 @@ public:
       for (auto& [id, vertex] : rigid_object.vertices) {
         vertex = glm::dvec3(vertex + position_change);
       }
-
     }
   }
 

@@ -5,7 +5,7 @@
 
 glm::dvec3 pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.1, -0.9, -0.2);
 double pce3d::Core3D::LENSE_CURVE_ = 0.1;
-double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 13.0;
+double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 15.0;
 
 
 #include "modules.cpp"
@@ -59,6 +59,7 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::RadarSystem, pce::Position, pce::RigidObject>();
 
   render_system_ = control.RegisterSystem<pce3d::RenderSystem>();
+  render_system_->setOrdinaryZoomIndex(pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface, pce::RigidObject, pce::FaceShade>();
 
   shade_system_ = control.RegisterSystem<pce3d::ShadeSystem>();
@@ -82,7 +83,6 @@ void Core3D::PrepareForAllSystemsGo() {
 
 
 void Core3D::UpdateCore3D() {
-  std::cout << "ORDINARY_ZOOM_INDEX -- " << pce3d::Core3D::ORDINARY_ZOOM_INDEX_ << '\n';
   camera_operator_system_->UpdateCamera(camera_);
   camera_transform_system_->UpdateEntities(-camera_.position, camera_.rotation_versor);
   space_map_system_->UpdateEntities();

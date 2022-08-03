@@ -43,9 +43,7 @@ void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
                                                   viewsphere_point,
                                                   sphere_center,
                                                   sphere_radius);
-      } catch (double discriminant) {
-        std::cout << "entity sphere point: " << entity_sphere_point.x << ", " << entity_sphere_point.y << ", " << entity_sphere_point.z << '\n';
-      }
+      } catch (double discriminant) {}
       const glm::dvec3 normal_vect = entity_sphere_point - sphere_center;  
       pixel_shades[p] = calculateFaceBrightness(light_direction, normal_vect);
       // std::cout << "pixel: " << p.x << ", " << p.y << ", " << "shading: " << pixel_shades.at(p) << '\n';

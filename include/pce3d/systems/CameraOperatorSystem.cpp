@@ -5,6 +5,7 @@
 #include <pcecs/ecs/System.cpp>
 #include "functions/cameraOperatorFunctions.hpp"
 #include "../utilities/objects/virtual_keyboard.hpp"
+#include "../utilities/objects/mouse_controller.hpp"
 #include "../utilities/camera_trolley.hpp"
 
 extern ControlPanel control;
@@ -12,6 +13,7 @@ extern ControlPanel control;
 namespace pce3d {
 class CameraOperatorSystem : public ISystem {
 public:
+
   CameraOperatorSystem() {
     keyboard_ = pce::VirtualKeyboard();
     trolley_ = pce3d::CameraTrolley{
@@ -22,22 +24,17 @@ public:
     };
   }
 
-  void PrintCameraParameters(const Camera& camera) {
-    ezp::print_item(camera.view_direction.x);
-    ezp::print_item(camera.view_direction.y);
-    ezp::print_item(camera.view_direction.z);
-  }
 
   void UpdateCamera(Camera& camera) {
+    pce3d::camera::pollMouseAndUpdateViewAngle(mouse_, camera, trolley_);
     pce3d::camera::pollVirtualKeyboard(keyboard_, camera, trolley_);
     pce3d::camera::calculateUpdatedCameraRotationVersor(trolley_.y_angle, trolley_.xz_angle, 
                                                         camera.rotation_versor);
-
-    // PrintCameraParameters(camera);
   }
 
 private:
   pce::VirtualKeyboard keyboard_;
+  pce::mouse::VirtualMouse mouse_;
   pce3d::CameraTrolley trolley_;
 
 

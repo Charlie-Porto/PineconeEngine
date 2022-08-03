@@ -12,7 +12,6 @@ system to adjust entities' camera-relative positions
 #include "pcecs/ecs/System.cpp"
 
 #include "../maths/functions/quaternion_functions.hpp"
-#include <ezprint.cpp>
 
 extern ControlPanel control;
 
@@ -25,27 +24,19 @@ public:
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
 
-      /* update position */
       const glm::dvec3 transformed_position = position.actual_center_of_mass - transform_vector;
       position.center_of_mass_relative_to_camera 
           = pce::rotateVector3byQuaternion(transformed_position, versor);
 
-      // std::cout << "entity: " << entity << " | " << "position: " << position.center_of_mass_relative_to_camera.x << ", " 
-      //                                                            << position.center_of_mass_relative_to_camera.y << ", "
-      //                                                            << position.center_of_mass_relative_to_camera.z 
-      //                                                            << '\n';
-      
-      // /* update vertices */
       for (auto const& [id, vertex] : rigid_object.vertices) {
         rigid_object.camera_transformed_vertices[id] = vertex - transform_vector;
-        rigid_object.camera_transformed_vertices[id] = 
-          pce::rotateVector3byQuaternion(rigid_object.camera_transformed_vertices.at(id), versor);
+        rigid_object.camera_transformed_vertices[id] 
+            = pce::rotateVector3byQuaternion(rigid_object.camera_transformed_vertices.at(id), versor);
       }
       
     }
   }
 
-private:
 };
 }
 #endif /* CameraTransformSystem_cpp */

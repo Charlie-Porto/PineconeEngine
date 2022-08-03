@@ -1,6 +1,11 @@
 #ifndef RenderSystem_cpp
 #define RenderSystem_cpp
 
+/*----------------------------------------------------------------|
+--------------------- System Description -------------------------|
+system that handles the rendering of on-screen entities
+-----------------------------------------------------------------*/
+
 #include <iostream>
 #include <pcecs/ecs/System.cpp>
 #include "OrderForRenderSystem.cpp"
@@ -10,15 +15,19 @@
 #include "../maths/objects/Triangle.hpp"
 #include "functions/renderFunctions.hpp"
 
-
 extern ControlPanel control;
 
 namespace pce3d {
 class RenderSystem : public ISystem {
 public:
 
-  void UpdateEntities(std::vector<std::pair<uint32_t, double>> order_of_render) {
+  void setOrdinaryZoomIndex(double ORDINARY_ZOOM_INDEX) {
+    ORDINARY_ZOOM_INDEX_ = ORDINARY_ZOOM_INDEX;
+  }
 
+
+  void UpdateEntities(std::vector<std::pair<uint32_t, double>> order_of_render) {
+    /* render objects in order of furthest from camera to closest */
     for (auto const& entity_pair : order_of_render) {
       auto const entity = entity_pair.first;
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
@@ -26,27 +35,29 @@ public:
       auto const& surface = control.GetComponent<pce::Surface>(entity);
       auto const& shade = control.GetComponent<pce::FaceShade>(entity);
 
-
       /* check if item is on screen */
       if (position.center_of_mass_radar_pixel == glm::dvec2(0, 0)) {
         continue;
       }
 
-      /* check if entity is a sphere */ 
+      /* handle rendering of sphere entities */ 
       if (rigid_object.radius != 0) {
         if (rigid_object.vertex_distance_map.at(1) < 15.0) {
-          const std::vector<int> ncolor = {int(surface.color[0] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel * 13.0)),
-                                           int(surface.color[1] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel * 13.0)),
-                                           int(surface.color[2] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel * 13.0)),
-                                           255};
-          // pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), surface.color);
+          const std::vector<int> ncolor 
+            = {int(surface.color[0] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel 
+                                                               * ORDINARY_ZOOM_INDEX_)),
+               int(surface.color[1] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel 
+                                                               * ORDINARY_ZOOM_INDEX_)),
+               int(surface.color[2] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel
+                                                               * ORDINARY_ZOOM_INDEX_)),
+               255};
           pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), ncolor);
         } else {
           pce::render::renderFilledCircleShaded(shade.pixel_shade_map, surface.color);
         }
       }
 
-      
+      /* handle rendering of non-sphere entities */ 
       if (rigid_object.radius == 0) {
         std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
             rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
@@ -62,11 +73,13 @@ public:
           
           std::vector<glm::dvec2> render_vertices{};
           size_t face_vertex_count = rigid_object.face_vertex_map.at(face).size();
+
           /* collect vertices */
           for (size_t j = 0; j < face_vertex_count; ++j) {
             render_vertices.push_back(rigid_object.vertex_pixels.at(rigid_object.face_vertex_map.at(face)[j]));
           }
 
+          /* render each side of the non-sphere entity */
           if (face_vertex_count == 4) {
             auto quad = pce3d::maths::Quadrilateral{render_vertices[0], render_vertices[1], 
                                                     render_vertices[2],render_vertices[3]};
@@ -76,13 +89,14 @@ public:
             auto tri = pce3d::maths::Triangle{render_vertices[0], render_vertices[1], render_vertices[2]};
             pce::quickdraw::drawFilledTriangle(tri, face_color);
           }
-
         }
       }
     }
   }
-
 private:
+  double ORDINARY_ZOOM_INDEX_;
+
+
 };
 }
 #endif /* RenderSystem_cpp */

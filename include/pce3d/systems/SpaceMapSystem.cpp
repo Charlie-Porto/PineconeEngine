@@ -14,7 +14,6 @@ system for mapping physical 3space onto a smaller set of data
 #include <glm_hash.hpp>
 #include <pcecs/ecs/System.cpp>
 #include "functions/spaceMapFunctions.hpp"
-
 #include "../utilities/functions/quickdraw.hpp"
 
 extern ControlPanel control;
@@ -31,6 +30,7 @@ public:
     potential_colliding_entities_ = {};
   }
   
+/* ---------------------------------------- setup --------------------------------- */
   void DoPreLoopSetup() {
     for (auto const& entity : entities) {
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
@@ -64,21 +64,6 @@ public:
         }
       }
     }
-
-    // for (auto const& [id, deadbods] : deadbod_map_) {
-    //   for (auto const& entity : deadbods) {
-    //     // std::cout << "entity: " << entity << " | " << "location: " << id.x << ", " << id.y << ", " << id.z << '\n';
-    //     const glm::dvec3 point = pce3d::space_map::findPointOfIndex(id, map_dimensions_, meter_index_ratio_);
-    //     // std::cout << "MAPSYS: " << entity << " | " << "location: " << point.x << ", " << point.y << ", " << point.z << '\n';
-    //   }
-    // }
-    // for (auto const& [id, resting_bods] : restingbod_map_) {
-    //   for (auto const& entity : resting_bods) {
-    //     // std::cout << "entity: " << entity << " | " << "location: " << id.x << ", " << id.y << ", " << id.z << '\n';
-    //     // const glm::dvec3 point = pce3d::space_map::findPointOfIndex(id, map_dimensions_, meter_index_ratio_);
-    //     // std::cout << "MAPSYS: " << entity << " | " << "location: " << point.x << ", " << point.y << ", " << point.z << '\n';
-    //   }
-    // }
   }
 
 /* ---------------------------------------- update --------------------------------- */
@@ -108,20 +93,7 @@ public:
           potential_colliding_entities_[entity] = deadbod_map_.at(index)[0];
         }
       }
-
     }
-
-    // for (auto const& [id, livebods] : livebod_map_) {
-      // for (auto const& entity : livebods) {
-        // std::cout << "entity: " << entity << " | " << "location: " << id.x << ", " << id.y << ", " << id.z << '\n';
-        // const glm::dvec3 point = pce3d::space_map::findPointOfIndex(id, map_dimensions_, meter_index_ratio_);
-        // std::cout << "MAPSYS: " << entity << " | " << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
-      // }
-    // }
-
-    // for (auto const& [first, second] : potential_colliding_entities_) {
-      // std::cout << "potential colliding entities: " << first << ", " << second << '\n';
-    // }
   }
 
   std::unordered_map<glm::ivec3, std::vector<uint32_t>> deadbod_map_;
@@ -129,10 +101,8 @@ public:
   std::unordered_map<glm::ivec3, std::vector<uint32_t>> livebod_map_;
   std::unordered_map<uint32_t, uint32_t> potential_colliding_entities_;
 
-
   double meter_index_ratio_;
   glm::ivec3 map_dimensions_;
-private:
 
 };
 }

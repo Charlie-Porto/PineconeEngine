@@ -1,6 +1,12 @@
 #ifndef RadarSystem_cpp
 #define RadarSystem_cpp
 
+/*----------------------------------------------------------------|
+--------------------- System Description -------------------------|
+determines where on the screen an entity will be rendered,
+based on that entity's location in 3space relative to the camera.
+-----------------------------------------------------------------*/
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -26,10 +32,6 @@ public:
       position.center_of_mass_radar_pixel = radar::convertPointOnViewSphereToPixel(view_sphere_intersection_point, true, false);
       position.distance_from_camera = sqrt(glm::dot(position.center_of_mass_relative_to_camera,
                                                     position.center_of_mass_relative_to_camera));
-
-      // std::cout << "entity: " << entity << " | " << "pixel: " << position.center_of_mass_radar_pixel.x << ", " 
-      //                                                         << position.center_of_mass_radar_pixel.y << ", "
-      //                                                         << '\n';
 
       for (auto const& [id, vertex] : rigid_object.camera_transformed_vertices) {
         const glm::dvec3 screen_plane_intersection_point = glm::normalize(vertex);

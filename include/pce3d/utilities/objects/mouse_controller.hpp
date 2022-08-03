@@ -23,6 +23,7 @@ public:
     mouse_report_.y_position = 0.0;
     mouse_report_.left_clicked = false;
     mouse_report_.right_clicked = false;
+    just_moved = false;
   }
 
   MouseReport& PollMouse() {
@@ -50,6 +51,8 @@ public:
     return mouse_report_;
   }
 
+
+  bool just_moved;
 
 private:
   MouseReport mouse_report_;

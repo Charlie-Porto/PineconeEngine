@@ -4,6 +4,7 @@
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp>
 #include "../../utilities/objects/virtual_keyboard.hpp"
+#include "../../utilities/objects/mouse_controller.hpp"
 #include "../../utilities/camera_trolley.hpp"
 
 
@@ -29,6 +30,9 @@ void moveCameraPositionUpDown(glm::dvec3& position, const double direction, cons
 
 void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
                          pce3d::CameraTrolley& trolley);
+
+void pollMouseAndUpdateViewAngle(pce::mouse::VirtualMouse& mouse, pce3d::Camera& camera,
+                                 pce3d::CameraTrolley& trolley);
 
 }}
 

@@ -14,13 +14,6 @@ namespace pce3d {
 class OrderForRenderSystem : public ISystem {
 public:
   
-  void PrintOrderVector() {
-    for (auto const& entity_pair : order_of_render_) {
-      ezp::print_labeled_item("entity: ", entity_pair.first);
-      ezp::print_labeled_item("distance from camera: ", entity_pair.second);
-    }
-  }
-
   void UpdateEntities() {
     order_of_render_.clear();
     for (auto const& entity : entities) {
@@ -30,8 +23,6 @@ public:
       pce3d::render_order::insertEntityIntoRenderOrderVectorLinear(
         entity_with_distance, order_of_render_);
     }
-
-    // PrintOrderVector();
   }
 
   std::vector<std::pair<uint32_t, double>> order_of_render_;

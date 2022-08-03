@@ -39,19 +39,17 @@ void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<in
   sortTriangleVertices(triangle);
   
   pce::render::setRendererColor(color);
-  if (abs(triangle.A.y - triangle.B.y) < (0.5 * zoom_ratio )
-      && abs(triangle.A.y - triangle.C.y) < (0.5 * zoom_ratio )
-      && abs(triangle.B.y - triangle.C.y) < (0.5 * zoom_ratio )
+  const double size_tolerance = 0.1;
+  if (abs(triangle.A.y - triangle.B.y) < (size_tolerance )
+      && abs(triangle.A.y - triangle.C.y) < (size_tolerance )
+      && abs(triangle.B.y - triangle.C.y) < (size_tolerance  )
   ) { 
-    // pce::quickdraw::drawLine(triangle.A, triangle.B, color, 1.0);
-    // pce::quickdraw::drawLine(triangle.C, triangle.B, color, 1.0);
-    // pce::quickdraw::drawLine(triangle.A, triangle.C, color, 1.0);
+    // pce::quickdraw::drawLine(triangle.A, triangle.B, color);
+    // pce::quickdraw::drawLine(triangle.C, triangle.B, color);
+    // pce::quickdraw::drawLine(triangle.A, triangle.C, color);
   } else {
-    // pce::quickdraw::drawCircle(triangle.A, 5.0, {0, 200, 20, 255}, 1.0);
-    // pce::quickdraw::drawCircle(triangle.B, 5.0, {0, 200, 20, 255}, 1.0);
-    // pce::quickdraw::drawCircle(triangle.C, 5.0, {0, 200, 20, 255}, 1.0);
     rasterizeAndRenderTriangleTopHalf(triangle, color);
-    if (abs(triangle.B.y - triangle.C.y) > 0.5 * zoom_ratio ) {
+    if (abs(triangle.B.y - triangle.C.y) > size_tolerance * zoom_ratio ) {
       rasterizeAndRenderTriangleLowerHalf(triangle, color);
     }
     pce::render::setRendererColor({0, 0, 0, 255});

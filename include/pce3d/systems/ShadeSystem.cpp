@@ -3,7 +3,8 @@
 
 /*----------------------------------------------------------------|
 --------------------- Module Description -------------------------|
-system for calculating amount of light reaching object faces (thus the color)
+system for calculating amount of light reaching object faces 
+(and, ergo, the shaded color of each face)
 -----------------------------------------------------------------*/
 
 #include <unordered_map>
@@ -18,8 +19,6 @@ system for calculating amount of light reaching object faces (thus the color)
 extern ControlPanel control;
 
 namespace pce3d {
-
-
 class ShadeSystem : public ISystem {
 public:
   
@@ -63,13 +62,10 @@ public:
         } 
         /* do pixel color calculation */
         using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
-
         const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
-
         PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
                                                                           ncenter_point.y,
                                                                           rigid_object.radius * 500.0 / rigid_object.vertex_distance_map.at(1));
-
         shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
                                                       position.center_of_mass_relative_to_camera,
                                                       rigid_object.radius,
@@ -80,7 +76,7 @@ public:
   }
 
 private:
-  const glm::dvec3 LIGHT_FLOW_DIRECTION_ = glm::dvec3(0.4, -1.0, 0.3);
+  const glm::dvec3 LIGHT_FLOW_DIRECTION_ = glm::dvec3(0.2, -1.0, 0.5);
   glm::dvec3 ROTATED_LIGHT_FLOW_DIRECTION_;
   double ORDINARY_ZOOM_INDEX_;
 

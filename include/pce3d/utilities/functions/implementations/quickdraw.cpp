@@ -112,7 +112,13 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
 
   pce3d::raster::rasterizeAndRenderTriangle(tri_a, color);
   pce3d::raster::rasterizeAndRenderTriangle(tri_b, color);
+
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  SDL_RenderDrawLine(Simulation::renderer, q.B.x, q.B.y, q.A.x, q.A.y);                                           
+  SDL_RenderDrawLine(Simulation::renderer, q.A.x, q.A.y, q.C.x, q.C.y);                                           
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
+
 
 void drawFilledTriangle(const pce3d::maths::Triangle& triangle,
                         const std::vector<int>& color) {

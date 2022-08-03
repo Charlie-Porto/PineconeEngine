@@ -6,6 +6,8 @@
 #include "../../../maths/functions/quaternion_functions.hpp"
 #include <ezprint.cpp>
 
+#include "../../../../pceSDL/core/CoreManager.hpp"
+
 namespace pce3d {
 namespace camera {
 
@@ -91,9 +93,7 @@ void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
   }
   if (report.Down_pressed) { 
     rotateCameraViewDirectionVertically(trolley, 1.0, camera.view_direction, 
-                                        camera.focus_distance, camera.position);
-  }
-  if (report.A_pressed) { 
+                                        camera.focus_distance, camera.position); } if (report.A_pressed) { 
     moveCameraPositionLaterally(camera.position, camera.view_direction, 
                                 glm::dvec3(-1, 0, 0), trolley.movement_speed);
   }
@@ -118,11 +118,36 @@ void pollVirtualKeyboard(pce::VirtualKeyboard& keyboard, pce3d::Camera& camera,
 
 
 
-
-
-
-
 }
+
+
+void pollMouseAndUpdateViewAngle(pce::mouse::VirtualMouse& mouse, pce3d::Camera& camera,
+                                 pce3d::CameraTrolley& trolley) {
+  pce::MouseReport mouse_report = mouse.PollMouse();
+  constexpr double mouse_movement_smoother = 20.0;
+  constexpr double mouse_sensitivity = 1.0;
+  const double direction_x_shift = (mouse_report.x_position - mouse_report.prev_x_pos) / mouse_movement_smoother;
+  const double direction_y_shift = -(mouse_report.y_position - mouse_report.prev_y_pos) / mouse_movement_smoother;
+
+
+  if (!mouse.just_moved) {
+    if (direction_x_shift != 0 || direction_y_shift != 0) {
+      rotateCameraViewDirectionLaterally(trolley, direction_x_shift * mouse_sensitivity, 
+                                        camera.view_direction, camera.focus_distance, camera.position);
+      rotateCameraViewDirectionVertically(trolley, -direction_y_shift * mouse_sensitivity, 
+                                        camera.view_direction, camera.focus_distance, camera.position);
+      SDL_WarpMouseInWindow(NULL, int(pce::CoreManager::SCREEN_X/2), int(pce::CoreManager::SCREEN_Y/2));
+      mouse.just_moved = true;
+    } else {
+      mouse.just_moved = false;
+    }
+  } else {
+    mouse.just_moved = false;
+  }
+}
+
+
+
 
 }}
 

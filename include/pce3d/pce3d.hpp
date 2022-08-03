@@ -33,7 +33,7 @@ class Core3D {
 public:
   Core3D(const glm::dvec3 light_flow_direction = glm::dvec3(-0.1, -0.9, -0.2), 
          const double lense_curve_index = 0.1,
-         const double ordinary_zoom_index = 13.0);
+         const double ordinary_zoom_index = 15.0);
 
   void RegisterCoreComponents();
   void RegisterCoreSystems();

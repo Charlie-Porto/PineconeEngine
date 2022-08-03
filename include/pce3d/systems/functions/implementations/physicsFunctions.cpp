@@ -14,7 +14,7 @@ glm::dvec3 calculateParticlePositionGivenTime(
 
   duration += time_change;
   glm::dvec3 path_traveled = initial_velocity * duration;   
-  path_traveled.y -= (0.5 * pow(duration, 2.0) * GRAVITY * gravitational_force_applied);
+  path_traveled.y += (0.5 * pow(duration, 2.0) * GRAVITY * gravitational_force_applied);
   return glm::dvec3(initial_position + path_traveled);
 }
 
