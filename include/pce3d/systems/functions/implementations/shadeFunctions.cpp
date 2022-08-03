@@ -9,10 +9,9 @@ namespace shade {
 const double PI = 3.14159265;
 
 double calculateFaceBrightness(const glm::dvec3& light_direction, const glm::dvec3& plane_normal_vec) {
-/* returns a double between 0 and 2 */
+/* returns a double between 0 and 1 */
 /* 0 = black */
 /* 1 = pure natural color */
-/* 2 = white */
 
   double angle_light_hits_face = acos(glm::dot(light_direction, plane_normal_vec) 
                                     / (sqrt(glm::dot(light_direction, light_direction))
@@ -35,7 +34,7 @@ void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
     for (double i_x = A.x; i_x <= B.x; ++i_x) {
       const glm::dvec2 p = glm::dvec2(i_x, A.y);
 
-      const glm::dvec3 viewsphere_point = glm::normalize(radar::convertPixelToPointOnViewSphere(p / 13.0));
+      const glm::dvec3 viewsphere_point = glm::normalize(radar::convertPixelToPointOnViewSphere(p / pce3d::Core3D::ORDINARY_ZOOM_INDEX_));
       glm::dvec3 entity_sphere_point;
 
       try {
@@ -45,8 +44,7 @@ void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
                                                   sphere_center,
                                                   sphere_radius);
       } catch (double discriminant) {
-        // std::cout << 'x' << '\n';
-        // std::cout << "entity sphere point: " << entity_sphere_point.x << ", " << entity_sphere_point.y << ", " << entity_sphere_point.z << '\n';
+        std::cout << "entity sphere point: " << entity_sphere_point.x << ", " << entity_sphere_point.y << ", " << entity_sphere_point.z << '\n';
       }
       const glm::dvec3 normal_vect = entity_sphere_point - sphere_center;  
       pixel_shades[p] = calculateFaceBrightness(light_direction, normal_vect);

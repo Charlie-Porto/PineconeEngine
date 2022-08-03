@@ -10,7 +10,6 @@ system for calculating amount of light reaching object faces (thus the color)
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include <pcecs/ecs/System.cpp>
-#include <ezprint.cpp>
 #include "functions/shadeFunctions.hpp"
 #include "../utilities/functions/raster_functions.hpp"
 #include "../utilities/functions/quickdraw.hpp"
@@ -23,8 +22,14 @@ namespace pce3d {
 
 class ShadeSystem : public ISystem {
 public:
+  
+  void setOrdinaryZoomIndex(double ORDINARY_ZOOM_INDEX) {
+    ORDINARY_ZOOM_INDEX_ = ORDINARY_ZOOM_INDEX;
+  }
 
+  
   void UpdateEntities(const glm::dquat& camera_versor) {
+
     ROTATED_LIGHT_FLOW_DIRECTION_ = pce::rotateVector3byQuaternion(LIGHT_FLOW_DIRECTION_, camera_versor);
 
     for (auto const& entity : entities) {
@@ -32,6 +37,7 @@ public:
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto& face_shade = control.GetComponent<pce::FaceShade>(entity); 
       
+      /* update non-spheres */
       if (rigid_object.radius == 0) {
         for (auto& [face, vertices] : rigid_object.face_vertex_map) {
           glm::dvec3 vertex_a = rigid_object.vertices.at(vertices[1]) - rigid_object.vertices.at(vertices[0]);
@@ -41,10 +47,13 @@ public:
         }
       }
 
+      /* update spheres */
       else {
+        /* if close to sphere, do shortcut alg to avoid exp complexity */
         if (rigid_object.vertex_distance_map.at(1) < 15.0) { 
-          std::unordered_map<glm::dvec2, glm::dvec2> center_pixel = {{position.center_of_mass_radar_pixel * 13.0,
-                                                                      position.center_of_mass_radar_pixel * 13.0}};
+          std::unordered_map<glm::dvec2, glm::dvec2> center_pixel 
+                                     = {{position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_,
+                                         position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_}};
           shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
                                                         position.center_of_mass_relative_to_camera,
                                                         rigid_object.radius,
@@ -55,7 +64,7 @@ public:
         /* do pixel color calculation */
         using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
 
-        const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * 13.0;
+        const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
 
         PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
                                                                           ncenter_point.y,
@@ -73,6 +82,7 @@ public:
 private:
   const glm::dvec3 LIGHT_FLOW_DIRECTION_ = glm::dvec3(0.4, -1.0, 0.3);
   glm::dvec3 ROTATED_LIGHT_FLOW_DIRECTION_;
+  double ORDINARY_ZOOM_INDEX_;
 
 };
 }
