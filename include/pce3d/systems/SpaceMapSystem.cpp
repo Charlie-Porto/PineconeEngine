@@ -14,6 +14,7 @@ system for mapping physical 3space onto a smaller set of data
 #include <glm_hash.hpp>
 #include <pcecs/ecs/System.cpp>
 #include "functions/spaceMapFunctions.hpp"
+#include "functions/radarFunctions.hpp"
 #include "../utilities/functions/quickdraw.hpp"
 
 extern ControlPanel control;
@@ -22,7 +23,7 @@ namespace pce3d{
 class SpaceMapSystem : public ISystem {
 public:
   
-  SpaceMapSystem(const double meter_index_ratio = 6.0, const glm::ivec3 map_dimensions = glm::ivec3(10000, 10000, 10000))
+  SpaceMapSystem(const double meter_index_ratio = 3.0, const glm::ivec3 map_dimensions = glm::ivec3(10000, 10000, 10000))
     : meter_index_ratio_(meter_index_ratio), map_dimensions_(map_dimensions) {
     deadbod_map_ = {};
     livebod_map_ = {};
@@ -36,8 +37,19 @@ public:
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
 
-      const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
-      
+      // const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      std::vector<glm::ivec3> indices{};
+      indices.insert(indices.end(), vertex_indices.begin(), vertex_indices.end());
+
+      for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
+        std::cout << "getting face indices" << '\n';
+        const std::vector<glm::ivec3> face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                                                    rigid_object.vertices,
+                                                                                    map_dimensions_,
+                                                                                    meter_index_ratio_);
+        indices.insert(indices.end(), face_indices.begin(), face_indices.end());
+      }
 
       if (rigid_object.is_deadbod) {
         /* put deadbod location -> entity mapping into map */
@@ -65,8 +77,25 @@ public:
       }
     }
   }
+ 
+
+/* ---------------------------------------- draw --------------------------------- */
+void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_transform) {
+  std::cout << "-----" << '\n';
+  for (auto const& [point, entity] : deadbod_map_) {
+    // std::cout << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
+    const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
+    glm::dvec3 rotated_point = converted_point - cam_transform;
+    double distance = sqrt(glm::dot(rotated_point, rotated_point));
+    rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
+    const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
+    const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
+    pce::quickdraw::drawCircle(pixel, 10.0 / distance, {12, 200, 200, 255});
+  }
+}
 
 /* ---------------------------------------- update --------------------------------- */
+/* passing the camera versor to render index points during developement */
   void UpdateEntities() {
     livebod_map_.clear();
     potential_colliding_entities_.clear();

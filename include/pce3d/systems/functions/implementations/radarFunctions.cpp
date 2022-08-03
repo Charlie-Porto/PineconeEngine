@@ -38,7 +38,7 @@ if (!is_first_pass) {
 }
   const double y_pixel = Y_PIXEL_STRETCH * atan(point.y / point.z);
   const double x_pixel = atan(point.x / point.z) / (PIXEL_ANGLE * PI / 180.0);
-  return glm::dvec2(x_pixel, y_pixel);
+  return glm::dvec2(x_pixel, y_pixel) * pce::math::sign(point.z);
 }
 
 

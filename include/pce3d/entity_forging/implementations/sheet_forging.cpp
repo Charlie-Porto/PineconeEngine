@@ -9,10 +9,10 @@ namespace forge {
 Entity forgeSheetEntity(const double w, const double l, const glm::dvec3& center, 
                         const glm::dquat& local_rotation, const std::vector<int>& color) {
   VertexMap vertices{};
-  vertices[1] = glm::dvec3(center + glm::dvec3(w, 0, -l));
-  vertices[2] = glm::dvec3(center + glm::dvec3(-w, 0, -l));
-  vertices[3] = glm::dvec3(center + glm::dvec3(-w, 0, l));
-  vertices[4] = glm::dvec3(center + glm::dvec3(w, 0, l));
+  vertices[1] = glm::dvec3(center + glm::dvec3(w/2.0, 0, -l/2.0));
+  vertices[2] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, -l/2.0));
+  vertices[3] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, l/2.0));
+  vertices[4] = glm::dvec3(center + glm::dvec3(w/2.0, 0, l/2.0));
 
   FaceVertexMap face_map{};
   face_map[1] = {1, 2, 3, 4};
@@ -32,10 +32,16 @@ Entity forgeSheetEntity(const double w, const double l, const glm::dvec3& center
   control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
+    .mass = w * l,
+    .is_deadbod = true,
+    .is_restingbod = false,
     .vertices = vertices,
     .edges = edge_map,
     .face_vertex_map = face_map
   });
+  // control.AddComponent(new_entity, pce::Force{
+    // .of_gravity = 0.0
+  // });
 
   return new_entity;
 }

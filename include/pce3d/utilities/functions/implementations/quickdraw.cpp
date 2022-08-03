@@ -114,8 +114,12 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
   pce3d::raster::rasterizeAndRenderTriangle(tri_b, color);
 
   SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
-  SDL_RenderDrawLine(Simulation::renderer, q.B.x, q.B.y, q.A.x, q.A.y);                                           
-  SDL_RenderDrawLine(Simulation::renderer, q.A.x, q.A.y, q.C.x, q.C.y);                                           
+  const glm::dvec2 a = pce::convert::convertCartesianCoordinatesToSDL(q.A * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  const glm::dvec2 b = pce::convert::convertCartesianCoordinatesToSDL(q.B * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  const glm::dvec2 c = pce::convert::convertCartesianCoordinatesToSDL(q.C * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  const glm::dvec2 d = pce::convert::convertCartesianCoordinatesToSDL(q.D * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  SDL_RenderDrawLine(Simulation::renderer, b.x, b.y, d.x, d.y);                                           
+  SDL_RenderDrawLine(Simulation::renderer, a.x, a.y, c.x, c.y);                                           
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 

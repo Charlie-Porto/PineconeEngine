@@ -92,6 +92,7 @@ void Core3D::UpdateCore3D() {
   shade_system_->UpdateEntities(camera_.rotation_versor);
   render_order_system_->UpdateEntities();
   render_system_->UpdateEntities(render_order_system_->order_of_render_);
+  space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
 }
 
 
