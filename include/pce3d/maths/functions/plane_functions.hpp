@@ -5,7 +5,10 @@
 --------------------- Module Description -------------------------|
 functions for planes
 -----------------------------------------------------------------*/
+#include <iostream>
+#include <cmath>
 #include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
 #include "../objects/PlaneCartesianForm.hpp"
 
 namespace pce3d {
@@ -17,6 +20,9 @@ plane calculatePlaneGiven3Points(const glm::dvec3& A, const glm::dvec3& B, const
 
 bool checkIfPointInPlane(const glm::dvec3& A, const glm::dvec3& B,
                          const glm::dvec3& C, const glm::dvec3& testing_point);
+
+
+double calculateDistanceBetweenPointAndPlane(const plane& mplane, const glm::dvec3& point);
 
 }
 }

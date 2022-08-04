@@ -6,6 +6,7 @@
 #include <vector>
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <glm_hash.hpp>
 
 namespace pce {
 
@@ -15,6 +16,9 @@ using VertexPixelMap = std::unordered_map<uint32_t, glm::dvec2>;
 using VertexDistanceMap = std::unordered_map<uint32_t, double>;
 using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
+using IndexFaceMap = std::unordered_map<glm::ivec3, uint32_t>;
+using FaceIndexMap = std::unordered_map<uint32_t, glm::ivec3>;
+using EntityFaceCollisionMap = std::unordered_map<uint32_t, uint32_t>;
 
 struct RigidObject {
   double radius;  // if == 0, then not a sphere
@@ -31,6 +35,10 @@ struct RigidObject {
   VertexMap camera_transformed_vertices;
   VertexPixelMap vertex_pixels;
   VertexDistanceMap vertex_distance_map;
+
+  IndexFaceMap index_face_map;
+  FaceIndexMap face_index_map;  
+  EntityFaceCollisionMap entity_face_collision_map;
 };
 
 }

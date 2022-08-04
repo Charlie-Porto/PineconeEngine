@@ -34,7 +34,7 @@ public:
 /* ---------------------------------------- setup --------------------------------- */
   void DoPreLoopSetup() {
     for (auto const& entity : entities) {
-      auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
+      auto & rigid_object = control.GetComponent<pce::RigidObject>(entity); 
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
 
       // const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
@@ -49,6 +49,10 @@ public:
                                                                                     map_dimensions_,
                                                                                     meter_index_ratio_);
         indices.insert(indices.end(), face_indices.begin(), face_indices.end());
+        for (auto const& index : face_indices) {
+          rigid_object.index_face_map[index] = face;
+          rigid_object.face_index_map[face] = index;
+        }
       }
 
       if (rigid_object.is_deadbod) {
@@ -119,7 +123,12 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
           potential_colliding_entities_[entity] = restingbod_map_.at(index)[0];
         }
         if (deadbod_map_.find(index) != deadbod_map_.end()) {
-          potential_colliding_entities_[entity] = deadbod_map_.at(index)[0];
+          uint32_t deadbod_entity = deadbod_map_.at(index)[0];
+          potential_colliding_entities_[entity] = deadbod_entity; 
+          auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
+          deadbod_rigid_object.entity_face_collision_map[entity] 
+            = deadbod_rigid_object.index_face_map.at(index);
+          std::cout << "collision with deadbod" << '\n';
         }
       }
     }

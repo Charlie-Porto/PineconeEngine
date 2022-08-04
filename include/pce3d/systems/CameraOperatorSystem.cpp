@@ -26,10 +26,13 @@ public:
 
 
   void UpdateCamera(Camera& camera) {
-    pce3d::camera::pollMouseAndUpdateViewAngle(mouse_, camera, trolley_);
+    // pce3d::camera::pollMouseAndUpdateViewAngle(mouse_, camera, trolley_);
     pce3d::camera::pollVirtualKeyboard(keyboard_, camera, trolley_);
     pce3d::camera::calculateUpdatedCameraRotationVersor(trolley_.y_angle, trolley_.xz_angle, 
                                                         camera.rotation_versor);
+    
+    std::cout << "camera position: " << camera.position.x << ", "<< camera.position.y << ", "<< camera.position.z << '\n';
+    std::cout << "camera direction: " << camera.view_direction.x << ", "<< camera.view_direction.y << ", "<< camera.view_direction.z << '\n';
   }
 
 private:

@@ -26,7 +26,6 @@ public:
     entities_updated_ = {};
   }
 
-
   void checkPotentialCollisions(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities_) {
     for (auto const& [entity_a, entity_b] : potential_colliding_entities_) { 
       if (std::find(entities_updated_.begin(), entities_updated_.end(), entity_a) != entities_updated_.end()) {
@@ -38,35 +37,52 @@ public:
       auto& b_position = control.GetComponent<pce::Position>(entity_b);
       auto& a_motion = control.GetComponent<pce::Motion>(entity_a);
       auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
-
-      const bool are_colliding = physics::determineIfParticlesAreColliding(
-        a_position.actual_center_of_mass, a_rigid_object.radius, 
-        b_position.actual_center_of_mass, b_rigid_object.radius);
-
-      if (are_colliding) {
-        std::pair<glm::dvec3, glm::dvec3> new_velocity_vectors 
-          = physics::calculateVelocityVectorsAfterTwoParticleCollision(
-              a_position.actual_center_of_mass, a_rigid_object.radius,
-              a_motion.velocity, a_rigid_object.mass,
-              b_position.actual_center_of_mass, b_rigid_object.radius,
-              b_motion.velocity, b_rigid_object.mass);
+      
+      /* handle active particle collision with dead entity face */
+      if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
+                                     && b_rigid_object.is_deadbod) {
+        const bool are_colliding = physics::determineIfParticleIsCollidingWithFace(
+          a_position.actual_center_of_mass, a_rigid_object.radius, a_motion.velocity, a_rigid_object.mass,
+          {b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[0]),
+           b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
+           b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])});
         
-        a_motion.velocity += new_velocity_vectors.second;
-        a_motion.velocity -= new_velocity_vectors.first;
-        a_motion.direction = glm::normalize(a_motion.velocity);
-        b_motion.velocity += new_velocity_vectors.first;
-        b_motion.velocity -= new_velocity_vectors.second;
-        b_motion.direction = glm::normalize(b_motion.velocity);
+      }
+      
+      /* handle active-active collision */
+      /* CURRENTLY ONLY PARTICLES */
+      if (!a_rigid_object.is_deadbod && !b_rigid_object.is_deadbod
+       && !a_rigid_object.is_restingbod && !b_rigid_object.is_restingbod) {
+        const bool are_colliding = physics::determineIfParticlesAreColliding(
+          a_position.actual_center_of_mass, a_rigid_object.radius, 
+          b_position.actual_center_of_mass, b_rigid_object.radius);
 
-        a_motion.previous_resting_position = a_position.actual_center_of_mass;
-        b_motion.previous_resting_position = b_position.actual_center_of_mass;
-        a_motion.duration = 0.0;
-        b_motion.duration = 0.0;
+        if (are_colliding) {
+          std::pair<glm::dvec3, glm::dvec3> new_velocity_vectors 
+            = physics::calculateVelocityVectorsAfterTwoParticleCollision(
+                a_position.actual_center_of_mass, a_rigid_object.radius,
+                a_motion.velocity, a_rigid_object.mass,
+                b_position.actual_center_of_mass, b_rigid_object.radius,
+                b_motion.velocity, b_rigid_object.mass);
+          
+          a_motion.velocity += new_velocity_vectors.second;
+          a_motion.velocity -= new_velocity_vectors.first;
+          a_motion.direction = glm::normalize(a_motion.velocity);
+          b_motion.velocity += new_velocity_vectors.first;
+          b_motion.velocity -= new_velocity_vectors.second;
+          b_motion.direction = glm::normalize(b_motion.velocity);
 
-        entities_updated_.push_back(entity_a);
-        if (!b_rigid_object.is_deadbod) {
-          entities_updated_.push_back(entity_b);
+          a_motion.previous_resting_position = a_position.actual_center_of_mass;
+          b_motion.previous_resting_position = b_position.actual_center_of_mass;
+          a_motion.duration = 0.0;
+          b_motion.duration = 0.0;
+
+          entities_updated_.push_back(entity_a);
+          if (!b_rigid_object.is_deadbod) {
+            entities_updated_.push_back(entity_b);
+          }
         }
+
       }
     }
   }

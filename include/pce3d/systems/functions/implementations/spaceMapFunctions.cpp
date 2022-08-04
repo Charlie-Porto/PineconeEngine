@@ -86,17 +86,17 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
     for (size_t j = 0; j < smaller_size; ++j) {
       if (distance < distance_map.at(ordered_vertices[j])) {
         std::cout << "j: " << j << '\n';
-        if (i == vertices.size()-1) {
-          std::cout << "i equals vertices.size() - 1" << '\n';
-          auto d = ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.end());
-          has_been_added = true;
-          continue;
-        } 
-        else {
+        // if (i == vertices.size()-1) {
+        //   std::cout << "i equals vertices.size() - 1" << '\n';
+        //   auto d = ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.end());
+        //   has_been_added = true;
+        //   continue;
+        // } 
+        // else {
           ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.begin()+i);
           has_been_added = true;
           continue;
-        }
+        // }
       }
       if (has_been_added) { break; }
     }

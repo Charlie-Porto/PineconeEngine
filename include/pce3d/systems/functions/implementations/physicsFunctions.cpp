@@ -63,6 +63,35 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollis
   return std::make_pair(a_provision, b_provision);
 }
 
+
+
+bool determineIfParticleIsCollidingWithFace(
+    const glm::dvec3& p_center, const double p_radius, 
+    const glm::dvec3& p_velocity_vect, const double p_mass,
+    const std::vector<glm::dvec3>& face_vertices) {
+
+  pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
+                                                                                         face_vertices[1], 
+                                                                                         face_vertices[2]);
+  const double distance = pce3d::maths::calculateDistanceBetweenPointAndPlane(face_plane, p_center);
+  return (p_radius > distance) ? false : true;
+}
+
+
+
+
+glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
+    const glm::dvec3& p_center, const double p_radius, 
+    const glm::dvec3& p_velocity_vect, const double p_mass,
+    const std::vector<glm::dvec3>& face_vertices) {
+  /* pick up here */ 
+}
+
+
+
+
+
+
 }
 }
 
