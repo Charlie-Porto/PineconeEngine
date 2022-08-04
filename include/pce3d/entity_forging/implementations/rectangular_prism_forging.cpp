@@ -43,7 +43,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
     .face_index_map = {},
     .entity_face_collision_map = {}
   });
-  control.AddComponent(new_entity, pce::Surface{.color = color});
+  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::FaceShade{});
 
   return new_entity;

@@ -20,8 +20,12 @@ using VertexMap = std::unordered_map<uint32_t, glm::dvec3>;
 using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 
-Entity forgeSheetEntity(const double w, const double l, const glm::dvec3& center, 
-                        const glm::dquat& local_rotation, const std::vector<int>& color);
+Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& center, 
+                            const glm::dquat& local_rotation, const std::vector<int>& color);
+
+
+Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
+                                const std::vector<int>& color);
 
 
 }

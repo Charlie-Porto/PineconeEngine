@@ -65,7 +65,7 @@ public:
         const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
         PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
                                                                           ncenter_point.y,
-                                                                          rigid_object.radius * 500.0 / rigid_object.vertex_distance_map.at(1));
+                                                                          rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
         shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
                                                       position.center_of_mass_relative_to_camera,
                                                       rigid_object.radius,

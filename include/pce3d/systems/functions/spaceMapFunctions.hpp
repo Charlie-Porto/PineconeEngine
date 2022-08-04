@@ -37,14 +37,20 @@ std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
                                         const VertexMap& vertices, const glm::dvec3& mdim,
                                         const double mir);
 
-
 std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
                                                 const VertexMap& vertices, const glm::dvec3& mdim,
                                                 const double mir);
 
+std::vector<glm::ivec3> findTriangleFaceTopIndices(const std::vector<glm::dvec3>& vertices,
+                                                      const glm::dvec3& mdim,
+                                                      const double mir);
+
+std::vector<glm::ivec3> findTriangleFaceBottomIndices(const std::vector<glm::dvec3>& vertices,
+                                                      const glm::dvec3& mdim,
+                                                      const double mir);
+
 std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices);
   
-
 std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
                                             const VertexMap& unordered_vertices, const glm::dvec3& mdim,
                                             const double mir);

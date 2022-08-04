@@ -14,6 +14,7 @@ struct Force {
   std::unordered_map<uint32_t, double> surfaces_of_contact_roughness;
   std::unordered_map<uint32_t, double> momentums;
   std::unordered_map<uint32_t, double> rotational_momentums;
+  std::unordered_map<uint32_t, double> sequential_collisions_by_entity;
 };
 
 }

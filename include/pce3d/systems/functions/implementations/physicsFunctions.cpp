@@ -74,6 +74,7 @@ bool determineIfParticleIsCollidingWithFace(
                                                                                          face_vertices[1], 
                                                                                          face_vertices[2]);
   const double distance = pce3d::maths::calculateDistanceBetweenPointAndPlane(face_plane, p_center);
+
   return (p_radius > distance) ? false : true;
 }
 
@@ -83,8 +84,36 @@ bool determineIfParticleIsCollidingWithFace(
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
-    const std::vector<glm::dvec3>& face_vertices) {
+    const std::vector<glm::dvec3>& face_vertices, double elasticity) {
   /* pick up here */ 
+  glm::dvec3 new_velocity_vector = p_velocity_vect;
+  double initial_speed = sqrt(glm::dot(p_velocity_vect, p_velocity_vect));
+  // std::cout <<"initial_speed: " <<initial_speed << '\n';
+  pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
+                                                                                         face_vertices[1], 
+                                                                                         face_vertices[2]);
+  glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
+                                                    face_vertices[2] - face_vertices[1]));
+  const double distance = pce3d::maths::calculateDistanceBetweenPointAndPlane(face_plane, p_center);
+
+  /* if not colliding, return velocity vector with no changes */
+  // if (distance > p_radius) {
+  //   return new_velocity_vector;
+  // }
+
+  /* make sure we have the correct normal vector direction */
+  // if (!pce3d::maths::checkIfPointInPlane(face_vertices[0], face_vertices[1], face_vertices[2], 
+  //                                        p_center + normal_vec * distance)) {
+  //   normal_vec = -normal_vec; 
+  // }
+  
+  const glm::dvec3 reverse_velocity_vect = -p_velocity_vect;
+  new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
+  // new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec);
+  // new_velocity_vector = new_velocity_vector * (elasticity * initial_speed);
+  double final_speed = sqrt(glm::dot(new_velocity_vector, new_velocity_vector));
+  // std::cout <<"final speed: " <<final_speed << '\n';
+  return new_velocity_vector;
 }
 
 

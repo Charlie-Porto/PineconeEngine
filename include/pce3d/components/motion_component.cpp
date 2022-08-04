@@ -16,6 +16,7 @@ struct Motion {
   double rotational_momentum;
   double duration;
   glm::dvec3 previous_resting_position;
+  int stationary_counter;
 };
 
 }

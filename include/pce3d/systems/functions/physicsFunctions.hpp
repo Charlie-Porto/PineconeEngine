@@ -11,6 +11,8 @@ free functions to assist the physics system
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include "../../maths/functions/plane_functions.hpp"
+#include "../../maths/functions/quaternion_functions.hpp"
+
 
 namespace pce3d {
 namespace physics {
@@ -43,7 +45,7 @@ bool determineIfParticleIsCollidingWithFace(
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
-    const std::vector<glm::dvec3>& face_vertices);
+    const std::vector<glm::dvec3>& face_vertices, double elasticity);
 
 }
 }

@@ -16,7 +16,7 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
   });
   control.AddComponent(sphere_entity, pce::Position{.actual_center_of_mass=location});
   control.AddComponent(sphere_entity, pce::LocalRotation{.versor = {1.0, 0, 0, 0}});
-  control.AddComponent(sphere_entity, pce::Surface{.color=color});
+  control.AddComponent(sphere_entity, pce::Surface{.color=color, .collision_elasticity_index=0.7});
   control.AddComponent(sphere_entity, pce::FaceShade{});
   control.AddComponent(sphere_entity, pce::Force{
     .of_gravity = 0.0

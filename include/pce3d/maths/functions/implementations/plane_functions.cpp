@@ -36,13 +36,10 @@ bool checkIfPointInPlane(const glm::dvec3& A, const glm::dvec3& B,
 }
 
 
-
-
 double calculateDistanceBetweenPointAndPlane(const plane& mplane, const glm::dvec3& point) {
   return ((mplane.a * point.x + mplane.b * point.y + mplane.c * point.z + mplane.d)
          / sqrt(pow(mplane.a, 2.0) + pow(mplane.b, 2.0) + pow(mplane.c, 2.0)));
 }
-
 
 
 }

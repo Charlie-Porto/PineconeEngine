@@ -10,6 +10,7 @@ struct Surface {
   std::vector<int> color;
   std::unordered_map<uint32_t, std::vector<int>> face_color_map;
   double opacity;
+  double collision_elasticity_index;
 };
 
 }

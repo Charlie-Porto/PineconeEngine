@@ -51,7 +51,7 @@ public:
                int(surface.color[2] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel
                                                                * ORDINARY_ZOOM_INDEX_)),
                255};
-          pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 550.0 / rigid_object.vertex_distance_map.at(1), ncolor);
+          pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1), ncolor);
         } else {
           pce::render::renderFilledCircleShaded(shade.pixel_shade_map, surface.color);
         }

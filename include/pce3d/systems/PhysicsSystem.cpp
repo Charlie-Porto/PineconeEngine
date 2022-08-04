@@ -37,16 +37,44 @@ public:
       auto& b_position = control.GetComponent<pce::Position>(entity_b);
       auto& a_motion = control.GetComponent<pce::Motion>(entity_a);
       auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
+      auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
+      auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
+      auto& a_force = control.GetComponent<pce::Force>(entity_a);
+      auto& b_force = control.GetComponent<pce::Force>(entity_b);
       
       /* handle active particle collision with dead entity face */
       if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
                                      && b_rigid_object.is_deadbod) {
         const bool are_colliding = physics::determineIfParticleIsCollidingWithFace(
-          a_position.actual_center_of_mass, a_rigid_object.radius, a_motion.velocity, a_rigid_object.mass,
+          a_position.actual_center_of_mass, a_rigid_object.radius, a_motion.direction * a_motion.speed, a_rigid_object.mass,
           {b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[0]),
            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])});
         
+        
+        if (are_colliding) {
+          const double net_elasticity = a_surface.collision_elasticity_index * b_surface.collision_elasticity_index;
+          const glm::dvec3 nvelocity = physics::calculateVelocityVectorAfterLiveParticleDeadFaceCollision( 
+            a_position.actual_center_of_mass, a_rigid_object.radius, a_motion.direction * a_motion.speed, a_rigid_object.mass,
+            {b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[0]),
+            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
+            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])},
+            net_elasticity);
+          
+          a_motion.velocity = nvelocity;
+          a_motion.direction = glm::normalize(a_motion.velocity);
+          a_motion.previous_resting_position = a_position.actual_center_of_mass;
+          a_motion.duration = 0.1;
+          a_motion.speed = sqrt(glm::dot(a_motion.velocity, a_motion.velocity));
+          
+          if (a_force.sequential_collisions_by_entity.find( entity_b) == a_force.sequential_collisions_by_entity.end()) {
+            a_force.sequential_collisions_by_entity[entity_b] = 1;
+          } else { ++a_force.sequential_collisions_by_entity.at(entity_b); }
+        } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
+
+        if (a_force.sequential_collisions_by_entity[entity_b] > 5.0) {
+          a_rigid_object.is_restingbod = true;
+        }
       }
       
       /* handle active-active collision */
@@ -74,8 +102,8 @@ public:
 
           a_motion.previous_resting_position = a_position.actual_center_of_mass;
           b_motion.previous_resting_position = b_position.actual_center_of_mass;
-          a_motion.duration = 0.0;
-          b_motion.duration = 0.0;
+          a_motion.duration = 0.1;
+          b_motion.duration = 0.1;
 
           entities_updated_.push_back(entity_a);
           if (!b_rigid_object.is_deadbod) {
@@ -98,16 +126,33 @@ public:
       auto& motion = control.GetComponent<pce::Motion>(entity);
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
-
-      const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
-        motion.previous_resting_position, motion.velocity, time_change_,
-        force.of_gravity, motion.duration);
-
-      const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
-      position.actual_center_of_mass = new_position;
       
-      for (auto& [id, vertex] : rigid_object.vertices) {
-        vertex = glm::dvec3(vertex + position_change);
+      if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {
+
+        const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
+          motion.previous_resting_position, motion.velocity, time_change_,
+          force.of_gravity, motion.duration);
+        
+        const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
+        position.actual_center_of_mass = new_position;
+
+        // std::cout <<  sqrt(glm::dot(position_change, position_change)) << '\n';
+        // std::cout << "speed: " << motion.speed << '\n';
+        if (sqrt(glm::dot(position_change, position_change)) < 0.002) {
+          ++motion.stationary_counter;
+        } else { motion.stationary_counter = 0; }
+        if (motion.stationary_counter > 10) {
+          rigid_object.is_restingbod = true;
+          continue;
+        } else {
+
+          motion.direction = glm::normalize(position_change);
+          motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
+          
+          for (auto& [id, vertex] : rigid_object.vertices) {
+            vertex = glm::dvec3(vertex + position_change);
+          }
+        }
       }
     }
   }
