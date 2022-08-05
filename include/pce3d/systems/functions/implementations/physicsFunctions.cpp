@@ -74,8 +74,10 @@ bool determineIfParticleIsCollidingWithFace(
                                                                                          face_vertices[1], 
                                                                                          face_vertices[2]);
   const double distance = pce3d::maths::calculateDistanceBetweenPointAndPlane(face_plane, p_center);
-
-  return (p_radius > distance) ? false : true;
+  // std::cout << "distance" << distance << '\n';
+  // std::cout << "radius" << p_radius << '\n';
+  
+  return (distance < p_radius) ? true : false;
 }
 
 
@@ -87,14 +89,11 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const std::vector<glm::dvec3>& face_vertices, double elasticity) {
   /* pick up here */ 
   glm::dvec3 new_velocity_vector = p_velocity_vect;
-  double initial_speed = sqrt(glm::dot(p_velocity_vect, p_velocity_vect));
-  // std::cout <<"initial_speed: " <<initial_speed << '\n';
   pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
                                                                                          face_vertices[1], 
                                                                                          face_vertices[2]);
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
-  const double distance = pce3d::maths::calculateDistanceBetweenPointAndPlane(face_plane, p_center);
 
   /* if not colliding, return velocity vector with no changes */
   // if (distance > p_radius) {

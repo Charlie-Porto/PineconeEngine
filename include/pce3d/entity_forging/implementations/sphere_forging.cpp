@@ -8,7 +8,8 @@ namespace pce3d {
 namespace forge {
 
 
-Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const std::vector<int> color) {
+Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const std::vector<int> color,
+                         const glm::dvec3& velocity, const double gravitational_force) {
   Entity sphere_entity = control.CreateEntity();
   control.AddComponent(sphere_entity, pce::RigidObject{
     .radius=radius, .vertices={std::make_pair(1, location)},
@@ -18,9 +19,16 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
   control.AddComponent(sphere_entity, pce::LocalRotation{.versor = {1.0, 0, 0, 0}});
   control.AddComponent(sphere_entity, pce::Surface{.color=color, .collision_elasticity_index=0.7});
   control.AddComponent(sphere_entity, pce::FaceShade{});
-  control.AddComponent(sphere_entity, pce::Force{
-    .of_gravity = 0.0
-    /* other fields filled by map and physics systems */
+  control.AddComponent(sphere_entity, pce::Force{ .of_gravity = gravitational_force });
+  control.AddComponent(sphere_entity, pce::Motion{
+    .speed = 0.0,
+    .direction = glm::dvec3(0, 0, 0),
+    .velocity = velocity,
+    .rotational_speed = 0.0,
+    .rotational_axis = glm::dvec3(0, 0, 0),
+    .duration = 0.0,
+    .previous_resting_position = location,
+    .stationary_counter = 0
   });
   return sphere_entity;
 }

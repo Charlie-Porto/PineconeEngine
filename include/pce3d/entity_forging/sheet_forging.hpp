@@ -9,6 +9,8 @@ functions for forging two-dimensional sheets
 #include <unordered_map>
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp>
+#include "../maths/functions/quaternion_functions.hpp"
+#include "functions/forge_functions.hpp"
 
 extern ControlPanel control;
 
@@ -21,7 +23,8 @@ using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 
 Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& center, 
-                            const glm::dquat& local_rotation, const std::vector<int>& color);
+                            const double angle, const glm::dvec3& axis_of_rotation,
+                            const std::vector<int>& color);
 
 
 Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,

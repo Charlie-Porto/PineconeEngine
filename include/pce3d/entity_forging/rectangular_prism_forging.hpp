@@ -11,6 +11,7 @@ functions to forge rectangular prism entities
 #include <unordered_map>
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp>
+#include "functions/forge_functions.hpp"
 
 extern ControlPanel control;
 
@@ -24,7 +25,7 @@ using VertexVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 
 Entity forgeRectPrismEntity(const double w, const double h, const double l,
-                            const glm::dvec3& center, const glm::dquat& local_rotation,
+                            const glm::dvec3& center, const double angle, const glm::dvec3& axis,
                             const std::vector<int>& color);
 
 

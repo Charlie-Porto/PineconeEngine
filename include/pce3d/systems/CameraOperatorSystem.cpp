@@ -19,8 +19,8 @@ public:
     trolley_ = pce3d::CameraTrolley{
       .movement_speed = 0.4,
       .swivel_speed = 2.0,
-      .y_angle = 0.0,
-      .xz_angle = 0.0
+      .y_angle = 10.0,
+      .xz_angle = -30.0
     };
   }
 

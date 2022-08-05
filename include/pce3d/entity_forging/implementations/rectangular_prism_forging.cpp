@@ -10,7 +10,7 @@ namespace forge {
 
 
 Entity forgeRectPrismEntity(const double w, const double h, const double l,
-                            const glm::dvec3& center, const glm::dquat& local_rotation,
+                            const glm::dvec3& center, const double angle, const glm::dvec3& axis,
                             const std::vector<int>& color) {
 
   /* create new entity's major attributes */
@@ -20,16 +20,16 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   VertexVertexMap vvmap = assignVerticestoVertices();
 
   /* adjust vertex points based on rotation and center point */
-  // TODO: add local rotation calculation
-
+  
   for (auto& [id, vec3] : e_vertex_map) {
     vec3 += center;
   }
+  pce3d::forge::rotateVertices(e_vertex_map, angle, axis, center);
   
   /* create the new entity */
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
-  control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
+  // control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = w * h * l,

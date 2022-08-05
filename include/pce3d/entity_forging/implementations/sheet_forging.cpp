@@ -7,16 +7,15 @@ namespace pce3d {
 namespace forge {
 
 Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& center, 
-                            const glm::dquat& local_rotation, const std::vector<int>& color) {
+                            const double angle, const glm::dvec3& axis_of_rotation,
+                            const std::vector<int>& color) {
   VertexMap vertices{};
   vertices[1] = glm::dvec3(center + glm::dvec3(w/2.0, 0, -l/2.0));
   vertices[2] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, -l/2.0));
   vertices[3] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, l/2.0));
   vertices[4] = glm::dvec3(center + glm::dvec3(w/2.0, 0, l/2.0));
-
   FaceVertexMap face_map{};
   face_map[1] = {1, 2, 3, 4};
-
   EdgeMap edge_map = { 
     std::make_pair(1, 2),
     std::make_pair(2, 3),
@@ -24,12 +23,12 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     std::make_pair(4, 1)
   };
 
-  /* to handle cases of rotation later */
+  pce3d::forge::rotateVertices(vertices, angle, axis_of_rotation, center);
 
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
-  control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
-  control.AddComponent(new_entity, pce::Surface{.color = color});
+  // control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
+  control.AddComponent(new_entity, pce::Surface{.color = color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
@@ -67,7 +66,7 @@ Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
   };
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = point_avg});
-  control.AddComponent(new_entity, pce::Surface{.color = color});
+  control.AddComponent(new_entity, pce::Surface{.color = color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,

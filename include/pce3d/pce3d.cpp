@@ -20,7 +20,7 @@ Core3D::Core3D(const glm::dvec3 light_flow_direction,
                const double ordinary_zoom_index) {
 
   camera_ = Camera{
-    .position = glm::dvec3(0.0, 0.0, 0.0),
+    .position = glm::dvec3(-30.0, 0.0, 0.0),
     .view_direction = glm::dvec3(0.0, 0.0, 1.0),
     .focus_distance = 20.0,
     .zoom_amount = 1.0,

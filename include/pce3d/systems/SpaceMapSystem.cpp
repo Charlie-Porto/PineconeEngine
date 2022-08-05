@@ -23,7 +23,7 @@ namespace pce3d{
 class SpaceMapSystem : public ISystem {
 public:
   
-  SpaceMapSystem(const double meter_index_ratio = 3.0, const glm::ivec3 map_dimensions = glm::ivec3(10000, 10000, 10000))
+  SpaceMapSystem(const double meter_index_ratio = 2.0, const glm::ivec3 map_dimensions = glm::ivec3(10000, 10000, 10000))
     : meter_index_ratio_(meter_index_ratio), map_dimensions_(map_dimensions) {
     deadbod_map_ = {};
     livebod_map_ = {};
@@ -33,6 +33,7 @@ public:
   
 /* ---------------------------------------- setup --------------------------------- */
   void DoPreLoopSetup() {
+    std::cout << "Doing Pre-Loop Setup" << '\n';
     for (auto const& entity : entities) {
       auto & rigid_object = control.GetComponent<pce::RigidObject>(entity); 
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
@@ -89,12 +90,14 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
   for (auto const& [point, entity] : deadbod_map_) {
     // std::cout << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
     const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
+    glm::dvec3 p = converted_point;
+    // std::cout << "p: " << p.x << ", " << p.y << ", " << p.z << '\n';
     glm::dvec3 rotated_point = converted_point - cam_transform;
     double distance = sqrt(glm::dot(rotated_point, rotated_point));
     rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
     const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
     const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
-    pce::quickdraw::drawCircle(pixel, 10.0 / distance, {12, 200, 200, 255});
+    // pce::quickdraw::drawCircle(pixel, 10.0 / distance, {12, 200, 200, 255});
   }
 }
 
@@ -128,7 +131,7 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
           auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
           deadbod_rigid_object.entity_face_collision_map[entity] 
             = deadbod_rigid_object.index_face_map.at(index);
-          std::cout << "collision with deadbod" << '\n';
+          std::cout << "SpaceMapSystem: collision with deadbod" << '\n';
         }
       }
     }

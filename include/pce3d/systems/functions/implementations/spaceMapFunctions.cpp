@@ -9,6 +9,7 @@ namespace space_map {
 
 glm::ivec3 findIndexOfPoint(const glm::dvec3& point, const glm::ivec3& mdim, const double mir) {
   glm::dvec3 p = point / mir;
+  // std::cout << "~~~~~~~~~p: " << p.x << ", " << p.y << ", " << p.z << '\n';
   p = p + ((glm::dvec3(mdim.x, mdim.y, mdim.z) / mir) / 2.0);
   return glm::ivec3(p.x, p.y, p.z);
 }
@@ -16,6 +17,7 @@ glm::ivec3 findIndexOfPoint(const glm::dvec3& point, const glm::ivec3& mdim, con
 
 glm::dvec3 findPointOfIndex(const glm::ivec3& index, const glm::ivec3& mdim, const double mir) {
   glm::ivec3 p = index - ((mdim / int(mir)) / 2);
+  // std::cout << "~~~~~~~~~p: " << p.x << ", " << p.y << ", " << p.z << '\n';
   p = p * int(mir);
   return glm::dvec3(p.x, p.y, p.z);
 }
@@ -67,10 +69,10 @@ std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
 // }
 
 std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices) {
-  std::cout << "v0" << vertices[0].x << ", " << vertices[0].y << ", " << vertices[0].z << '\n';
-  std::cout << "v1" << vertices[1].x << ", " << vertices[1].y << ", " << vertices[1].z << '\n';
-  std::cout << "v2" << vertices[2].x << ", " << vertices[2].y << ", " << vertices[2].z << '\n';
-  std::cout << "v3" << vertices[3].x << ", " << vertices[3].y << ", " << vertices[3].z << '\n';
+  // std::cout << "v0" << vertices[0].x << ", " << vertices[0].y << ", " << vertices[0].z << '\n';
+  // std::cout << "v1" << vertices[1].x << ", " << vertices[1].y << ", " << vertices[1].z << '\n';
+  // std::cout << "v2" << vertices[2].x << ", " << vertices[2].y << ", " << vertices[2].z << '\n';
+  // std::cout << "v3" << vertices[3].x << ", " << vertices[3].y << ", " << vertices[3].z << '\n';
   std::vector<glm::dvec3> ordered_vertices{vertices[0]};
   std::unordered_map<glm::dvec3, double> distance_map{};
   distance_map[ordered_vertices[0]] = 0.0;
@@ -85,7 +87,7 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
 
     for (size_t j = 0; j < smaller_size; ++j) {
       if (distance < distance_map.at(ordered_vertices[j])) {
-        std::cout << "j: " << j << '\n';
+        // std::cout << "j: " << j << '\n';
         // if (i == vertices.size()-1) {
         //   std::cout << "i equals vertices.size() - 1" << '\n';
         //   auto d = ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.end());
@@ -102,15 +104,15 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
     }
     if (!has_been_added) { ordered_vertices.push_back(vertices[i]); std::cout << "pushing back" << '\n';}
 
-    std::cout << "ordered_vertices:" << '\n';
+    // std::cout << "ordered_vertices:" << '\n';
     for (auto const& vertex : ordered_vertices) {
-       std::cout << "vertex: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
+      // std::cout << "vertex: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
     }
   }
-    std::cout << "distances:" << '\n';
-  for (auto const& vertex : ordered_vertices) {
-    std::cout << distance_map.at(vertex) << '\n';
-  }
+    // std::cout << "distances:" << '\n';
+  // for (auto const& vertex : ordered_vertices) {
+    // std::cout << distance_map.at(vertex) << '\n';
+  // }
   // return ordered_vertices;
   return vertices;
 }
@@ -138,8 +140,8 @@ std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
                                           vertices[0] - vertices[3]));
   const double j_distance = sqrt(glm::dot(vertices[0] - vertices[1],
                                           vertices[0] - vertices[1]));
-  std::cout << "j_distance: "  << j_distance << '\n';
-  std::cout << "i_distance: "  << i_distance << '\n';
+  // std::cout << "j_distance: "  << j_distance << '\n';
+  // std::cout << "i_distance: "  << i_distance << '\n';
 
   glm::dvec3 i_position = vertices[0];
   double i_dist_traveled = 0.0;
