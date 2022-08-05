@@ -118,8 +118,25 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
   const glm::dvec2 b = pce::convert::convertCartesianCoordinatesToSDL(q.B * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   const glm::dvec2 c = pce::convert::convertCartesianCoordinatesToSDL(q.C * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   const glm::dvec2 d = pce::convert::convertCartesianCoordinatesToSDL(q.D * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  /* draw diagonals */
   SDL_RenderDrawLine(Simulation::renderer, b.x, b.y, d.x, d.y);                                           
   SDL_RenderDrawLine(Simulation::renderer, a.x, a.y, c.x, c.y);                                           
+
+  const int b_x_increment = pce::math::sign(d.x - b.x);
+  const int b_y_increment = pce::math::sign(d.y - b.y);
+  const int a_x_increment = pce::math::sign(c.x - a.x);
+  const int a_y_increment = pce::math::sign(c.y - a.y);
+
+  /* draw thick diagonals */
+  SDL_RenderDrawLine(Simulation::renderer, b.x + b_x_increment, b.y + b_y_increment,
+                                           d.x + b_x_increment, d.y - b_y_increment);                                           
+  SDL_RenderDrawLine(Simulation::renderer, b.x - b_x_increment, b.y + b_y_increment,
+                                           d.x - b_x_increment, d.y - b_y_increment);                                           
+  SDL_RenderDrawLine(Simulation::renderer, a.x + a_x_increment, a.y + a_y_increment,
+                                           c.x + a_x_increment, c.y - a_y_increment);                                           
+  SDL_RenderDrawLine(Simulation::renderer, a.x - a_x_increment, a.y + a_y_increment,
+                                           c.x - a_x_increment, c.y - a_y_increment);                                           
+
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
