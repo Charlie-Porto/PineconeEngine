@@ -46,14 +46,14 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollis
                               /(sqrt(glm::dot(b_hitpoint_direction, b_hitpoint_direction))
                               * sqrt(glm::dot(b_velocity_vect, b_velocity_vect)))) / PI * 180.0;
 
-  std::cout << "a_angle: " << a_angle << '\n';
-  std::cout << "b_angle: " << b_angle << '\n';
+  // std::cout << "a_angle: " << a_angle << '\n';
+  // std::cout << "b_angle: " << b_angle << '\n';
  
   const double a_directness = (90.0 - a_angle)/90.0;
   const double b_directness = (90.0 - b_angle)/90.0;
 
-  std::cout << "a_directness: " << a_directness << '\n';
-  std::cout << "b_directness: " << b_directness << '\n';
+  // std::cout << "a_directness: " << a_directness << '\n';
+  // std::cout << "b_directness: " << b_directness << '\n';
 
   // const glm::dvec3 a_provision = a_velocity_vect * a_directness * b_mass_percentage;
   // const glm::dvec3 b_provision = b_velocity_vect * b_directness * a_mass_percentage;
@@ -89,9 +89,9 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const std::vector<glm::dvec3>& face_vertices, double elasticity) {
   /* pick up here */ 
   glm::dvec3 new_velocity_vector = p_velocity_vect;
-  pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
-                                                                                         face_vertices[1], 
-                                                                                         face_vertices[2]);
+  // pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
+                                                                                        //  face_vertices[1], 
+                                                                                        //  face_vertices[2]);
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
 
@@ -110,7 +110,7 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
   new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
   // new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec);
   // new_velocity_vector = new_velocity_vector * (elasticity * initial_speed);
-  double final_speed = sqrt(glm::dot(new_velocity_vector, new_velocity_vector));
+  // double final_speed = sqrt(glm::dot(new_velocity_vector, new_velocity_vector));
   // std::cout <<"final speed: " <<final_speed << '\n';
   return new_velocity_vector;
 }

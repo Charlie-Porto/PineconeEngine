@@ -133,8 +133,8 @@ void rasterizeAndRenderTriangleLowerHalf(const maths::Triangle& triangle, const 
   const double short_angle = acos(glm::dot(short_side, height_vector) 
                             / (sqrt(glm::dot(short_side, short_side)) 
                             * sqrt(glm::dot(height_vector, height_vector))));
-  std::cout << "short_angle: " << short_angle / PI * 180.0 << '\n';
-  std::cout << "short_angle: " << short_angle << '\n';
+  // std::cout << "short_angle: " << short_angle / PI * 180.0 << '\n';
+  // std::cout << "short_angle: " << short_angle << '\n';
 
   const double long_angle_sign = pce::math::sign(triangle.A.x - triangle.C.x);
   const double short_angle_sign = pce::math::sign(triangle.B.x - triangle.C.x);
@@ -142,7 +142,7 @@ void rasterizeAndRenderTriangleLowerHalf(const maths::Triangle& triangle, const 
   double short_side_x_crawl_distance = std::min(tan(short_angle), sqrt(glm::dot(triangle.C - triangle.B, triangle.C - triangle.B)));
   // double long_side_x_crawl_distance = tan(long_angle);
   // double short_side_x_crawl_distance = tan(short_angle);
-  std::cout << "short_side_x_crawl_distance: " << short_side_x_crawl_distance << '\n';
+  // std::cout << "short_side_x_crawl_distance: " << short_side_x_crawl_distance << '\n';
   double crawl_number = 0;
   if (long_angle > angle_threshold_for_render) { long_side_x_crawl_distance = 0.0; }
   if (short_angle > angle_threshold_for_render) { short_side_x_crawl_distance = 0.0; }

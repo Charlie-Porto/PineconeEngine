@@ -105,9 +105,9 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
     if (!has_been_added) { ordered_vertices.push_back(vertices[i]); std::cout << "pushing back" << '\n';}
 
     // std::cout << "ordered_vertices:" << '\n';
-    for (auto const& vertex : ordered_vertices) {
+    // for (auto const& vertex : ordered_vertices) {
       // std::cout << "vertex: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
-    }
+    // }
   }
     // std::cout << "distances:" << '\n';
   // for (auto const& vertex : ordered_vertices) {

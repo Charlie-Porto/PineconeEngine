@@ -21,8 +21,10 @@ void insertEntityIntoRenderOrderVectorLinear(const std::pair<uint32_t, double>& 
     }
     ++i;
   }
-
 }
+
+
+
 
 void insertEntityIntoRenderOrderVector(const std::pair<uint32_t, double>& entity, 
                                        std::vector<std::pair<uint32_t, double>>& order_vector) {
@@ -52,6 +54,54 @@ void insertEntityIntoRenderOrderVector(const std::pair<uint32_t, double>& entity
   if (order_vector.size() > 0) { order_vector.insert(order_vector.begin() + index+1, entity); } 
   else { order_vector.push_back(entity); }
 }
+
+
+std::pair<bool, size_t> tryInsertEntityIntoRenderOrderMap(const orderTag& entity_tag, std::vector<orderTag>& order_list) {
+  for (size_t i = 0; i != order_list.size()+1; ++i) {
+    if (i == order_list.size()) { order_list.push_back(entity_tag); }
+
+    /* check if entity closest vertex is farther than both comparison entity vertices */
+    if (entity_tag.closest_vertex_distance > order_list[i].closest_vertex_distance
+     && entity_tag.farthest_vertex_distance > order_list[i].farthest_vertex_distance) {
+      order_list.insert(order_list.begin() + i, entity_tag);
+      return std::make_pair(true, i);
+    }
+    /* check if entity closest vertex is closer than both comparison entity vertices */
+    else if (entity_tag.closest_vertex_distance < order_list[i].closest_vertex_distance
+         &&  entity_tag.farthest_vertex_distance < order_list[i].farthest_vertex_distance) {
+      continue;
+    }
+    /* handle case in which entity closest vertex distance is inbetween the others */
+    else {
+      return std::make_pair(false, i);
+    }
+  }
+  return std::make_pair(false, 0);
+}
+
+
+void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity_tag, size_t i, 
+                                                          std::vector<orderTag>& order_list) {
+  // std::cout << "placing in specific index within order list" << '\n';
+  /* NOTE: this function will require a call to the ControlPanel */
+  /* 1. get face closest to the mvertex */ 
+  /*   A. get closest vertex to mvertex */
+  /*   B. get vertices connected to vertex */
+  /*   C. get the unit vectors that bisect adjacent pairs of edges */
+  /*   D. calc distance between mvertex the vertex + each unit vector */
+  /*   E. return the face that corresponds to the selected point (contains the 3 points) */
+
+  /* 2. get point on this face that is closest to the vertex*/
+  /*   A. relatively simple calc */
+}
+
+
+
+
+
+
+
+
 
 }
 }

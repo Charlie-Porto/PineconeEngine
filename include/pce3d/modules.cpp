@@ -11,6 +11,8 @@ including not-yet-included implementation files
 #include "maths/functions/implementations/plane_functions.cpp"
 #include "maths/functions/implementations/sphere_functions.cpp"
 #include "maths/functions/implementations/triangle_functions.cpp"
+#include "maths/functions/implementations/vector_functions.cpp"
+#include "maths/functions/implementations/vertex_functions.cpp"
 #include "maths/functions/sign.hpp"
 
 /* utilities */

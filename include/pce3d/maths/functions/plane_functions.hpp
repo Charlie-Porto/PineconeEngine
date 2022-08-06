@@ -10,6 +10,7 @@ functions for planes
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include "../objects/PlaneCartesianForm.hpp"
+#include "vector_functions.hpp"
 
 namespace pce3d {
 namespace maths {
@@ -21,9 +22,13 @@ plane calculatePlaneGiven3Points(const glm::dvec3& A, const glm::dvec3& B, const
 bool checkIfPointInPlane(const glm::dvec3& A, const glm::dvec3& B,
                          const glm::dvec3& C, const glm::dvec3& testing_point);
 
-
 double calculateDistanceBetweenPointAndPlane(const plane& mplane, const glm::dvec3& point);
 
+glm::dvec3 calculateNormalVectorInDirectionOfPoint(const glm::dvec3& A, const glm::dvec3& B,
+                                                   const glm::dvec3& C, const glm::dvec3& point);
+
+glm::dvec3 calculateClosestPointInPlaneToPoint(const glm::dvec3& A, const glm::dvec3& B,
+                                               const glm::dvec3& C, const glm::dvec3& point);
 }
 }
 

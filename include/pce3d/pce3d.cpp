@@ -67,7 +67,7 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::ShadeSystem, pce::RigidObject, pce::Position, pce::FaceShade>();
 
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
-  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position>();
+  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position, pce::RigidObject>();
   
   space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
   control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();

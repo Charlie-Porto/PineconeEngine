@@ -42,6 +42,28 @@ double calculateDistanceBetweenPointAndPlane(const plane& mplane, const glm::dve
 }
 
 
+glm::dvec3 calculateNormalVectorInDirectionOfPoint(const glm::dvec3& A, const glm::dvec3& B,
+                                                   const glm::dvec3& C, const glm::dvec3& point) {
+  const glm::dvec3 X = glm::dvec3(A - C);
+  const glm::dvec3 Y = glm::dvec3(B - C);
+  const glm::dvec3 normal_vec = glm::normalize(glm::cross(X, Y));
+  const glm::dvec3 alt_normal_vec = -normal_vec;
+
+  const double distance = pce3d::maths::calculateDistanceBetweenVectors(A + normal_vec, point);
+  const double alt_distance = pce3d::maths::calculateDistanceBetweenVectors(A + alt_normal_vec, point);
+
+  return distance < alt_distance ? normal_vec : alt_normal_vec;
+}
+
+
+glm::dvec3 calculateClosestPointInPlaneToPoint(const glm::dvec3& A, const glm::dvec3& B,
+                                               const glm::dvec3& C, const glm::dvec3& point) {
+  const plane mplane = calculatePlaneGiven3Points(A, B, C);
+  const double distance = abs(calculateDistanceBetweenPointAndPlane(mplane, point));
+  const glm::dvec3 plane_normal_direction_vector = calculateNormalVectorInDirectionOfPoint(A, B, C, point);
+  return glm::dvec3(point + (-plane_normal_direction_vector * distance));
+}
+
 }
 }
 

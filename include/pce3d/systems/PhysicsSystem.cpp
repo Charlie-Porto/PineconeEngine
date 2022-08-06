@@ -40,7 +40,6 @@ public:
       auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
       auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
       auto& a_force = control.GetComponent<pce::Force>(entity_a);
-      auto& b_force = control.GetComponent<pce::Force>(entity_b);
       
       /* handle active particle collision with dead entity face */
       if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
@@ -57,11 +56,12 @@ public:
           std::cout << "Physics System: collision with deadbod" << '\n';
           bool execute_redirection = true;
           if (a_force.sequential_collisions_by_entity.find(entity_b) != a_force.sequential_collisions_by_entity.end()) {
-            if (a_force.sequential_collisions_by_entity.at(entity_b) > 0) {
+            if (a_force.sequential_collisions_by_entity.at(entity_b) > 2) {
               std::cout << "COLLISION NULLIFIED" << '\n';
               execute_redirection = false;
               ++a_force.sequential_collisions_by_entity[entity_b];
               if (a_force.sequential_collisions_by_entity.at(entity_b) > 10) {
+                std::cout << "entity switched to RestingBod" << '\n';
                 a_rigid_object.is_restingbod = true;
               }
             } else {
@@ -82,7 +82,7 @@ public:
             a_motion.velocity = nvelocity;
             a_motion.direction = glm::normalize(a_motion.velocity);
             a_motion.previous_resting_position = a_position.actual_center_of_mass;
-            a_motion.duration = 0.1;
+            a_motion.duration = 0.05;
             a_motion.speed = sqrt(glm::dot(a_motion.velocity, a_motion.velocity));
           }
         } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
@@ -130,6 +130,9 @@ public:
   void UpdateEntities(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities) {
     entities_updated_.clear();
     checkPotentialCollisions(potential_colliding_entities);
+    if (isnan(pce::CoreManager::time_)) {
+      pce::CoreManager::time_ = 0.01;
+    }
     time_change_ = std::max(pce::CoreManager::time_ - previous_time_, 0.01);
     if (time_change_ > 5.0) { time_change_ = 0.015; }
     std::cout << "time_change: " << time_change_ << '\n';
