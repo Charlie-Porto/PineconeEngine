@@ -14,8 +14,9 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
   vertices[2] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, -l/2.0));
   vertices[3] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, l/2.0));
   vertices[4] = glm::dvec3(center + glm::dvec3(w/2.0, 0, l/2.0));
-  FaceVertexMap face_map{};
-  face_map[1] = {1, 2, 3, 4};
+  FaceVertexMap face_map{
+    {1, {1, 2, 3, 4}}
+  };
   EdgeMap edge_map = { 
     std::make_pair(1, 2),
     std::make_pair(2, 3),

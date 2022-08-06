@@ -25,42 +25,44 @@ public:
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
 
-      /* depreciating this stuff */
+      // /* depreciating this stuff */
       uint32_t centity = entity;
       std::pair<uint32_t, double> entity_with_distance = std::make_pair(centity, position.distance_from_camera);
       pce3d::render_order::insertEntityIntoRenderOrderVectorLinear(entity_with_distance, order_of_render_);
-      /* -------------- */
+      // /* -------------- */
       
 
-      /* THE NEW NEW */
-      order_tag_.entity = entity;
-      uint32_t id_closest_vertex = 1;
-      uint32_t id_farthest_vertex = 1;
-      double distance_closest_vertex = rigid_object.vertex_distance_map.at(id_closest_vertex);
-      double distance_farthest_vertex = rigid_object.vertex_distance_map.at(id_farthest_vertex);;
+      // /* THE NEW NEW */
+  //     uint32_t id_closest_vertex = 1;
+  //     uint32_t id_farthest_vertex = 1;
+  //     double distance_closest_vertex = rigid_object.vertex_distance_map.at(id_closest_vertex);
+  //     double distance_farthest_vertex = rigid_object.vertex_distance_map.at(id_farthest_vertex);;
 
-      /* get closest and furthest vertex */
-      for (auto const& [id, distance] : rigid_object.vertex_distance_map) {
-        if (distance < distance_closest_vertex) {
-          id_closest_vertex = id;
-          distance_closest_vertex = distance;
-        }
-        else if (distance > distance_farthest_vertex) {
-          id_farthest_vertex = id;
-          distance_farthest_vertex = distance;
-        }
-      }
+  //     /* get closest and furthest vertex */
+  //     for (auto const& [id, distance] : rigid_object.vertex_distance_map) {
+  //       if (distance < distance_closest_vertex) {
+  //         id_closest_vertex = id;
+  //         distance_closest_vertex = distance;
+  //       }
+  //       else if (distance > distance_farthest_vertex) {
+  //         id_farthest_vertex = id;
+  //         distance_farthest_vertex = distance;
+  //       }
+  //     }
 
-      order_tag_.closest_vertex_distance = distance_closest_vertex;
-      order_tag_.farthest_vertex_distance = distance_farthest_vertex;
+  //     order_tag_.entity = entity;
+  //     order_tag_.closest_vertex_distance = distance_closest_vertex;
+  //     order_tag_.farthest_vertex_distance = distance_farthest_vertex;
       
-      std::pair<bool, size_t> insert_info = pce3d::render_order::tryInsertEntityIntoRenderOrderMap(
-                                                order_tag_, order_list_);
+  //     std::pair<bool, size_t> insert_info = pce3d::render_order::tryInsertEntityIntoRenderOrderMap(
+  //                                               order_tag_, order_list_);
       
-      if (!insert_info.first) {
-        pce3d::render_order::insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(
-                                 order_tag_, insert_info.second, order_list_);
-      }
+  //     if (!insert_info.first) {
+  //       pce3d::render_order::insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(
+  //                                order_tag_, insert_info.second, 
+  //                                rigid_object.camera_transformed_vertices.at(id_closest_vertex),
+  //                                order_list_);
+  //     }
 
     }
   }

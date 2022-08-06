@@ -2,7 +2,6 @@
 #define orderForRenderFunctions_cpp
 
 #include "../orderForRenderFunctions.hpp"
-#include <ezprint.cpp>
 
 namespace pce3d {
 namespace render_order {
@@ -81,18 +80,40 @@ std::pair<bool, size_t> tryInsertEntityIntoRenderOrderMap(const orderTag& entity
 
 
 void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity_tag, size_t i, 
+                                                          const glm::dvec3 closest_vertex_rotated_pos,
                                                           std::vector<orderTag>& order_list) {
-  // std::cout << "placing in specific index within order list" << '\n';
   /* NOTE: this function will require a call to the ControlPanel */
-  /* 1. get face closest to the mvertex */ 
+  const uint32_t mentity = order_list[i].entity;
+  auto const& mrigid_object = control.GetComponent<pce::RigidObject>(mentity);
+  /* 1. get 3 points of face closest to the mvertex */ 
   /*   A. get closest vertex to mvertex */
   /*   B. get vertices connected to vertex */
   /*   C. get the unit vectors that bisect adjacent pairs of edges */
   /*   D. calc distance between mvertex the vertex + each unit vector */
-  /*   E. return the face that corresponds to the selected point (contains the 3 points) */
-
+  /*   E. return the 3 points that make of the plane of the side */
+  const std::vector<uint32_t> closest_face_points 
+      = pce3d::maths::calculateClosestPolyhedronFaceToPoint(mrigid_object.camera_transformed_vertices,
+                                                            mrigid_object.edges,
+                                                            mrigid_object.face_vertex_map,
+                                                            closest_vertex_rotated_pos);
+  assert(closest_face_points.size() == 3);
   /* 2. get point on this face that is closest to the vertex*/
   /*   A. relatively simple calc */
+  const glm::dvec3 face_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
+                                    mrigid_object.vertices.at(closest_face_points[0]),
+                                    mrigid_object.vertices.at(closest_face_points[1]),
+                                    mrigid_object.vertices.at(closest_face_points[2]),
+                                    closest_vertex_rotated_pos);
+  
+  const double face_point_distance = sqrt(glm::dot(face_point, face_point));
+  if (entity_tag.closest_vertex_distance < face_point_distance) {
+    if (i == order_list.size()-1) { order_list.push_back(entity_tag); }
+    else {
+      order_list.insert(order_list.begin() + i+1, entity_tag);
+    }
+  } else {
+    order_list.insert(order_list.begin() + i, entity_tag);
+  }
 }
 
 

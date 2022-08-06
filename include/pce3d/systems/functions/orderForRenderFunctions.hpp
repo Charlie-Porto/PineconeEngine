@@ -6,6 +6,7 @@
 #include <vector>
 #include "../../maths/functions/plane_functions.hpp"
 #include "../objects/orderTag.hpp"
+#include "../../maths/functions/vertex_functions.hpp"
 
 extern ControlPanel control;
 
@@ -24,6 +25,7 @@ void insertEntityIntoRenderOrderVectorLinear(const std::pair<uint32_t, double>& 
 std::pair<bool, size_t> tryInsertEntityIntoRenderOrderMap(const orderTag& entity_tag, std::vector<orderTag>& order_list);
 
 void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity_tag, size_t i, 
+                                                          const glm::dvec3 closest_vertex_rotated_pos,
                                                           std::vector<orderTag>& order_list);
 
 
