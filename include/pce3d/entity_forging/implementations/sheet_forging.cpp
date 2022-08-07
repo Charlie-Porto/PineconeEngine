@@ -24,12 +24,28 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     std::make_pair(4, 1)
   };
 
+  FaceCornerMap face_corner_map{};
+  FaceVertexCornerMap face_vertex_corner_map{};
+  VertexFaceCornerMap vertex_face_corner_map{};
+
+  pce3d::forge::createFaceVertexCornerMaps(vertices, face_map, 
+                                           face_corner_map, 
+                                           face_vertex_corner_map, vertex_face_corner_map,
+                                           center);
+
+
   pce3d::forge::rotateVertices(vertices, angle, axis_of_rotation, center);
 
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
   // control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
   control.AddComponent(new_entity, pce::Surface{.color = color, .collision_elasticity_index=0.9});
+  control.AddComponent(new_entity, pce::Radar{
+    .closest_vertex_id = 1,
+    .closest_vertex_distance = 100000.0,
+    .farthest_vertex_id = 1,
+    .farthest_vertex_distance = 0.0
+  });
   control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
@@ -38,7 +54,10 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     .is_restingbod = false,
     .vertices = vertices,
     .edges = edge_map,
-    .face_vertex_map = face_map
+    .face_vertex_map = face_map,
+    .face_corner_map = face_corner_map,
+    .face_vertex_corner_map = face_vertex_corner_map,
+    .vertex_face_corner_map = vertex_face_corner_map
   });
   // control.AddComponent(new_entity, pce::Force{
     // .of_gravity = 0.0

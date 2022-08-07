@@ -33,7 +33,11 @@ public:
         rigid_object.camera_transformed_vertices[id] 
             = pce::rotateVector3byQuaternion(rigid_object.camera_transformed_vertices.at(id), versor);
       }
-      
+      for (auto const& [id, corner] : rigid_object.face_corner_map) {
+        rigid_object.camera_rotated_face_corner_map[id] = corner - transform_vector;
+        rigid_object.camera_rotated_face_corner_map[id] 
+            = pce::rotateVector3byQuaternion(rigid_object.camera_rotated_face_corner_map.at(id), versor);
+      }
     }
   }
 

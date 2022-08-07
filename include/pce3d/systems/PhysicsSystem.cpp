@@ -135,7 +135,7 @@ public:
     }
     time_change_ = std::max(pce::CoreManager::time_ - previous_time_, 0.01);
     if (time_change_ > 5.0) { time_change_ = 0.015; }
-    std::cout << "time_change: " << time_change_ << '\n';
+    // std::cout << "time_change: " << time_change_ << '\n';
     previous_time_ = pce::CoreManager::time_;
     for (auto const& entity : entities) {
       auto const& force = control.GetComponent<pce::Force>(entity);

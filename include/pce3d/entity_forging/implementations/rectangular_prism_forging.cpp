@@ -18,9 +18,16 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   FaceVertexMap e_face_vertex_map = assignVerticesToFaces();
   EdgeMap e_edge_map = assignEdgesToVertices();
   VertexVertexMap vvmap = assignVerticestoVertices();
+  FaceCornerMap face_corner_map{};
+  FaceVertexCornerMap face_vertex_corner_map{};
+  VertexFaceCornerMap vertex_face_corner_map{};
+
+  pce3d::forge::createFaceVertexCornerMaps(e_vertex_map, e_face_vertex_map, 
+                                           face_corner_map, 
+                                           face_vertex_corner_map, vertex_face_corner_map,
+                                           center);
 
   /* adjust vertex points based on rotation and center point */
-  
   for (auto& [id, vec3] : e_vertex_map) {
     vec3 += center;
   }
@@ -30,6 +37,12 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   Entity new_entity = control.CreateEntity();
   control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
   // control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
+  control.AddComponent(new_entity, pce::Radar{
+    .closest_vertex_id = 1,
+    .closest_vertex_distance = 100000.0,
+    .farthest_vertex_id = 1,
+    .farthest_vertex_distance = 0.0
+  });
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = w * h * l,
@@ -39,12 +52,19 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
     .vertex_vertex_map = vvmap,
     .edges = e_edge_map,
     .face_vertex_map = e_face_vertex_map,
+    .face_corner_map = face_corner_map,
+    .face_vertex_corner_map = face_vertex_corner_map,
+    .vertex_face_corner_map = vertex_face_corner_map,
     .index_face_map = {},
     .face_index_map = {},
     .entity_face_collision_map = {}
   });
   control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::FaceShade{});
+
+  for (auto const& [vertex, face_corners] : vertex_face_corner_map) {
+    std::cout << "vertex: " << vertex << '\n';
+  }
 
   return new_entity;
 }
@@ -74,12 +94,6 @@ VertexMap calculateRectPrismOriginalVertexLocations(const double w, const double
     }
   }
 
-  // /* TEMPORARY: print */
-  // for (auto const& [id, vec3] : vertex_map) {
-  //   ezp::print_item(id);  
-  //   vezp::print_dvec3(vec3);
-  // }
-  
   return vertex_map;
 }
 

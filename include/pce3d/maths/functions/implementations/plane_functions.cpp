@@ -58,9 +58,19 @@ glm::dvec3 calculateNormalVectorInDirectionOfPoint(const glm::dvec3& A, const gl
 
 glm::dvec3 calculateClosestPointInPlaneToPoint(const glm::dvec3& A, const glm::dvec3& B,
                                                const glm::dvec3& C, const glm::dvec3& point) {
+  // std::cout << "A: " << A.x << ", " << A.y << ", " << A.z << "\n";
+  // std::cout << "B: " << B.x << ", " << B.y << ", " << B.z << "\n";
+  // std::cout << "C: " << C.x << ", " << C.y << ", " << C.z << "\n";
   const plane mplane = calculatePlaneGiven3Points(A, B, C);
+  // std::cout << "mplane: " << mplane.a << ", " << mplane.b << ", " << mplane.c << ", " << mplane.d << "\n";
   const double distance = abs(calculateDistanceBetweenPointAndPlane(mplane, point));
+  // std::cout << "distance: " << distance << '\n';
   const glm::dvec3 plane_normal_direction_vector = calculateNormalVectorInDirectionOfPoint(A, B, C, point);
+  auto const E = plane_normal_direction_vector;
+  // std::cout << "normal vector: " << E.x << ", " << E.y << ", " << E.z << "\n";
+  const glm::dvec3 P = (point + -plane_normal_direction_vector * distance);
+  // std::cout << "O: " << point.x << ", " << point.y << ", " << point.z << "\n";
+  // std::cout << "P: " << P.x << ", " << P.y << ", " << P.z << "\n";
   return glm::dvec3(point + (-plane_normal_direction_vector * distance));
 }
 

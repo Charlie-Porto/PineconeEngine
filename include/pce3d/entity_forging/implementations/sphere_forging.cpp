@@ -16,6 +16,12 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
     .mass = 4.0 * PI * pow(radius, 2.0)
   });
   control.AddComponent(sphere_entity, pce::Position{.actual_center_of_mass=location});
+  control.AddComponent(sphere_entity, pce::Radar{
+    .closest_vertex_id = 1,
+    .closest_vertex_distance = 100000.0,
+    .farthest_vertex_id = 1,
+    .farthest_vertex_distance = 0.0
+  });
   control.AddComponent(sphere_entity, pce::LocalRotation{.versor = {1.0, 0, 0, 0}});
   control.AddComponent(sphere_entity, pce::Surface{.color=color, .collision_elasticity_index=0.7});
   control.AddComponent(sphere_entity, pce::FaceShade{});

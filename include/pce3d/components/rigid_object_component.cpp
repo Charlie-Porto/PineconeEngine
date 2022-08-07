@@ -19,6 +19,9 @@ using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 using IndexFaceMap = std::unordered_map<glm::ivec3, uint32_t>;
 using FaceIndexMap = std::unordered_map<uint32_t, glm::ivec3>;
 using EntityFaceCollisionMap = std::unordered_map<uint32_t, uint32_t>;
+using FaceCornerMap = std::unordered_map<uint32_t, glm::dvec3>;
+using FaceVertexCornerMap = std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>>;
+using VertexFaceCornerMap = std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>>;
 
 struct RigidObject {
   double radius;  // if == 0, then not a sphere
@@ -35,6 +38,11 @@ struct RigidObject {
   VertexMap camera_transformed_vertices;
   VertexPixelMap vertex_pixels;
   VertexDistanceMap vertex_distance_map;
+
+  FaceCornerMap face_corner_map;
+  FaceCornerMap camera_rotated_face_corner_map;
+  VertexFaceCornerMap vertex_face_corner_map;
+  FaceVertexCornerMap face_vertex_corner_map;
 
   IndexFaceMap index_face_map;
   FaceIndexMap face_index_map;  

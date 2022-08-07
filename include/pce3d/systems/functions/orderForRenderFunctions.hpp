@@ -6,9 +6,12 @@
 #include <vector>
 #include "../../maths/functions/plane_functions.hpp"
 #include "../objects/orderTag.hpp"
-#include "../../maths/functions/vertex_functions.hpp"
+#include "../../maths/functions/quaternion_functions.hpp"
+#include "../DevRenderSystem.cpp"
+
 
 extern ControlPanel control;
+extern pce3d::DevRenderSystem dev_render_system;
 
 namespace pce3d {
 namespace render_order {
@@ -28,6 +31,13 @@ void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity
                                                           const glm::dvec3 closest_vertex_rotated_pos,
                                                           std::vector<orderTag>& order_list);
 
+void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 closest_vertex,
+                              std::vector<orderTag>& order_list, size_t start_position);
+
+void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag, 
+                                         const glm::dvec3& closest_vertex_location,
+                                         size_t i,
+                                         std::vector<orderTag>& order_list);
 
 }
 }

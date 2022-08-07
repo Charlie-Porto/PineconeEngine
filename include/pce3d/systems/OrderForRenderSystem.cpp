@@ -17,60 +17,49 @@ namespace pce3d {
 
 class OrderForRenderSystem : public ISystem {
 public:
-  OrderForRenderSystem() : order_tag_(orderTag{}) {}
   
   void UpdateEntities() {
     order_of_render_.clear();
+    order_list_.clear();
+    particles_to_order_last_.clear();
     for (auto const& entity : entities) {
-      auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
+      if (rigid_object.radius != 0) {particles_to_order_last_.push_back(entity); continue; }
+      auto const& radar = control.GetComponent<pce::Radar>(entity);
 
-      // /* depreciating this stuff */
-      uint32_t centity = entity;
-      std::pair<uint32_t, double> entity_with_distance = std::make_pair(centity, position.distance_from_camera);
-      pce3d::render_order::insertEntityIntoRenderOrderVectorLinear(entity_with_distance, order_of_render_);
-      // /* -------------- */
+      /* THE New NEW NEW */
+      auto order_tag_ = orderTag{};
+      order_tag_.entity = entity;
+      order_tag_.closest_vertex_distance = radar.closest_vertex_distance;
+      order_tag_.farthest_vertex_distance = radar.farthest_vertex_distance;
+
+      pce3d::render_order::insertEntityIntoOrderMap(order_tag_, 
+                                                    rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id),
+                                                    order_list_, 0);
       
 
-      // /* THE NEW NEW */
-  //     uint32_t id_closest_vertex = 1;
-  //     uint32_t id_farthest_vertex = 1;
-  //     double distance_closest_vertex = rigid_object.vertex_distance_map.at(id_closest_vertex);
-  //     double distance_farthest_vertex = rigid_object.vertex_distance_map.at(id_farthest_vertex);;
+    }
+    for (auto const& entity : particles_to_order_last_) {
+      auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
+      auto const& radar = control.GetComponent<pce::Radar>(entity);
 
-  //     /* get closest and furthest vertex */
-  //     for (auto const& [id, distance] : rigid_object.vertex_distance_map) {
-  //       if (distance < distance_closest_vertex) {
-  //         id_closest_vertex = id;
-  //         distance_closest_vertex = distance;
-  //       }
-  //       else if (distance > distance_farthest_vertex) {
-  //         id_farthest_vertex = id;
-  //         distance_farthest_vertex = distance;
-  //       }
-  //     }
+      /* THE New NEW NEW */
+      auto order_tag_ = orderTag{};
+      order_tag_.entity = entity;
+      order_tag_.closest_vertex_distance = radar.closest_vertex_distance;
+      order_tag_.farthest_vertex_distance = radar.farthest_vertex_distance;
 
-  //     order_tag_.entity = entity;
-  //     order_tag_.closest_vertex_distance = distance_closest_vertex;
-  //     order_tag_.farthest_vertex_distance = distance_farthest_vertex;
+      pce3d::render_order::insertEntityIntoOrderMap(order_tag_, 
+                                                    rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id),
+                                                    order_list_, 0);
       
-  //     std::pair<bool, size_t> insert_info = pce3d::render_order::tryInsertEntityIntoRenderOrderMap(
-  //                                               order_tag_, order_list_);
-      
-  //     if (!insert_info.first) {
-  //       pce3d::render_order::insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(
-  //                                order_tag_, insert_info.second, 
-  //                                rigid_object.camera_transformed_vertices.at(id_closest_vertex),
-  //                                order_list_);
-  //     }
-
     }
   }
 
   std::vector<std::pair<uint32_t, double>> order_of_render_;
   std::vector<orderTag> order_list_;
 private:
-  orderTag order_tag_;
+  std::vector<uint32_t> particles_to_order_last_;
 };
 
 

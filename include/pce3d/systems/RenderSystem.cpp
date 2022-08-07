@@ -27,12 +27,12 @@ public:
   }
 
 
-  void UpdateEntities(std::vector<std::pair<uint32_t, double>> order_of_render) {
-  // void UpdateEntities(const std::vector<orderTag> order_of_render){
+  // void UpdateEntities(std::vector<std::pair<uint32_t, double>> order_of_render) {
+  void UpdateEntities(const std::vector<orderTag> order_of_render){
     /* render objects in order of furthest from camera to closest */
     for (auto const& entity_pair : order_of_render) {
-      auto const entity = entity_pair.first;
-      // auto const entity = entity_pair.entity;
+      // auto const entity = entity_pair.first;
+      auto const entity = entity_pair.entity;
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& surface = control.GetComponent<pce::Surface>(entity);

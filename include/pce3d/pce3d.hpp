@@ -13,6 +13,7 @@
 #include "components/face_shade_component.cpp"
 #include "components/force_component.cpp"
 #include "components/motion_component.cpp"
+#include "components/radar_component.cpp"
 
 /* systems */
 #include "systems/CameraTransformSystem.cpp"
@@ -24,8 +25,12 @@
 #include "systems/SpaceMapSystem.cpp"
 #include "systems/PhysicsSystem.cpp"
 
+/* dev-only systems */
+#include "systems/DevRenderSystem.cpp"
+
 
 extern ControlPanel control;
+extern pce3d::DevRenderSystem dev_render_system;
 
 namespace pce3d {
 

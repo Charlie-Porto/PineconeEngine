@@ -46,6 +46,7 @@ void Core3D::RegisterCoreComponents() {
   control.RegisterComponent<pce::FaceShade>();
   control.RegisterComponent<pce::Force>();
   control.RegisterComponent<pce::Motion>();
+  control.RegisterComponent<pce::Radar>();
 }
 
 
@@ -56,7 +57,7 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::CameraTransformSystem, pce::Position, pce::RigidObject>();
 
   radar_system_ = control.RegisterSystem<pce3d::RadarSystem>();
-  control.AssignSystemComponents<pce3d::RadarSystem, pce::Position, pce::RigidObject>();
+  control.AssignSystemComponents<pce3d::RadarSystem, pce::Position, pce::RigidObject, pce::Radar>();
 
   render_system_ = control.RegisterSystem<pce3d::RenderSystem>();
   render_system_->setOrdinaryZoomIndex(pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
@@ -67,7 +68,7 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::ShadeSystem, pce::RigidObject, pce::Position, pce::FaceShade>();
 
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
-  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position, pce::RigidObject>();
+  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position, pce::RigidObject, pce::Radar>();
   
   space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
   control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();
@@ -91,9 +92,10 @@ void Core3D::UpdateCore3D() {
   radar_system_->UpdateEntities();
   shade_system_->UpdateEntities(camera_.rotation_versor);
   render_order_system_->UpdateEntities();
-  render_system_->UpdateEntities(render_order_system_->order_of_render_);
-  // render_system_->UpdateEntities(render_order_system_->order_list_);
+  // render_system_->UpdateEntities(render_order_system_->order_of_render_);
+  render_system_->UpdateEntities(render_order_system_->order_list_);
   space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 
 

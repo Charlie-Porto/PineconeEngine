@@ -104,7 +104,9 @@ void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity
                                     mrigid_object.vertices.at(closest_face_points[1]),
                                     mrigid_object.vertices.at(closest_face_points[2]),
                                     closest_vertex_rotated_pos);
-  
+
+  dev_render_system.AddPointToPointColorMap(face_point, {255, 0, 0, 255});
+
   const double face_point_distance = sqrt(glm::dot(face_point, face_point));
   if (entity_tag.closest_vertex_distance < face_point_distance) {
     if (i == order_list.size()-1) { order_list.push_back(entity_tag); }
@@ -118,9 +120,118 @@ void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity
 
 
 
+void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 closest_vertex,
+                              std::vector<orderTag>& order_list, size_t start_position) {
+  // std::cout << "inserting entity into order map: " << entity_tag.entity << '\n';
+  if (order_list.empty()) { order_list.push_back(entity_tag); }
+  else {
+    for (size_t i = start_position; i != order_list.size(); ++i) {
+      if (entity_tag.closest_vertex_distance > order_list[i].farthest_vertex_distance) {
+        order_list.insert(order_list.begin() + i, entity_tag);
+        break;
+      }
+      if (entity_tag.closest_vertex_distance < order_list[i].closest_vertex_distance) {
+        if (i == order_list.size()-1) {
+          order_list.push_back(entity_tag); 
+          break;
+        }
+        else {
+          continue;
+        }
+      }
+      else {
+      /* pick up here */
+        /* this code below is temporary */
+        // order_list.insert(order_list.begin() + i, entity_tag);
+        // std::cout << "entity closest vertex distance" << entity_tag.closest_vertex_distance << '\n';
+        // std::cout << "mentity closest vertex distance" << order_list[i].closest_vertex_distance << '\n';
+        // std::cout << "mentity farthest vertex distance" << order_list[i].farthest_vertex_distance << '\n';
+        insertEntityIntoOrderMapBesideIndex(entity_tag, closest_vertex,
+                                            i, order_list);
+        break;
+         
+      }
+    }
+  }
+}
 
 
+void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag, 
+                                         const glm::dvec3& closest_vertex_location,
+                                         size_t i,
+                                         std::vector<orderTag>& order_list) {
+  // std::cout << "inserting direct" << '\n';
+  // std::cout << "entity: " << entity_tag.entity << '\n';
+  // std::cout << "mentity: " << order_list[i].entity << '\n';
+  const orderTag mentity_tag = order_list[i];
+  auto const mrigid_object = control.GetComponent<pce::RigidObject>(mentity_tag.entity);
+  auto const mradar = control.GetComponent<pce::Radar>(mentity_tag.entity);
+  uint32_t closest_face = 2;
+  double closest_face_corner_distance = 10000;
+  double vertex_distance = sqrt(glm::dot(
+    mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id) - closest_vertex_location,
+    mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id) - closest_vertex_location));
+  
+  // for (auto const& [face, vertex_list] : mrigid_object.face_vertex_map) {
+  //   std::cout << "face: " << face << " | " << "vertex count: " << vertex_list.size() << '\n';
+  // } 
 
+  // dev_render_system.AddPointToPointColorMap(mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id), {255, 0, 0, 255});
+  std::cout << "---" << '\n';
+  for (auto const& [vertex, corner_map] : mrigid_object.vertex_face_corner_map) {
+    std::cout << "vertex: " << vertex << " | " << "farthest_vertex_id: " << mradar.farthest_vertex_id << '\n';
+    if (vertex == mradar.farthest_vertex_id) {
+      // dev_render_system.AddPointToPointColorMap(mrigid_object.camera_transformed_vertices.at(vertex), {255, 0, 0, 255});
+      // dev_render_system.AddPointToPointColorMap(mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id), {255, 0, 0, 255});
+      for (auto const& [face, corner] : corner_map) {
+
+        // std::cout << "face: " << face << '\n';
+        const double distance = sqrt(glm::dot(
+          mrigid_object.camera_rotated_face_corner_map.at(corner) - closest_vertex_location,
+          mrigid_object.camera_rotated_face_corner_map.at(corner) - closest_vertex_location));
+          
+        dev_render_system.AddPointToPointColorMap(mrigid_object.camera_rotated_face_corner_map.at(corner), {0, 255, 0, 255});
+        // auto const A = mrigid_object.camera_rotated_face_corner_map.at(corner);
+        // std::cout << "A: " << A.x << ", " << A.y << ", " << A.z << "\n";
+        if (distance < closest_face_corner_distance) {
+          closest_face_corner_distance = distance;
+          closest_face = face;
+        }
+      }
+    }
+  }
+  // std::cout << "closest_vertex_location: " << closest_vertex_location.x << ", " << closest_vertex_location.y << ", " << closest_vertex_location.z << "\n";
+  // std::cout << "closest face: " << closest_face << '\n';
+  const glm::dvec3 face_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
+    mrigid_object.camera_transformed_vertices.at(mrigid_object.face_vertex_map.at(closest_face)[0]),
+    mrigid_object.camera_transformed_vertices.at(mrigid_object.face_vertex_map.at(closest_face)[1]),
+    mrigid_object.camera_transformed_vertices.at(mrigid_object.face_vertex_map.at(closest_face)[2]),
+    closest_vertex_location);
+  
+  dev_render_system.AddPointToPointColorMap(face_point, {255, 0, 0, 255});
+  dev_render_system.AddPointToPointColorMap(closest_vertex_location, {0, 0, 200, 255});
+
+  const double face_point_magnitude = sqrt(glm::dot(face_point, face_point));
+  // std::cout << "vertex point: " << closest_vertex_location.x << ", "
+  //                               << closest_vertex_location.y << ", "
+  //                               << closest_vertex_location.z << "\n";
+  // std::cout << "face point: " << face_point.x << ", "
+  //                             << face_point.y << ", "
+  //                             << face_point.z << "\n";
+  // std::cout << "face point distance: " << face_point_magnitude << '\n';
+  // std::cout << "closest vertex distance: " << entity_tag.closest_vertex_distance << '\n';
+
+  if (face_point_magnitude <= entity_tag.closest_vertex_distance) {
+    order_list.insert(order_list.begin() + i, entity_tag);
+  }
+  else {
+    if (i == order_list.size()-1) { order_list.push_back(entity_tag); }
+    else { 
+      // order_list.insert(order_list.begin() + i + 1, entity_tag); 
+      insertEntityIntoOrderMap(entity_tag, closest_vertex_location, order_list, i + 1);
+    }
+  }
+}
 
 
 
