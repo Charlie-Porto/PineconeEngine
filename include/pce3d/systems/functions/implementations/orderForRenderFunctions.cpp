@@ -177,9 +177,9 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
   // } 
 
   // dev_render_system.AddPointToPointColorMap(mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id), {255, 0, 0, 255});
-  std::cout << "---" << '\n';
+  // std::cout << "---" << '\n';
   for (auto const& [vertex, corner_map] : mrigid_object.vertex_face_corner_map) {
-    std::cout << "vertex: " << vertex << " | " << "farthest_vertex_id: " << mradar.farthest_vertex_id << '\n';
+    // std::cout << "vertex: " << vertex << " | " << "farthest_vertex_id: " << mradar.farthest_vertex_id << '\n';
     if (vertex == mradar.farthest_vertex_id) {
       // dev_render_system.AddPointToPointColorMap(mrigid_object.camera_transformed_vertices.at(vertex), {255, 0, 0, 255});
       // dev_render_system.AddPointToPointColorMap(mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id), {255, 0, 0, 255});
