@@ -33,9 +33,7 @@ public:
       order_tag_.closest_vertex_distance = radar.closest_vertex_distance;
       order_tag_.farthest_vertex_distance = radar.farthest_vertex_distance;
 
-      pce3d::render_order::insertEntityIntoOrderMap(order_tag_, 
-                                                    rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id),
-                                                    order_list_, 0);
+      pce3d::render_order::insertEntityIntoOrderMap(order_tag_, order_list_, 0);
       
 
     }
@@ -47,12 +45,15 @@ public:
       auto order_tag_ = orderTag{};
       order_tag_.entity = entity;
       order_tag_.closest_vertex_distance = radar.closest_vertex_distance;
+      order_tag_.closest_vertex_location = rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id);
       order_tag_.farthest_vertex_distance = radar.farthest_vertex_distance;
 
-      pce3d::render_order::insertEntityIntoOrderMap(order_tag_, 
-                                                    rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id),
-                                                    order_list_, 0);
+      pce3d::render_order::insertEntityIntoOrderMap(order_tag_, order_list_, 0);
       
+    }
+    std::cout << "---" << '\n';
+    for (auto const& order_tag : order_list_) {
+      std::cout << order_tag.entity << '\n';
     }
   }
 

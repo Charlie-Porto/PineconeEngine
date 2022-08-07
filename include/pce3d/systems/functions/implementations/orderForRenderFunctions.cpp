@@ -120,7 +120,7 @@ void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity
 
 
 
-void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 closest_vertex,
+void insertEntityIntoOrderMap(const orderTag& entity_tag,
                               std::vector<orderTag>& order_list, size_t start_position) {
   // std::cout << "inserting entity into order map: " << entity_tag.entity << '\n';
   if (order_list.empty()) { order_list.push_back(entity_tag); }
@@ -130,7 +130,8 @@ void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 close
         order_list.insert(order_list.begin() + i, entity_tag);
         break;
       }
-      if (entity_tag.closest_vertex_distance < order_list[i].closest_vertex_distance) {
+      if (entity_tag.closest_vertex_distance < order_list[i].closest_vertex_distance
+       && entity_tag.farthest_vertex_distance < order_list[i].closest_vertex_distance) {
         if (i == order_list.size()-1) {
           order_list.push_back(entity_tag); 
           break;
@@ -139,6 +140,12 @@ void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 close
           continue;
         }
       }
+      if (entity_tag.closest_vertex_distance < order_list[i].closest_vertex_distance
+       && entity_tag.farthest_vertex_distance > order_list[i].closest_vertex_distance) {
+        const pce3d::orderTag temptap = order_list[i];
+        order_list[i] = entity_tag;
+        insertEntityIntoOrderMapBesideIndex(temptap, i, order_list);
+      }
       else {
       /* pick up here */
         /* this code below is temporary */
@@ -146,8 +153,7 @@ void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 close
         // std::cout << "entity closest vertex distance" << entity_tag.closest_vertex_distance << '\n';
         // std::cout << "mentity closest vertex distance" << order_list[i].closest_vertex_distance << '\n';
         // std::cout << "mentity farthest vertex distance" << order_list[i].farthest_vertex_distance << '\n';
-        insertEntityIntoOrderMapBesideIndex(entity_tag, closest_vertex,
-                                            i, order_list);
+        insertEntityIntoOrderMapBesideIndex(entity_tag, i, order_list);
         break;
          
       }
@@ -157,7 +163,6 @@ void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 close
 
 
 void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag, 
-                                         const glm::dvec3& closest_vertex_location,
                                          size_t i,
                                          std::vector<orderTag>& order_list) {
   // std::cout << "inserting direct" << '\n';
@@ -169,8 +174,8 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
   uint32_t closest_face = 2;
   double closest_face_corner_distance = 10000;
   double vertex_distance = sqrt(glm::dot(
-    mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id) - closest_vertex_location,
-    mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id) - closest_vertex_location));
+    mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id) - entity_tag.closest_vertex_location,
+    mrigid_object.camera_transformed_vertices.at(mradar.farthest_vertex_id) - entity_tag.closest_vertex_location));
   
   // for (auto const& [face, vertex_list] : mrigid_object.face_vertex_map) {
   //   std::cout << "face: " << face << " | " << "vertex count: " << vertex_list.size() << '\n';
@@ -187,8 +192,8 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
 
         // std::cout << "face: " << face << '\n';
         const double distance = sqrt(glm::dot(
-          mrigid_object.camera_rotated_face_corner_map.at(corner) - closest_vertex_location,
-          mrigid_object.camera_rotated_face_corner_map.at(corner) - closest_vertex_location));
+          mrigid_object.camera_rotated_face_corner_map.at(corner) - entity_tag.closest_vertex_location,
+          mrigid_object.camera_rotated_face_corner_map.at(corner) - entity_tag.closest_vertex_location));
           
         dev_render_system.AddPointToPointColorMap(mrigid_object.camera_rotated_face_corner_map.at(corner), {0, 255, 0, 255});
         // auto const A = mrigid_object.camera_rotated_face_corner_map.at(corner);
@@ -206,10 +211,10 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
     mrigid_object.camera_transformed_vertices.at(mrigid_object.face_vertex_map.at(closest_face)[0]),
     mrigid_object.camera_transformed_vertices.at(mrigid_object.face_vertex_map.at(closest_face)[1]),
     mrigid_object.camera_transformed_vertices.at(mrigid_object.face_vertex_map.at(closest_face)[2]),
-    closest_vertex_location);
+    entity_tag.closest_vertex_location);
   
   dev_render_system.AddPointToPointColorMap(face_point, {255, 0, 0, 255});
-  dev_render_system.AddPointToPointColorMap(closest_vertex_location, {0, 0, 200, 255});
+  dev_render_system.AddPointToPointColorMap(entity_tag.closest_vertex_location, {0, 0, 200, 255});
 
   const double face_point_magnitude = sqrt(glm::dot(face_point, face_point));
   // std::cout << "vertex point: " << closest_vertex_location.x << ", "
@@ -228,7 +233,7 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
     if (i == order_list.size()-1) { order_list.push_back(entity_tag); }
     else { 
       // order_list.insert(order_list.begin() + i + 1, entity_tag); 
-      insertEntityIntoOrderMap(entity_tag, closest_vertex_location, order_list, i + 1);
+      insertEntityIntoOrderMap(entity_tag, order_list, i + 1);
     }
   }
 }

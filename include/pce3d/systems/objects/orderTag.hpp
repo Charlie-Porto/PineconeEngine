@@ -11,6 +11,7 @@ namespace pce3d {
 struct orderTag{
   uint32_t entity;
   double closest_vertex_distance;
+  glm::dvec3 closest_vertex_location;
   double farthest_vertex_distance;
 };
 

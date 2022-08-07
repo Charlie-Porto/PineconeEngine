@@ -31,12 +31,10 @@ void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity
                                                           const glm::dvec3 closest_vertex_rotated_pos,
                                                           std::vector<orderTag>& order_list);
 
-void insertEntityIntoOrderMap(const orderTag& entity_tag, const glm::dvec3 closest_vertex,
+void insertEntityIntoOrderMap(const orderTag& entity_tag,
                               std::vector<orderTag>& order_list, size_t start_position);
 
-void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag, 
-                                         const glm::dvec3& closest_vertex_location,
-                                         size_t i,
+void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag, size_t i,
                                          std::vector<orderTag>& order_list);
 
 }
