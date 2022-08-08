@@ -122,7 +122,7 @@ void insertEntityBetweenVerticesIntoRenderOrderMapAtIndex(const orderTag& entity
 
 void insertEntityIntoOrderMap(const orderTag& entity_tag,
                               std::vector<orderTag>& order_list, size_t start_position) {
-  std::cout << "inserting entity into order map: " << entity_tag.entity << '\n';
+  // std::cout << "inserting entity into order map: " << entity_tag.entity << '\n';
   if (order_list.empty()) { order_list.push_back(entity_tag); }
   else {
     for (size_t i = start_position; i != order_list.size(); ++i) {
@@ -167,8 +167,8 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
                                          std::vector<orderTag>& order_list) {
   // std::cout << "inserting direct" << '\n';
   size_t order_list_size = order_list.size();
-  std::cout << "entity: " << entity_tag.entity << '\n';
-  std::cout << "mentity: " << order_list[i].entity << '\n';
+  // std::cout << "entity: " << entity_tag.entity << '\n';
+  // std::cout << "mentity: " << order_list[i].entity << '\n';
   const orderTag mentity_tag = order_list[i];
   auto const mrigid_object = control.GetComponent<pce::RigidObject>(mentity_tag.entity);
   auto const mradar = control.GetComponent<pce::Radar>(mentity_tag.entity);
@@ -228,14 +228,14 @@ void insertEntityIntoOrderMapBesideIndex(const orderTag& entity_tag,
   // std::cout << "closest vertex distance: " << entity_tag.closest_vertex_distance << '\n';
 
   if (face_point_magnitude <= entity_tag.closest_vertex_distance) {
-    std::cout << "inserting entity: " << entity_tag.entity << '\n';
+    // std::cout << "inserting entity: " << entity_tag.entity << '\n';
     order_list.insert(order_list.begin() + i, entity_tag);
   }
   else {
     if (i >= order_list_size - 1) { order_list.push_back(entity_tag); }
     else { 
-      std::cout << "sending back at index: " << i+1 << '\n';
-      std::cout << "entity: " << entity_tag.entity << '\n';
+      // std::cout << "sending back at index: " << i+1 << '\n';
+      // std::cout << "entity: " << entity_tag.entity << '\n';
       insertEntityIntoOrderMap(entity_tag, order_list, i + 1);
     }
   }

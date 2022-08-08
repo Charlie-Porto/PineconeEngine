@@ -32,7 +32,7 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
     .velocity = velocity,
     .rotational_speed = 0.0,
     .rotational_axis = glm::dvec3(0, 0, 0),
-    .duration = 0.0,
+    .duration = 0.1,
     .previous_resting_position = location,
     .stationary_counter = 0
   });

@@ -19,7 +19,7 @@ class OrderForRenderSystem : public ISystem {
 public:
   
   void UpdateEntities() {
-    std::cout << "updating order of render" << '\n';
+    // std::cout << "updating order of render" << '\n';
     order_list_.clear();
     particles_to_order_last_.clear();
     for (auto const& entity : entities) {
@@ -38,7 +38,7 @@ public:
 
     }
     for (auto const& entity : particles_to_order_last_) {
-      std::cout << "particles entered now" << '\n';
+      // std::cout << "particles entered now" << '\n';
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto const& radar = control.GetComponent<pce::Radar>(entity);
 
@@ -52,10 +52,10 @@ public:
       pce3d::render_order::insertEntityIntoOrderMap(order_tag_, order_list_, 0);
       
     }
-    std::cout << "---" << '\n';
-    for (auto const& order_tag : order_list_) {
-      std::cout << order_tag.entity << '\n';
-    }
+    // std::cout << "---" << '\n';
+    // for (auto const& order_tag : order_list_) {
+    //   std::cout << order_tag.entity << '\n';
+    // }
   }
 
   std::vector<orderTag> order_list_;

@@ -10,7 +10,8 @@ namespace physics {
 glm::dvec3 calculateParticlePositionGivenTime(
     const glm::dvec3& initial_position, const glm::dvec3& initial_velocity, 
     double time_change, double gravitational_force_applied,
-    double& duration) {
+    double& duration) 
+{
 
   duration += time_change;
   glm::dvec3 path_traveled = initial_velocity * duration;   
@@ -22,8 +23,8 @@ glm::dvec3 calculateParticlePositionGivenTime(
 
 bool determineIfParticlesAreColliding(
     const glm::dvec3& a_position, const double a_radius,
-    const glm::dvec3& b_position, const double b_radius) {
-  
+    const glm::dvec3& b_position, const double b_radius)
+{
   const double total_radius = a_radius + b_radius;
   const glm::dvec3 diff_vect = a_position - b_position;
   const double centers_distance = sqrt(glm::dot(diff_vect, diff_vect));
@@ -33,42 +34,63 @@ bool determineIfParticlesAreColliding(
 
 std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollision(
     const glm::dvec3& a_center, const double a_radius, const glm::dvec3& a_velocity_vect, const double a_mass,
-    const glm::dvec3& b_center, const double b_radius, const glm::dvec3& b_velocity_vect, const double b_mass) {
+    const glm::dvec3& b_center, const double b_radius, const glm::dvec3& b_velocity_vect, const double b_mass) 
+{
   
   const glm::dvec3 a_hitpoint_direction = glm::normalize(b_center - a_center);
   const glm::dvec3 b_hitpoint_direction = glm::normalize(a_center - b_center);
+  // std::cout << "a_velocity_vect: "<< a_velocity_vect.x << ", " << a_velocity_vect.y << ", " << a_velocity_vect.z << '\n';
+  // std::cout << "b_velocity_vect: "<< b_velocity_vect.x << ", " << b_velocity_vect.y << ", " << b_velocity_vect.z << '\n';
 
-  const double a_angle = acos(glm::dot(a_hitpoint_direction, a_velocity_vect)
-                                /(sqrt(glm::dot(a_hitpoint_direction, a_hitpoint_direction))
-                                * sqrt(glm::dot(a_velocity_vect, a_velocity_vect)))) / PI * 180.0;
+  const double a_velocity_magnitude = sqrt(glm::dot(a_velocity_vect, a_velocity_vect));
+  const double b_velocity_magnitude = sqrt(glm::dot(b_velocity_vect, b_velocity_vect));
 
-  const double b_angle = acos(glm::dot(b_hitpoint_direction, b_velocity_vect)
-                              /(sqrt(glm::dot(b_hitpoint_direction, b_hitpoint_direction))
-                              * sqrt(glm::dot(b_velocity_vect, b_velocity_vect)))) / PI * 180.0;
-
-  // std::cout << "a_angle: " << a_angle << '\n';
-  // std::cout << "b_angle: " << b_angle << '\n';
+  const glm::dvec3 a_magnitude_in_a_direction = a_hitpoint_direction * a_velocity_magnitude;
+  const glm::dvec3 b_magnitude_in_b_direction = b_hitpoint_direction * b_velocity_magnitude;
  
-  const double a_directness = (90.0 - a_angle)/90.0;
-  const double b_directness = (90.0 - b_angle)/90.0;
-
-  // std::cout << "a_directness: " << a_directness << '\n';
-  // std::cout << "b_directness: " << b_directness << '\n';
-
-  // const glm::dvec3 a_provision = a_velocity_vect * a_directness * b_mass_percentage;
-  // const glm::dvec3 b_provision = b_velocity_vect * b_directness * a_mass_percentage;
-  const glm::dvec3 a_provision = a_velocity_vect * a_directness;
-  const glm::dvec3 b_provision = b_velocity_vect * b_directness;
-
-  return std::make_pair(a_provision, b_provision);
+  return std::make_pair(a_magnitude_in_a_direction, b_magnitude_in_b_direction);
 }
 
+
+void updateBothEntityInfoAfterTwoParticleCollision(
+    const glm::dvec3& a_center, const double a_radius, pce::Motion& a_motion, const double a_mass,
+    const glm::dvec3& b_center, const double b_radius, pce::Motion& b_motion, const double b_mass)
+{
+  std::pair<glm::dvec3, glm::dvec3> new_velocity_vectors 
+    = physics::calculateVelocityVectorsAfterTwoParticleCollision(
+        a_center, a_radius, a_motion.direction * a_motion.speed, a_mass,
+        b_center, b_radius, b_motion.direction * b_motion.speed, b_mass);
+  
+
+  // a_motion.velocity += (new_velocity_vectors.second);
+  a_motion.velocity = (new_velocity_vectors.second);
+  // std::cout << "new_a_velocity: "<< a_motion.velocity.x << ", " << a_motion.velocity.y << ", " << a_motion.velocity.z << '\n';
+  a_motion.direction = glm::normalize(a_motion.velocity);
+  // if (isnan(a_motion.direction.x) || isnan(a_motion.direction.y) || isnan(a_motion.direction.y)) {
+    // a_motion.direction = a_motion.velocity;
+  // }
+  // std::cout << "former_b_velocity: "<< b_motion.velocity.x << ", " << b_motion.velocity.y << ", " << b_motion.velocity.z << '\n';
+  // b_motion.velocity += (new_velocity_vectors.first + new_velocity_vectors.second);
+  // b_motion.velocity += new_velocity_vectors.first;
+  b_motion.velocity = new_velocity_vectors.first;
+  // std::cout << "new_b_velocity: "<< b_motion.velocity.x << ", " << b_motion.velocity.y << ", " << b_motion.velocity.z << '\n';
+  b_motion.direction = glm::normalize(b_motion.velocity);
+  // if (isnan(b_motion.direction.x) || isnan(b_motion.direction.y) || isnan(b_motion.direction.y)) {
+    // b_motion.direction = b_motion.velocity;
+  // }
+
+  a_motion.previous_resting_position = a_center;
+  b_motion.previous_resting_position = b_center;
+  a_motion.duration = 0.0;
+  b_motion.duration = 0.0;
+}
 
 
 bool determineIfParticleIsCollidingWithFace(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
-    const std::vector<glm::dvec3>& face_vertices) {
+    const std::vector<glm::dvec3>& face_vertices) 
+{
 
   pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
                                                                                          face_vertices[1], 
@@ -86,36 +108,38 @@ bool determineIfParticleIsCollidingWithFace(
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
-    const std::vector<glm::dvec3>& face_vertices, double elasticity) {
+    const std::vector<glm::dvec3>& face_vertices, double elasticity) 
+{
   /* pick up here */ 
   glm::dvec3 new_velocity_vector = p_velocity_vect;
-  // pce3d::maths::PlaneCartesianForm face_plane = pce3d::maths::calculatePlaneGiven3Points(face_vertices[0], 
-                                                                                        //  face_vertices[1], 
-                                                                                        //  face_vertices[2]);
+
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
 
-  /* if not colliding, return velocity vector with no changes */
-  // if (distance > p_radius) {
-  //   return new_velocity_vector;
-  // }
-
-  /* make sure we have the correct normal vector direction */
-  // if (!pce3d::maths::checkIfPointInPlane(face_vertices[0], face_vertices[1], face_vertices[2], 
-  //                                        p_center + normal_vec * distance)) {
-  //   normal_vec = -normal_vec; 
-  // }
-  
   const glm::dvec3 reverse_velocity_vect = -p_velocity_vect;
   new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
-  // new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec);
-  // new_velocity_vector = new_velocity_vector * (elasticity * initial_speed);
-  // double final_speed = sqrt(glm::dot(new_velocity_vector, new_velocity_vector));
-  // std::cout <<"final speed: " <<final_speed << '\n';
   return new_velocity_vector;
 }
 
 
+void updateLiveParticleInfoAfterDeadFaceCollision(
+    const glm::dvec3& p_center, const double p_radius, 
+    const double mass, pce::Motion& motion,
+    const std::vector<glm::dvec3>& face_vertices, double elasticity) 
+{
+  const glm::dvec3 nvelocity = physics::calculateVelocityVectorAfterLiveParticleDeadFaceCollision( 
+      p_center, p_radius, motion.direction * motion.speed, mass, face_vertices, elasticity);
+  
+  motion.velocity = nvelocity;
+  motion.direction = glm::normalize(nvelocity);
+  motion.previous_resting_position = p_center;
+  motion.duration = 0.05;
+  motion.speed = sqrt(glm::dot(motion.velocity, motion.velocity));
+  
+  
+
+
+}
 
 
 

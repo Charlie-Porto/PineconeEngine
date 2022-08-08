@@ -94,7 +94,7 @@ void Core3D::UpdateCore3D() {
   render_order_system_->UpdateEntities();
   // render_system_->UpdateEntities(render_order_system_->order_of_render_);
   render_system_->UpdateEntities(render_order_system_->order_list_);
-  space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 

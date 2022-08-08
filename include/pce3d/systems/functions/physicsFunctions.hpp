@@ -36,6 +36,11 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollis
     const glm::dvec3& b_center, const double b_radius, const glm::dvec3& b_velocity_vect, const double b_mass);
 
 
+void updateBothEntityInfoAfterTwoParticleCollision(
+    const glm::dvec3& a_center, const double a_radius, pce::Motion& a_motion, const double a_mass,
+    const glm::dvec3& b_center, const double b_radius, pce::Motion& b_motion, const double b_mass);
+
+
 bool determineIfParticleIsCollidingWithFace(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
@@ -46,6 +51,13 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
     const std::vector<glm::dvec3>& face_vertices, double elasticity);
+
+
+void updateLiveParticleInfoAfterDeadFaceCollision(
+    const glm::dvec3& p_center, const double p_radius, 
+    const double mass, pce::Motion& motion,
+    const std::vector<glm::dvec3>& face_vertices, double elasticity);
+     
 
 }
 }
