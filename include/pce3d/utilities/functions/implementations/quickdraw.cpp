@@ -43,10 +43,8 @@ void drawCircle(const glm::dvec2& center_point, double radius, const std::vector
 
 
 void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color) {
-  // SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
   const glm::vec2 ncenter_point = pce::convert::convertCartesianCoordinatesToSDL(center_point * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   pce::render::renderFilledCircle(ncenter_point.x, ncenter_point.y, radius, color);
-  // SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
 void drawFilledCircleClean(const glm::dvec2& center_point, double radius, const std::vector<int>& color) {
@@ -121,21 +119,6 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
   /* draw diagonals */
   SDL_RenderDrawLine(Simulation::renderer, b.x, b.y, d.x, d.y);                                           
   SDL_RenderDrawLine(Simulation::renderer, a.x, a.y, c.x, c.y);                                           
-
-  const int b_x_increment = pce::math::sign(d.x - b.x);
-  const int b_y_increment = pce::math::sign(d.y - b.y);
-  const int a_x_increment = pce::math::sign(c.x - a.x);
-  const int a_y_increment = pce::math::sign(c.y - a.y);
-
-  /* draw thick diagonals */
-  SDL_RenderDrawLine(Simulation::renderer, b.x + b_x_increment, b.y + b_y_increment,
-                                           d.x + b_x_increment, d.y - b_y_increment);                                           
-  SDL_RenderDrawLine(Simulation::renderer, b.x - b_x_increment, b.y + b_y_increment,
-                                           d.x - b_x_increment, d.y - b_y_increment);                                           
-  SDL_RenderDrawLine(Simulation::renderer, a.x + a_x_increment, a.y + a_y_increment,
-                                           c.x + a_x_increment, c.y - a_y_increment);                                           
-  SDL_RenderDrawLine(Simulation::renderer, a.x - a_x_increment, a.y + a_y_increment,
-                                           c.x - a_x_increment, c.y - a_y_increment);                                           
 
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
