@@ -60,17 +60,17 @@ public:
         
         if (are_colliding) 
         {
-          // std::cout << "Physics System: collision with deadbod" << '\n';
+          std::cout << "Physics System: collision with deadbod" << '\n';
 
           bool execute_redirection = true;
           if (a_force.sequential_collisions_by_entity.find(entity_b) != a_force.sequential_collisions_by_entity.end()) 
           {
-            if (a_force.sequential_collisions_by_entity.at(entity_b) > 2) 
+            if (a_force.sequential_collisions_by_entity.at(entity_b) > 1) 
             {
-              // std::cout << "COLLISION NULLIFIED" << '\n';
+              std::cout << "COLLISION NULLIFIED" << '\n';
               execute_redirection = false;
               ++a_force.sequential_collisions_by_entity[entity_b];
-              if (a_force.sequential_collisions_by_entity.at(entity_b) > 15) {
+              if (a_force.sequential_collisions_by_entity.at(entity_b) > 5) {
                 std::cout << "entity" << entity_b << "switched to RestingBod" << '\n';
                 a_rigid_object.is_restingbod = true;
               }
@@ -84,7 +84,8 @@ public:
           {
             a_force.sequential_collisions_by_entity[entity_b] = 1;
           }
-          if (execute_redirection) {
+          if (execute_redirection) 
+          {
             const double net_elasticity = a_surface.collision_elasticity_index * b_surface.collision_elasticity_index;
 
             physics::updateLiveParticleInfoAfterDeadFaceCollision( 
@@ -106,20 +107,20 @@ public:
       //  && !a_rigid_object.is_restingbod && !b_rigid_object.is_restingbod) {
        && !a_rigid_object.is_restingbod) 
       {
-        std::cout << "entity_a: " << entity_a<< '\n';
-        std::cout << "speed: " << a_motion.speed << '\n';
-        std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
-        std::cout << "entity_b: " << entity_b << '\n';
-        std::cout << "speed: " << b_motion.speed << '\n';
-        std::cout << "direction: "<< b_motion.direction.x << ", " << b_motion.direction.y << ", " << b_motion.direction.z << '\n';
-        std::cout << "a_position: "
-                  << a_position.actual_center_of_mass.x << ", " 
-                  << a_position.actual_center_of_mass.y << ", " 
-                  << a_position.actual_center_of_mass.z << '\n';
-        std::cout << "b_position: "
-                  << b_position.actual_center_of_mass.x << ", " 
-                  << b_position.actual_center_of_mass.y << ", " 
-                  << b_position.actual_center_of_mass.z << '\n';
+        // std::cout << "entity_a: " << entity_a<< '\n';
+        // std::cout << "speed: " << a_motion.speed << '\n';
+        // std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
+        // std::cout << "entity_b: " << entity_b << '\n';
+        // std::cout << "speed: " << b_motion.speed << '\n';
+        // std::cout << "direction: "<< b_motion.direction.x << ", " << b_motion.direction.y << ", " << b_motion.direction.z << '\n';
+        // std::cout << "a_position: "
+        //           << a_position.actual_center_of_mass.x << ", " 
+        //           << a_position.actual_center_of_mass.y << ", " 
+        //           << a_position.actual_center_of_mass.z << '\n';
+        // std::cout << "b_position: "
+        //           << b_position.actual_center_of_mass.x << ", " 
+        //           << b_position.actual_center_of_mass.y << ", " 
+        //           << b_position.actual_center_of_mass.z << '\n';
         // std::cout << "Physics System: collision with livebod" << entity_a << ", " << entity_b <<'\n';
         const bool are_colliding = physics::determineIfParticlesAreColliding(
           a_position.actual_center_of_mass, a_rigid_object.radius, 
@@ -160,8 +161,6 @@ public:
     }
     time_change_ = std::max(pce::CoreManager::time_ - previous_time_, 0.01);
     time_change_ = std::min(time_change_, 5.0);
-    // if (time_change_ > 5.0) { time_change_ = 0.015; }
-    // std::cout << "time_change: " << time_change_ << '\n';
     previous_time_ = pce::CoreManager::time_;
     for (auto const& entity : entities) {
       auto const& force = control.GetComponent<pce::Force>(entity);
@@ -170,29 +169,34 @@ public:
       auto& position = control.GetComponent<pce::Position>(entity);
       
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {
-        std::cout << "time change: " << time_change_ << '\n';
         const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
           motion.previous_resting_position, motion.velocity, time_change_,
           force.of_gravity, motion.duration);
         
         const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
-        position.actual_center_of_mass = new_position;
 
         // std::cout <<  sqrt(glm::dot(position_change, position_change)) << '\n';
         // std::cout << "speed: " << motion.speed << '\n';
-        if (sqrt(glm::dot(position_change, position_change)) < 0.002) {
+        if (sqrt(glm::dot(position_change, position_change)) < 0.001) 
+        {
           ++motion.stationary_counter;
-        } else { motion.stationary_counter = 0; }
+        } 
+        else 
+        { 
+          motion.stationary_counter = 0; 
+          position.actual_center_of_mass = new_position;
+        }
         if (motion.stationary_counter > 10) {
           rigid_object.is_restingbod = true;
           continue;
-        } else {
-
+        } 
+        else 
+        {
           motion.direction = glm::normalize(position_change);
           motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
-          std::cout << "entity: " << entity << '\n';
-          std::cout << "speed: " << motion.speed << '\n';
-          std::cout << "direction: "<< motion.direction.x << ", " << motion.direction.y << ", " << motion.direction.z << '\n';
+          // std::cout << "entity: " << entity << '\n';
+          // std::cout << "speed: " << motion.speed << '\n';
+          // std::cout << "direction: "<< motion.direction.x << ", " << motion.direction.y << ", " << motion.direction.z << '\n';
          
           for (auto& [id, vertex] : rigid_object.vertices) {
             vertex = glm::dvec3(vertex + position_change);

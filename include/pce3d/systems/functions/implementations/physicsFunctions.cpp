@@ -131,6 +131,13 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
       p_center, p_radius, motion.direction * motion.speed, mass, face_vertices, elasticity);
   
   motion.velocity = nvelocity;
+  if (p_center.y <= -29 ) 
+  {
+    std::cout << "nvelocity: "
+              << nvelocity.x << ", " 
+              << nvelocity.y << ", " 
+              << nvelocity.z << '\n';
+  }
   motion.direction = glm::normalize(nvelocity);
   motion.previous_resting_position = p_center;
   motion.duration = 0.05;
