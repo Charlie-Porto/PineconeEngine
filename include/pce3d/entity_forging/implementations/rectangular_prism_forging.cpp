@@ -34,15 +34,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   pce3d::forge::rotateVertices(e_vertex_map, angle, axis, center);
   
   /* create the new entity */
-  Entity new_entity = control.CreateEntity();
-  control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
-  // control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
-  control.AddComponent(new_entity, pce::Radar{
-    .closest_vertex_id = 1,
-    .closest_vertex_distance = 100000.0,
-    .farthest_vertex_id = 1,
-    .farthest_vertex_distance = 0.0
-  });
+  Entity new_entity = pce3d::forge::forgeBaseEntity(center);
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = w * h * l,
@@ -60,9 +52,6 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
     .entity_face_collision_map = {}
   });
   control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
-  control.AddComponent(new_entity, pce::FaceShade{});
-  control.AddComponent(new_entity, pce::Render{ .is_registered = false });
-  control.AddComponent(new_entity, pce::OrderOfRenderRegistration{});
 
   for (auto const& [vertex, face_corners] : vertex_face_corner_map) {
     std::cout << "vertex: " << vertex << '\n';

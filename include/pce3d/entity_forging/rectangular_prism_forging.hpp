@@ -12,6 +12,7 @@ functions to forge rectangular prism entities
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp>
 #include "functions/forge_functions.hpp"
+#include "base_entity_forging.hpp"
 
 extern ControlPanel control;
 

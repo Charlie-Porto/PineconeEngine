@@ -13,6 +13,7 @@ functions for creating sphere entities
 #include <glm/ext/quaternion_double.hpp>
 #include "../components/rigid_object_component.cpp"
 #include "triangle_pyramid_forging.hpp"
+#include "base_entity_forging.hpp"
 
 extern ControlPanel control;
 

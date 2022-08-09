@@ -11,6 +11,7 @@ functions for forging two-dimensional sheets
 #include <glm/ext/quaternion_double.hpp>
 #include "../maths/functions/quaternion_functions.hpp"
 #include "functions/forge_functions.hpp"
+#include "base_entity_forging.hpp"
 
 extern ControlPanel control;
 
