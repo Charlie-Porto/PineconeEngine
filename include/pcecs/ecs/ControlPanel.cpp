@@ -26,12 +26,14 @@ public:
 	void DestroyEntity(Entity entity)
 	{
 		mEntityManager->DestroyEntity(entity);
-
 		mComponentManager->EntityDestroyed(entity);
-
 		mSystemManager->EntityDestroyed(entity);
 	}
 
+  bool CheckIfEntityStillExists(Entity entity)
+	{
+		return mEntityManager->activeEntityHistory.at(entity);
+	}
 
 	// Component methods
 	template<typename T>

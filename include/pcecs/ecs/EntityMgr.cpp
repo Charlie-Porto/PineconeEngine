@@ -5,6 +5,7 @@
 #include <queue>
 #include <cassert>
 #include <array>
+#include <unordered_map>
 
 
 // Entity alii and constants
@@ -42,6 +43,7 @@ public:
         Entity id = availableEntities.front();
         availableEntities.pop();
         ++activeEntityCount;
+        activeEntityHistory[id] = true;
 
         return id;
     }
@@ -53,6 +55,7 @@ public:
 
         signatures[entity].reset();
         availableEntities.push(entity);
+        activeEntityHistory[entity] = false;
         --activeEntityCount;
     }
     
@@ -66,7 +69,7 @@ public:
     {
         return signatures[entity];
     }
-
+    std::unordered_map<Entity, bool> activeEntityHistory{};
 private:
     std::queue<int> availableEntities;
     std::array<Signature, MAX_ENTITIES> signatures{};

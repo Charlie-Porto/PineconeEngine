@@ -66,9 +66,14 @@ public:
       std::cout << "entity: " << mpair.first <<'\n';
     }
     order_list_.clear();
-    for (auto const& entity_info : order_of_ordering) 
+    for (size_t i = 0; i != order_of_ordering.size(); ++i)
     {
-      const uint32_t entity = entity_info.first;
+      const uint32_t entity = order_of_ordering[i].first;
+      if (!control.CheckIfEntityStillExists(entity))
+      {
+        order_of_ordering.erase(order_of_ordering.begin() + i);
+        continue;
+      }
       auto const& radar = control.GetComponent<pce::Radar>(entity);
       auto const& render = control.GetComponent<pce::Render>(entity);
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
