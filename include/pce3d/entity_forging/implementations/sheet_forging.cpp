@@ -59,6 +59,7 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     .face_vertex_corner_map = face_vertex_corner_map,
     .vertex_face_corner_map = vertex_face_corner_map
   });
+  control.AddComponent(new_entity, pce::Render{ .is_registered = false });
   // control.AddComponent(new_entity, pce::Force{
     // .of_gravity = 0.0
   // });
@@ -97,6 +98,7 @@ Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
     .edges = edge_map,
     .face_vertex_map = face_map
   });
+  control.AddComponent(new_entity, pce::Render{ .is_registered = false });
   
   return new_entity;
 }

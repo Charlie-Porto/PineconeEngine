@@ -39,7 +39,7 @@ EdgeMap assignEdgesToVertices();
 
 VertexVertexMap assignVerticestoVertices();
 
-
+void registerRectPrismEntityWithOrderRenderSystem(double size);
 
 
 

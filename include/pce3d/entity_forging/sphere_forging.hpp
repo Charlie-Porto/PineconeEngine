@@ -23,6 +23,7 @@ namespace forge {
 Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const std::vector<int> color,
                          const glm::dvec3& velocity, const double gravitational_force);
   
+void registerSphereEntityWithOrderRenderSystem(double size);
 
 }
 }

@@ -47,6 +47,7 @@ void Core3D::RegisterCoreComponents() {
   control.RegisterComponent<pce::Force>();
   control.RegisterComponent<pce::Motion>();
   control.RegisterComponent<pce::Radar>();
+  control.RegisterComponent<pce::Render>();
 }
 
 
@@ -68,7 +69,7 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::ShadeSystem, pce::RigidObject, pce::Position, pce::FaceShade>();
 
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
-  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position, pce::RigidObject, pce::Radar>();
+  control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position, pce::RigidObject, pce::Radar, pce::Render>();
   
   space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
   control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();

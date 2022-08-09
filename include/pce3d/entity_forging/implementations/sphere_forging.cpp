@@ -36,6 +36,8 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
     .previous_resting_position = location,
     .stationary_counter = 0
   });
+  control.AddComponent(sphere_entity, pce::Render{ .is_registered = false });
+
   return sphere_entity;
 }
 

@@ -14,6 +14,7 @@
 #include "components/force_component.cpp"
 #include "components/motion_component.cpp"
 #include "components/radar_component.cpp"
+#include "components/render_component.cpp"
 
 /* systems */
 #include "systems/CameraTransformSystem.cpp"
@@ -50,16 +51,16 @@ public:
   static double LENSE_CURVE_;
   static double ORDINARY_ZOOM_INDEX_;
 
+
 private:
   Camera camera_;
-  
   /* systems */
   std::shared_ptr<pce3d::CameraTransformSystem> camera_transform_system_;
   std::shared_ptr<pce3d::CameraOperatorSystem> camera_operator_system_;
-  std::shared_ptr<pce3d::RadarSystem> radar_system_;
   std::shared_ptr<pce3d::RenderSystem> render_system_;
-  std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::OrderForRenderSystem> render_order_system_;
+  std::shared_ptr<pce3d::RadarSystem> radar_system_;
+  std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::SpaceMapSystem> space_map_system_;
   std::shared_ptr<pce3d::PhysicsSystem> physics_system_;
 
