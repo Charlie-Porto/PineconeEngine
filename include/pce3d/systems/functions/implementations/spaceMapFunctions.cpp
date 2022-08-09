@@ -32,13 +32,6 @@ std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, cons
 }
 
 
-// std::vector<glm::ivec3> findIndicesOfFaceMidpoints(const std::vector<uint32_t>& face,
-//                                                    const VertexMap& vertices, const glm::dvec3& mdim, 
-//                                                    const double mir) {
-  
-// }
-
-
 std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
                                         const VertexMap& vertices, const glm::dvec3& mdim,
                                         const double mir) {
@@ -163,6 +156,49 @@ std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
   return indices;
   
 }
+
+
+
+std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
+                                                const VertexMap& vertices, const glm::dvec3& mdim,
+                                                const double mir)
+{
+  std::vector<glm::ivec3> indices{};
+
+  const double crawl_distance = 1.0;
+  const glm::dvec3 crawl_start_vertex = vertices.at(face[0]);
+  const glm::dvec3 sweep_start_vertex = vertices.at(face[1]);
+  const glm::dvec3 sweep_end_vertex = vertices.at(face[2]);
+  const glm::dvec3 sweep_direction = glm::normalize(sweep_end_vertex - sweep_start_vertex);
+
+  glm::dvec3 current_sweep_point = sweep_start_vertex;
+  double current_sweep_crawl_distance = 0.0;
+  const double total_sweep_crawl_distance = pce3d::maths::calculateDistanceBetweenVectors(
+                                                sweep_start_vertex, sweep_end_vertex);
+  std::cout << "total_sweep_crawl_distance: " << total_sweep_crawl_distance << '\n';
+
+  while (current_sweep_crawl_distance <= total_sweep_crawl_distance)
+  {
+    glm::dvec3 crawl_direction = glm::normalize(current_sweep_point - crawl_start_vertex);
+    glm::dvec3 current_point = crawl_start_vertex;
+    double current_crawl_distance = 0.0;
+    const double total_crawl_distance = pce3d::maths::calculateDistanceBetweenVectors(
+                                            current_sweep_point, crawl_start_vertex);
+    
+    while (current_crawl_distance <= total_crawl_distance)
+    {
+      indices.push_back(findIndexOfPoint(current_point, mdim, mir));
+      current_point += crawl_direction * crawl_distance;
+      current_crawl_distance += crawl_distance;
+    }
+
+    current_sweep_point += sweep_direction * crawl_distance;
+    current_sweep_crawl_distance += crawl_distance;
+  }
+
+  return indices;
+}
+
 
 
 

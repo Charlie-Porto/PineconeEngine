@@ -16,6 +16,7 @@ mdim = map dimensions
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include "../../maths/functions/triangle_functions.hpp"
+#include "../../maths/functions/vector_functions.hpp"
 
 namespace pce3d {
 namespace space_map {
@@ -29,17 +30,11 @@ glm::dvec3 findPointOfIndex(const glm::ivec3& index, const glm::ivec3& mdim, con
 
 std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, const glm::dvec3& mdim, const double mir);
 
-std::vector<glm::ivec3> findIndicesOfFaceMidpoints(const std::vector<uint32_t>& face,
-                                                   const VertexMap& vertices, const glm::dvec3& mdim, 
-                                                   const double mir);
+std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices);
 
 std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
                                         const VertexMap& vertices, const glm::dvec3& mdim,
                                         const double mir);
-
-std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
-                                                const VertexMap& vertices, const glm::dvec3& mdim,
-                                                const double mir);
 
 std::vector<glm::ivec3> findTriangleFaceTopIndices(const std::vector<glm::dvec3>& vertices,
                                                       const glm::dvec3& mdim,
@@ -49,12 +44,14 @@ std::vector<glm::ivec3> findTriangleFaceBottomIndices(const std::vector<glm::dve
                                                       const glm::dvec3& mdim,
                                                       const double mir);
 
-std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices);
   
 std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
                                             const VertexMap& unordered_vertices, const glm::dvec3& mdim,
                                             const double mir);
 
+std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
+                                                const VertexMap& vertices, const glm::dvec3& mdim,
+                                                const double mir);
 
 }
 }

@@ -12,6 +12,7 @@ functions to forge triangle pyramids
 #include <unordered_map>
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp>
+#include "base_entity_forging.hpp"
 
 extern ControlPanel control;
 

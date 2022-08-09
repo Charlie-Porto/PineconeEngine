@@ -46,15 +46,12 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
   };
 
 
-  Entity new_entity = control.CreateEntity();
-  control.AddComponent(new_entity, pce::Position{.actual_center_of_mass = center});
-  control.AddComponent(new_entity, pce::LocalRotation{.versor = local_rotation});
+  Entity new_entity = pce3d::forge::forgeBaseEntity(center);
   control.AddComponent(new_entity, pce::Surface{.color = color});
-  control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = 10.0,
-    .is_deadbod = false,
+    .is_deadbod = true,
     .is_restingbod = true,
     .vertices = vertices,
     .vertex_vertex_map = vvmap,

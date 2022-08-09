@@ -45,10 +45,25 @@ public:
 
       for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
         std::cout << "getting face indices" << '\n';
-        const std::vector<glm::ivec3> face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
-                                                                                    rigid_object.vertices,
-                                                                                    map_dimensions_,
-                                                                                    meter_index_ratio_);
+        
+        std::vector<glm::ivec3> face_indices{};
+        switch (vertex_ids.size()) 
+        {
+          case 4: 
+            face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                          rigid_object.vertices,
+                                                          map_dimensions_,
+                                                          meter_index_ratio_);
+            break;
+          case 3:
+            face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                              rigid_object.vertices,
+                                                              map_dimensions_,
+                                                              meter_index_ratio_);
+            break;
+          default:
+            break;
+        }
         indices.insert(indices.end(), face_indices.begin(), face_indices.end());
         for (auto const& index : face_indices) {
           rigid_object.index_face_map[index] = face;
