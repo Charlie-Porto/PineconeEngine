@@ -60,6 +60,7 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     .vertex_face_corner_map = vertex_face_corner_map
   });
   control.AddComponent(new_entity, pce::Render{ .is_registered = false });
+  control.AddComponent(new_entity, pce::OrderOfRenderRegistration{});
   // control.AddComponent(new_entity, pce::Force{
     // .of_gravity = 0.0
   // });

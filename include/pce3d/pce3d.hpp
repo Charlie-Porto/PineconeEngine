@@ -15,6 +15,7 @@
 #include "components/motion_component.cpp"
 #include "components/radar_component.cpp"
 #include "components/render_component.cpp"
+#include "components/order_of_render_registration_component.cpp"
 
 /* systems */
 #include "systems/CameraTransformSystem.cpp"
@@ -25,6 +26,7 @@
 #include "systems/ShadeSystem.cpp"
 #include "systems/SpaceMapSystem.cpp"
 #include "systems/PhysicsSystem.cpp"
+#include "systems/prep_only_systems/RegisterForOrderOfRenderSystem.cpp"
 
 /* dev-only systems */
 #include "systems/DevRenderSystem.cpp"
@@ -59,12 +61,11 @@ private:
   std::shared_ptr<pce3d::CameraOperatorSystem> camera_operator_system_;
   std::shared_ptr<pce3d::RenderSystem> render_system_;
   std::shared_ptr<pce3d::OrderForRenderSystem> render_order_system_;
+  std::shared_ptr<pce3d::RegisterForOrderOfRenderSystem> register_for_render_order_system_;
   std::shared_ptr<pce3d::RadarSystem> radar_system_;
   std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::SpaceMapSystem> space_map_system_;
   std::shared_ptr<pce3d::PhysicsSystem> physics_system_;
-
-
 };
 
 

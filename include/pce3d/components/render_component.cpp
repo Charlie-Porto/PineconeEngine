@@ -7,6 +7,7 @@ namespace pce {
 struct Render 
 {
   bool is_registered;
+  bool just_registered;
 };
 
 }

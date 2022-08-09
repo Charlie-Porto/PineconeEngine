@@ -249,10 +249,23 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   uint32_t big_entity = b_entity_tag.entity;
   uint32_t small_entity = a_entity_tag.entity;
   orderTag small_tag = a_entity_tag;
+
+  bool swap = false;
   
   if (b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance == 0)
   {
-    std::cout << "swapping big and small entities " << '\n';
+    swap = true;
+    // std::cout << "swapping big and small entities reason 1 " << '\n';
+  } else if (b_entity_tag.farthest_vertex_distance - b_entity_tag.closest_vertex_distance
+           < a_entity_tag.farthest_vertex_distance - a_entity_tag.closest_vertex_distance)
+  {
+    swap = true;
+    // std::cout << "swapping big and small entities reason 2 " << '\n';
+    // std::cout << b_entity_tag.farthest_vertex_distance - b_entity_tag.closest_vertex_distance << '\n';
+    // std::cout << a_entity_tag.farthest_vertex_distance - a_entity_tag.closest_vertex_distance << '\n';
+  }
+  if (swap) 
+  {
     big_entity = a_entity_tag.entity;
     small_entity = b_entity_tag.entity;
     small_tag = b_entity_tag;
@@ -287,6 +300,15 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[1]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[2]),
     a_entity_tag.closest_vertex_location);
+  // std::cout << "other: " <<  big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]).x << ", "
+  //                             <<  big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]).y << ", "
+  //                             <<  big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]).z << "\n";
+  // std::cout << "face point: " << face_point.x << ", "
+  //                             << face_point.y << ", "
+  //                             << face_point.z << "\n";
+
+  // dev_render_system.AddPointToPointColorMap( big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]), {255, 0, 200, 255});
+  // dev_render_system.AddPointToPointColorMap(face_point, {0, 255, 0, 255});
   
   const double face_point_magnitude = sqrt(glm::dot(face_point, face_point));
 
@@ -322,41 +344,28 @@ void insertEntityIntoOrderMapBinary(const orderTag& entity_tag,
 
   while (left < right) 
   {
-    std::cout << "right" << right << '\n';
-    std::cout << "left" << left << '\n';
+    std::cout << "right: " << right << '\n';
+    std::cout << "left: " << left << '\n';
     size_t mid = (left + right) / 2; 
     if (right - left == previous_left_right_difference)
     {
-      index = 1;
-      std::cout << "breaking due to incoming endless loop" << '\n';
-      break;
+      // index = 1;
+      // std::cout << "breaking due to incoming endless loop" << '\n';
+      // break;
+      --right;
     }
     previous_left_right_difference = right - left;
 
-    if (order_list[mid].closest_vertex_distance == order_list[mid].farthest_vertex_distance
-     && entity_tag.closest_vertex_distance == entity_tag.farthest_vertex_distance)
-    {
-      if (order_list[mid].closest_vertex_distance < entity_tag.closest_vertex_distance)
-      {
-        --right;
-      }
-      else
-      {
-        ++left;
-      }
-       continue;
-    }
-    
     uint32_t closer_left_neighbor_or_entity = getCloserOfTwoEntitiesToOrigin(entity_tag, order_list[mid]);
-    uint32_t closer_right_neighbor_or_entity = entity_tag.entity+1; 
+    uint32_t closer_right_neighbor_or_entity = entity_tag.entity; 
 
-    if (order_list.size() > 2 && mid < order_list.size()-1) 
+    if (order_list.size() > 1 && mid < order_list.size()-1) 
     { 
       closer_right_neighbor_or_entity = getCloserOfTwoEntitiesToOrigin(entity_tag, order_list[mid+1]);
     }
 
-    std::cout << "closer left" <<  closer_left_neighbor_or_entity<< '\n';
-    std::cout << "closer right" <<  closer_right_neighbor_or_entity<< '\n';
+    std::cout << "closer left: " <<  closer_left_neighbor_or_entity<< '\n';
+    std::cout << "closer right: " <<  closer_right_neighbor_or_entity<< '\n';
 
     const bool this_entity_closer_than_left  
         = (closer_left_neighbor_or_entity == entity_tag.entity) ? true : false;
@@ -369,16 +378,23 @@ void insertEntityIntoOrderMapBinary(const orderTag& entity_tag,
       index = mid+1;
       break;
     }
+    if (this_entity_closer_than_left && this_entity_closer_than_right
+       && mid == order_list.size()-1)
+    {
+      std::cout << "spot found: " << '\n';
+      index = mid+1;
+      break;
+    }
     else if (!this_entity_closer_than_left)
     {
       right = mid;
-      std::cout << "new right: " << right << '\n';
+      // std::cout << "new right: " << right << '\n';
       index = mid;
     }
     else if (this_entity_closer_than_right)
     {
       left = mid; 
-      std::cout << "new left: " << left << '\n';
+      // std::cout << "new left: " << left << '\n';
       index = mid;
       index = mid;
     }

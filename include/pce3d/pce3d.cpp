@@ -48,6 +48,7 @@ void Core3D::RegisterCoreComponents() {
   control.RegisterComponent<pce::Motion>();
   control.RegisterComponent<pce::Radar>();
   control.RegisterComponent<pce::Render>();
+  control.RegisterComponent<pce::OrderOfRenderRegistration>();
 }
 
 
@@ -71,11 +72,15 @@ void Core3D::RegisterCoreSystems() {
   render_order_system_ = control.RegisterSystem<pce3d::OrderForRenderSystem>();
   control.AssignSystemComponents<pce3d::OrderForRenderSystem, pce::Position, pce::RigidObject, pce::Radar, pce::Render>();
   
+  register_for_render_order_system_ = control.RegisterSystem<pce3d::RegisterForOrderOfRenderSystem>();
+  control.AssignSystemComponents<pce3d::RegisterForOrderOfRenderSystem, pce::Radar, pce::Render, pce::RigidObject, pce::OrderOfRenderRegistration>();
+
   space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
   control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();
 
   physics_system_ = control.RegisterSystem<pce3d::PhysicsSystem>();
   control.AssignSystemComponents<pce3d::PhysicsSystem, pce::RigidObject, pce::Force, pce::Motion, pce::Position>();
+
 }
 
 
@@ -91,9 +96,11 @@ void Core3D::UpdateCore3D() {
   physics_system_->UpdateEntities(space_map_system_->potential_colliding_entities_);
 
   radar_system_->UpdateEntities();
-  shade_system_->UpdateEntities(camera_.rotation_versor);
-  render_order_system_->UpdateEntities();
-  // render_system_->UpdateEntities(render_order_system_->order_of_render_);
+  shade_system_->UpdateEntities(camera_.rotation_versor); 
+  register_for_render_order_system_->RegisterUnRegisteredEntities();
+  // render_order_system_->UpdateEntities();
+  render_order_system_->UpdateEntities(register_for_render_order_system_->order_of_ordering_);
+  // render_system_->UpdateEntities(render_order_system_->order_of_render_); 
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);

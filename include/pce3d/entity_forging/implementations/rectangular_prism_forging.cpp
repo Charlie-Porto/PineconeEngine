@@ -62,6 +62,7 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::FaceShade{});
   control.AddComponent(new_entity, pce::Render{ .is_registered = false });
+  control.AddComponent(new_entity, pce::OrderOfRenderRegistration{});
 
   for (auto const& [vertex, face_corners] : vertex_face_corner_map) {
     std::cout << "vertex: " << vertex << '\n';
