@@ -53,6 +53,15 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const std::vector<glm::dvec3>& face_vertices, double elasticity);
 
 
+glm::dvec3 calculateStartPositionAfterLiveParticleDeadFaceCollision(
+    const glm::dvec3 A
+  , const glm::dvec3 B
+  , const glm::dvec3 C
+  , const glm::dvec3 plane_side_direction
+  , const glm::dvec3 particle_position
+  , const double particle_radius);
+
+
 void updateLiveParticleInfoAfterDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const double mass, pce::Motion& motion,

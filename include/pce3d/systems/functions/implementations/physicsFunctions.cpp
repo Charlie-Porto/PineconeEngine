@@ -103,8 +103,6 @@ bool determineIfParticleIsCollidingWithFace(
 }
 
 
-
-
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
@@ -120,10 +118,10 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
 
-  // std::cout << "normal_vec: "
-  //           << normal_vec.x << ", " 
-  //           << normal_vec.y << ", " 
-  //           << normal_vec.z << '\n';
+  std::cout << "normal_vec: "
+            << normal_vec.x << ", " 
+            << normal_vec.y << ", " 
+            << normal_vec.z << '\n';
   const glm::dvec3 reverse_velocity_vect = -p_velocity_vect;
   new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
   // std::cout << "new velocity: "
@@ -131,6 +129,20 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
   //           << new_velocity_vector.y << ", " 
   //           << new_velocity_vector.z << '\n';
   return new_velocity_vector;
+}
+
+
+glm::dvec3 calculateStartPositionAfterLiveParticleDeadFaceCollision(
+    const glm::dvec3 A
+  , const glm::dvec3 B
+  , const glm::dvec3 C
+  , const glm::dvec3 plane_side_direction
+  , const glm::dvec3 particle_position
+  , const double particle_radius)
+{
+  const glm::dvec3 normal_vector = pce3d::maths::calculateNormalVectorInDirectionOfPoint(A, B, C, plane_side_direction);
+  const glm::dvec3 plane_point = pce3d::maths::calculateClosestPointInPlaneToPoint(A, B, C, particle_position);
+  return plane_point + particle_radius * normal_vector;
 }
 
 
@@ -148,8 +160,15 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
   //           << nvelocity.y << ", " 
   //           << nvelocity.z << '\n';
   motion.direction = glm::normalize(nvelocity);
-  motion.previous_resting_position = p_center;
-  motion.duration = 0.05;
+  motion.previous_resting_position 
+      = calculateStartPositionAfterLiveParticleDeadFaceCollision(face_vertices[0],
+                                                                 face_vertices[1],
+                                                                 face_vertices[2],
+                                                                 p_center + nvelocity,
+                                                                 p_center,
+                                                                 p_radius);
+
+  motion.duration = 0.0;
   motion.speed = sqrt(glm::dot(motion.velocity, motion.velocity));
   
   

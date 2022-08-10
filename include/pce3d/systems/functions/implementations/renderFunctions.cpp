@@ -144,14 +144,14 @@ std::vector<uint32_t> getPyramidFacesOrderedForRender(const uint32_t closest_ver
   }
   std::vector<uint32_t> ordered_faces = head_node->GetListAtHeadNode();
 
-  for (auto const& face : ordered_faces) 
-  {
-    std::cout << face << '\n';
-  }
+  // for (auto const& face : ordered_faces) 
+  // {
+  //   std::cout << face << '\n';
+  // }
 
-  std::cout << "deleting head node"  << '\n';
+  // std::cout << "deleting head node"  << '\n';
   delete head_node;
-  std::cout << "head node deleted"  << '\n';
+  // std::cout << "head node deleted"  << '\n';
 
   return ordered_faces;
 }                                                    

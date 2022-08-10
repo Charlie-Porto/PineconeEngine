@@ -28,7 +28,7 @@ public:
     std::cout << "setting up Physics System" << '\n';
   }
 
-  void checkPotentialCollisions(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities_) 
+  void checkPotentialCollisions(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities_)
   {
     for (auto const& [entity_a, entity_b] : potential_colliding_entities_) 
     { 
@@ -42,7 +42,6 @@ public:
       auto& a_position = control.GetComponent<pce::Position>(entity_a);
       auto& b_position = control.GetComponent<pce::Position>(entity_b);
       auto& a_motion = control.GetComponent<pce::Motion>(entity_a);
-      auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
       auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
       auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
       auto& a_force = control.GetComponent<pce::Force>(entity_a);
@@ -50,53 +49,60 @@ public:
       /* handle live-dead collision */
       if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
                                      && b_rigid_object.is_deadbod) {
-        // std::cout << "Physics System: checking for collision" << '\n';
+        std::cout << "Physics System: checking for collision" << '\n';
         const bool are_colliding = physics::determineIfParticleIsCollidingWithFace(
           a_position.actual_center_of_mass, a_rigid_object.radius, a_motion.direction * a_motion.speed, a_rigid_object.mass,
           {b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[0]),
            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])});
         
-        
+        std::cout << "are colliding obtained " << '\n';
         if (are_colliding) 
         {
           std::cout << "Physics System: collision with deadbod" << '\n';
 
           bool execute_redirection = true;
-          if (a_force.sequential_collisions_by_entity.find(entity_b) != a_force.sequential_collisions_by_entity.end()) 
+          if (a_force.sequential_collisions_by_entity.find(entity_b) != a_force.sequential_collisions_by_entity.end() 
+          && a_rigid_object.entity_time_collision_map.find(entity_b) != a_rigid_object.entity_time_collision_map.end())
           {
-            if (a_force.sequential_collisions_by_entity.at(entity_b) >= 1) 
+            if (a_force.sequential_collisions_by_entity.at(entity_b) >= 1 
+             && pce::CoreManager::time_ - a_rigid_object.entity_time_collision_map.at(entity_b) < 0.5) 
             {
-              std::cout << "COLLISION NULLIFIED" << '\n';
-              execute_redirection = false;
+              // std::cout << "COLLISION NULLIFIED" << '\n';
+              std::cout << a_force.sequential_collisions_by_entity.at(entity_b) << '\n';
+              // execute_redirection = false;
               ++a_force.sequential_collisions_by_entity[entity_b];
-              if (a_force.sequential_collisions_by_entity.at(entity_b) > 60) {
+              a_rigid_object.entity_time_collision_map[entity_b] = pce::CoreManager::time_;
+              if (a_force.sequential_collisions_by_entity.at(entity_b) > 20) {
                 std::cout << "entity" << entity_b << "switched to RestingBod" << '\n';
                 a_rigid_object.is_restingbod = true;
+                a_force.sequential_collisions_by_entity[entity_b] = 0;
               }
-              else if (a_force.sequential_collisions_by_entity.at(entity_b) > 3
-               && (int(a_force.sequential_collisions_by_entity.at(entity_b)) % 3 == 0)
-               && a_motion.stationary_counter < 3) {
-                execute_redirection = true;
-                std::cout << "COLLISION DE-NULLIFIED!!!!!" << '\n';
+              // else if (a_force.sequential_collisions_by_entity.at(entity_b) > 2
+              //  && (int(a_force.sequential_collisions_by_entity.at(entity_b)) % 3 == 0)) {
+              //  && a_motion.stationary_counter < 3) {
+                // execute_redirection = true;
+                // std::cout << "COLLISION DE-NULLIFIED!!!!!" << '\n';
                 // a_force.sequential_collisions_by_entity[entity_b] = 2;
-              }
+              // }
             } 
             else 
             {
               ++a_force.sequential_collisions_by_entity[entity_b];
+              a_rigid_object.entity_time_collision_map[entity_b] = pce::CoreManager::time_;
             }
           } 
           else 
           {
             a_force.sequential_collisions_by_entity[entity_b] = 1;
+            a_rigid_object.entity_time_collision_map[entity_b] = pce::CoreManager::time_;
           }
           if (execute_redirection) 
           {
             const double net_elasticity = a_surface.collision_elasticity_index * b_surface.collision_elasticity_index;
-            std::cout << "entity_a: " << entity_a<< '\n';
-            std::cout << "pre speed: " << a_motion.speed << '\n';
-            std::cout << "pre direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
+            // std::cout << "entity_a: " << entity_a<< '\n';
+            // std::cout << "pre speed: " << a_motion.speed << '\n';
+            // std::cout << "pre direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
 
             physics::updateLiveParticleInfoAfterDeadFaceCollision( 
               a_position.actual_center_of_mass, 
@@ -108,9 +114,8 @@ public:
               b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])},
               net_elasticity);
             
-            // std::cout << "entity_a: " << entity_a<< '\n';
-            std::cout << "speed: " << a_motion.speed << '\n';
-            std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
+            // std::cout << "speed: " << a_motion.speed << '\n';
+            // std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
 
           }
         } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
@@ -122,6 +127,7 @@ public:
       //  && !a_rigid_object.is_restingbod && !b_rigid_object.is_restingbod) {
        && !a_rigid_object.is_restingbod) 
       {
+        auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
         // std::cout << "entity_a: " << entity_a<< '\n';
         // std::cout << "speed: " << a_motion.speed << '\n';
         // std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
@@ -144,8 +150,8 @@ public:
         if (are_colliding) 
         {
           b_rigid_object.is_restingbod = false;
-          std::cout << "entity" << entity_b << "switched to Livebod" << '\n';
-          std::cout << "Physics System: collision with livebod" << '\n';
+          // std::cout << "entity" << entity_b << "switched to Livebod" << '\n';
+          // std::cout << "Physics System: collision with livebod" << '\n';
              
           physics::updateBothEntityInfoAfterTwoParticleCollision(
             a_position.actual_center_of_mass, 
@@ -157,7 +163,7 @@ public:
             b_motion, 
             b_rigid_object.mass);
 
-          std::cout << "Physics System: collision with livebod has been executed" << '\n';
+          // std::cout << "Physics System: collision with livebod has been executed" << '\n';
           entities_updated_.push_back(entity_a);
           if (!b_rigid_object.is_deadbod) {
             entities_updated_.push_back(entity_b);
@@ -170,15 +176,15 @@ public:
 
 
   void UpdateEntities(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities) {
-    std::cout << "---" << '\n';
+    // std::cout << "---" << '\n';
     entities_updated_.clear();
-    checkPotentialCollisions(potential_colliding_entities);
     if (isnan(pce::CoreManager::time_)) {
       pce::CoreManager::time_ = 0.01;
     }
     time_change_ = std::max(pce::CoreManager::time_ - previous_time_, 0.01);
     time_change_ = std::min(time_change_, 5.0);
     previous_time_ = pce::CoreManager::time_;
+    checkPotentialCollisions(potential_colliding_entities);
     for (auto const& entity : entities) {
       auto const& force = control.GetComponent<pce::Force>(entity);
       auto& motion = control.GetComponent<pce::Motion>(entity);
