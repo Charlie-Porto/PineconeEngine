@@ -1,8 +1,13 @@
 #ifndef SphereFactory_hpp
 #define SphereFactory_hpp
 
+
+#include <cmath>
+#include <algorithm>
 #include <glm/vec3.hpp>
 #include "../sphere_forging.hpp"
+#include <kelp_randomness.hpp>
+  
 
 
 namespace pce3d {

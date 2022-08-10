@@ -31,6 +31,7 @@ including not-yet-included implementation files
 #include "systems/functions/implementations/shadeFunctions.cpp"
 #include "systems/functions/implementations/spaceMapFunctions.cpp"
 #include "systems/functions/implementations/physicsFunctions.cpp"
+#include "systems/objects/implementations/OrderRenderListNode.cpp"
 
 /* entity forging */
 #include "entity_forging/implementations/sphere_forging.cpp"

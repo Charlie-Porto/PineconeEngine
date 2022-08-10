@@ -18,12 +18,12 @@ std::vector<uint32_t> getFacesOrderedForRender(const uint32_t closest_vertex_id,
   /* returns faces connected to the closest vertex, in order. */
   // std::cout << "beginning loop" << '\n';
   const size_t size = vertex_face_corner_map.at(closest_vertex_id).size();
-  if (size < 1) { std::cout << "SIZE OF VECTOR FACE CORNER MAP == 0" << '\n';}
+  // if (size < 1) { std::cout << "SIZE OF VECTOR FACE CORNER MAP == 0" << '\n';}
   for (auto const& [face_id, corner_id] : vertex_face_corner_map.at(closest_vertex_id))
   {
     // std::cout << "calculating corner distance" << '\n';
     const double corner_distance = pce3d::maths::calculateDistanceBetweenVectors(face_corner_map.at(corner_id), glm::dvec3(0, 0, 0));
-    std::cout << "corner_distance: " << corner_distance << '\n';
+    // std::cout << "corner_distance: " << corner_distance << '\n';
     dev_render_system.AddPointToPointColorMap(face_corner_map.at(corner_id), {255, 30, 30, 255});
     // std::cout << "corner distance: "<< corner_distance << '\n';
     if (corner_distance_order.empty()) 

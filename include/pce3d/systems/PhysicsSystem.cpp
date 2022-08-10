@@ -70,16 +70,16 @@ public:
               std::cout << "COLLISION NULLIFIED" << '\n';
               execute_redirection = false;
               ++a_force.sequential_collisions_by_entity[entity_b];
-              if (a_force.sequential_collisions_by_entity.at(entity_b) > 3
-               && a_motion.stationary_counter > 3) {
+              if (a_force.sequential_collisions_by_entity.at(entity_b) > 6) {
                 std::cout << "entity" << entity_b << "switched to RestingBod" << '\n';
                 a_rigid_object.is_restingbod = true;
               }
               else if (a_force.sequential_collisions_by_entity.at(entity_b) > 3
+               && a_force.sequential_collisions_by_entity.at(entity_b) < 5
                && a_motion.stationary_counter < 3) {
                 execute_redirection = true;
                 std::cout << "COLLISION DE-NULLIFIED!!!!!" << '\n';
-                a_force.sequential_collisions_by_entity[entity_b] = 2;
+                // a_force.sequential_collisions_by_entity[entity_b] = 2;
               }
             } 
             else 
@@ -189,7 +189,7 @@ public:
 
         // std::cout <<  sqrt(glm::dot(position_change, position_change)) << '\n';
         // std::cout << "speed: " << motion.speed << '\n';
-        if (sqrt(glm::dot(position_change, position_change)) < 0.1) 
+        if (sqrt(glm::dot(position_change, position_change)) < 0.01) 
         {
           ++motion.stationary_counter;
         } 
@@ -198,7 +198,8 @@ public:
           motion.stationary_counter = 0; 
           position.actual_center_of_mass = new_position;
         }
-        if (motion.stationary_counter > 10) {
+        if (motion.stationary_counter > 15) {
+          std::cout << "entity" << entity << "switched to RestingBod" << '\n';
           rigid_object.is_restingbod = true;
           continue;
         } 

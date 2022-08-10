@@ -299,7 +299,7 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[1]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[2]),
-    a_entity_tag.closest_vertex_location);
+  //   small_tag.closest_vertex_location);
   // std::cout << "other: " <<  big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]).x << ", "
   //                             <<  big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]).y << ", "
   //                             <<  big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]).z << "\n";
@@ -307,8 +307,8 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   //                             << face_point.y << ", "
   //                             << face_point.z << "\n";
 
-  // dev_render_system.AddPointToPointColorMap( big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]), {255, 0, 200, 255});
-  // dev_render_system.AddPointToPointColorMap(face_point, {0, 255, 0, 255});
+  dev_render_system.AddPointToPointColorMap( big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]), {255, 255, 255, 255});
+  dev_render_system.AddPointToPointColorMap(face_point, {255, 0, 0, 255});
   
   const double face_point_magnitude = sqrt(glm::dot(face_point, face_point));
 
