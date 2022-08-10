@@ -63,7 +63,7 @@ void Core3D::RegisterCoreSystems() {
 
   render_system_ = control.RegisterSystem<pce3d::RenderSystem>();
   render_system_->setOrdinaryZoomIndex(pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface, pce::RigidObject, pce::FaceShade>();
+  control.AssignSystemComponents<pce3d::RenderSystem, pce::Position, pce::Surface, pce::RigidObject, pce::FaceShade, pce::Radar>();
 
   shade_system_ = control.RegisterSystem<pce3d::ShadeSystem>();
   shade_system_->setOrdinaryZoomIndex(pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
@@ -102,10 +102,9 @@ void Core3D::UpdateCore3D() {
   render_order_system_->UpdateEntities(register_for_render_order_system_->order_of_ordering_);
   // render_system_->UpdateEntities(render_order_system_->order_of_render_); 
   render_system_->UpdateEntities(render_order_system_->order_list_);
-  space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
-  // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
+  // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
-
 
 }
 

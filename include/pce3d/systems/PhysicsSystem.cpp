@@ -70,9 +70,16 @@ public:
               std::cout << "COLLISION NULLIFIED" << '\n';
               execute_redirection = false;
               ++a_force.sequential_collisions_by_entity[entity_b];
-              if (a_force.sequential_collisions_by_entity.at(entity_b) > 5) {
+              if (a_force.sequential_collisions_by_entity.at(entity_b) > 3
+               && a_motion.stationary_counter > 3) {
                 std::cout << "entity" << entity_b << "switched to RestingBod" << '\n';
                 a_rigid_object.is_restingbod = true;
+              }
+              else if (a_force.sequential_collisions_by_entity.at(entity_b) > 3
+               && a_motion.stationary_counter < 3) {
+                execute_redirection = true;
+                std::cout << "COLLISION DE-NULLIFIED!!!!!" << '\n';
+                a_force.sequential_collisions_by_entity[entity_b] = 2;
               }
             } 
             else 
@@ -97,6 +104,11 @@ public:
               b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
               b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])},
               net_elasticity);
+            
+            std::cout << "entity_a: " << entity_a<< '\n';
+            std::cout << "speed: " << a_motion.speed << '\n';
+            std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
+
           }
         } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
       }
@@ -177,7 +189,7 @@ public:
 
         // std::cout <<  sqrt(glm::dot(position_change, position_change)) << '\n';
         // std::cout << "speed: " << motion.speed << '\n';
-        if (sqrt(glm::dot(position_change, position_change)) < 0.001) 
+        if (sqrt(glm::dot(position_change, position_change)) < 0.1) 
         {
           ++motion.stationary_counter;
         } 

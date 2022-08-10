@@ -34,6 +34,7 @@ public:
       // auto const entity = entity_pair.first;
       auto const entity = entity_pair.entity;
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
+      auto const& radar = control.GetComponent<pce::Radar>(entity);
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& surface = control.GetComponent<pce::Surface>(entity);
       auto const& shade = control.GetComponent<pce::FaceShade>(entity);
@@ -62,11 +63,18 @@ public:
 
       /* handle rendering of non-sphere entities */ 
       if (rigid_object.radius == 0) {
-        std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
-            rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
+        // std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
+            // rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
+
+        // std::cout << "calling faces order function" << '\n';
+        std::vector<uint32_t> faces_in_render_order = render::getFacesOrderedForRender(radar.closest_vertex_id,
+                                                                                       rigid_object.vertex_face_corner_map,
+                                                                                       rigid_object.camera_rotated_face_corner_map);
         
         for (size_t i = 0; i < faces_in_render_order.size(); ++i) {
-          uint32_t face = faces_in_render_order[i].first;
+          std::cout << "face: " << faces_in_render_order[i] << '\n';
+          // uint32_t face = faces_in_render_order[i].first;
+            uint32_t face = faces_in_render_order[i];
 
           /* get face color */
           std::vector<int> face_color = surface.color;

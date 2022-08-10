@@ -60,10 +60,10 @@ public:
 
   void UpdateEntities(std::vector<std::pair<uint32_t, double>> order_of_ordering) 
   {
-    std::cout << "---" << '\n';
+    // std::cout << "---" << '\n';
     for (auto const& mpair : order_of_ordering)
     {
-      std::cout << "entity: " << mpair.first <<'\n';
+      // std::cout << "entity: " << mpair.first <<'\n';
     }
     order_list_.clear();
     for (size_t i = 0; i != order_of_ordering.size(); ++i)
@@ -89,9 +89,9 @@ public:
 
       pce3d::render_order::insertEntityIntoOrderMapBinary(order_tag_, order_list_);
     }
-    for (auto const& order_tag : order_list_) {
-      std::cout << order_tag.entity << '\n';
-    }
+    // for (auto const& order_tag : order_list_) {
+    //   std::cout << order_tag.entity << '\n';
+    // }
   }
 
 

@@ -112,12 +112,24 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
 {
   /* pick up here */ 
   glm::dvec3 new_velocity_vector = p_velocity_vect;
+  // std::cout << "original velocity: "
+  //           << new_velocity_vector.x << ", " 
+  //           << new_velocity_vector.y << ", " 
+  //           << new_velocity_vector.z << '\n';
 
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
 
+  // std::cout << "normal_vec: "
+  //           << normal_vec.x << ", " 
+  //           << normal_vec.y << ", " 
+  //           << normal_vec.z << '\n';
   const glm::dvec3 reverse_velocity_vect = -p_velocity_vect;
   new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
+  // std::cout << "new velocity: "
+  //           << new_velocity_vector.x << ", " 
+  //           << new_velocity_vector.y << ", " 
+  //           << new_velocity_vector.z << '\n';
   return new_velocity_vector;
 }
 
@@ -131,13 +143,10 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
       p_center, p_radius, motion.direction * motion.speed, mass, face_vertices, elasticity);
   
   motion.velocity = nvelocity;
-  if (p_center.y <= -29 ) 
-  {
-    std::cout << "nvelocity: "
-              << nvelocity.x << ", " 
-              << nvelocity.y << ", " 
-              << nvelocity.z << '\n';
-  }
+  // std::cout << "nvelocity: "
+  //           << nvelocity.x << ", " 
+  //           << nvelocity.y << ", " 
+  //           << nvelocity.z << '\n';
   motion.direction = glm::normalize(nvelocity);
   motion.previous_resting_position = p_center;
   motion.duration = 0.05;

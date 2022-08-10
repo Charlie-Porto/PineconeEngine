@@ -43,9 +43,18 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
     {3, {1, 2, 4}},
     {4, {1, 2, 3}}
   };
+  FaceCornerMap face_corner_map{};
+  FaceVertexCornerMap face_vertex_corner_map{};
+  VertexFaceCornerMap vertex_face_corner_map{};
+
+  pce3d::forge::createFaceVertexCornerMaps(vertices, face_vertex_map, 
+                                           face_corner_map, 
+                                           face_vertex_corner_map, vertex_face_corner_map,
+                                           center);
+
 
   Entity new_entity = pce3d::forge::forgeBaseEntity(center);
-  control.AddComponent(new_entity, pce::Surface{.color = color});
+  control.AddComponent(new_entity, pce::Surface{.color = color, .collision_elasticity_index = 0.9});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = 10.0,
@@ -54,8 +63,15 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
     .vertices = vertices,
     .vertex_vertex_map = vvmap,
     .edges = edge_map,
-    .face_vertex_map = face_vertex_map
+    .face_vertex_map = face_vertex_map,
+    .face_corner_map = face_corner_map,
+    .face_vertex_corner_map = face_vertex_corner_map,
+    .vertex_face_corner_map = vertex_face_corner_map,
+    .index_face_map = {},
+    .face_index_map = {},
+    .entity_face_collision_map = {}
   });
+
 
   return new_entity;
 

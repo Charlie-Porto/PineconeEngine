@@ -10,6 +10,53 @@ namespace pce3d {
 namespace render {
 
 
+std::vector<uint32_t> getFacesOrderedForRender(const uint32_t closest_vertex_id,
+                                               const VertexFaceCornerMap& vertex_face_corner_map,
+                                               const FaceCornerMap& face_corner_map)
+{
+  std::vector<std::pair<uint32_t, double>> corner_distance_order{};
+  /* returns faces connected to the closest vertex, in order. */
+  // std::cout << "beginning loop" << '\n';
+  const size_t size = vertex_face_corner_map.at(closest_vertex_id).size();
+  if (size < 1) { std::cout << "SIZE OF VECTOR FACE CORNER MAP == 0" << '\n';}
+  for (auto const& [face_id, corner_id] : vertex_face_corner_map.at(closest_vertex_id))
+  {
+    // std::cout << "calculating corner distance" << '\n';
+    const double corner_distance = pce3d::maths::calculateDistanceBetweenVectors(face_corner_map.at(corner_id), glm::dvec3(0, 0, 0));
+    std::cout << "corner_distance: " << corner_distance << '\n';
+    dev_render_system.AddPointToPointColorMap(face_corner_map.at(corner_id), {255, 30, 30, 255});
+    // std::cout << "corner distance: "<< corner_distance << '\n';
+    if (corner_distance_order.empty()) 
+    { 
+      // std::cout << "pushing back; empty" << '\n';
+      corner_distance_order.push_back(std::make_pair(face_id, corner_distance)); 
+    }
+    else
+    {
+      // std::cout << "checking for insertion place" << '\n';
+      // std::cout << "current vector size: "<< corner_distance_order.size() << '\n';
+      for (size_t i = 0; i != corner_distance_order.size(); ++i)
+      {
+        // std::cout << "current vector size: "<< corner_distance_order.size() << '\n';
+        // std::cout << "current vector position distance: "<< corner_distance_order[i].second << '\n';
+        if (corner_distance > corner_distance_order[i].second)
+        {
+          // std::cout << "attempting to insert at: "<< i << '\n';
+          corner_distance_order.insert(corner_distance_order.begin() + i, std::make_pair(face_id, corner_distance));
+          break;
+        }
+        else if (i == corner_distance_order.size()-1) { corner_distance_order.push_back(std::make_pair(face_id, corner_distance)); break; }
+      }
+    }
+  }
+  std::vector<uint32_t> faces_in_order{};
+  for (auto const& [face_id, corner_distance] : corner_distance_order)
+  {
+    faces_in_order.push_back(face_id);
+  }
+  return faces_in_order; 
+}
+
 std::vector<std::pair<uint32_t, double>> orderFacesByCameraProximity(
     const FaceVertexMap& face_vertex_map,
     const VertexDistanceMap& vertex_distance_map) {

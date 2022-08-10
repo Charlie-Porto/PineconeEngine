@@ -32,7 +32,7 @@ void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& 
       const glm::dvec3 connected_vertex_a = vertices.at(vertex_list[index_neighbor_a]);
       const glm::dvec3 connected_vertex_b = vertices.at(vertex_list[index_neighbor_b]);
 
-      const glm::dvec3 face_corner_direction = glm::normalize((connected_vertex_a + connected_vertex_b) - mvertex);
+      const glm::dvec3 face_corner_direction = glm::normalize((connected_vertex_a-mvertex + connected_vertex_b-mvertex));
       const glm::dvec3 face_corner_point = vertices.at(vertex_list[i]) + face_corner_direction + center_point;
       auto const A = face_corner_point;
       
@@ -40,6 +40,7 @@ void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& 
       face_corner_map[current_id] = face_corner_point;
       face_vertex_corner_map[face][vertex_list[i]] = current_id;
       vertex_face_corner_map[vertex_list[i]][face] = current_id;
+      std::cout << "current id: " <<current_id << '\n';
       ++current_id;
     }
   }

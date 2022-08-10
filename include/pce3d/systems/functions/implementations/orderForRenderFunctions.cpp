@@ -344,8 +344,8 @@ void insertEntityIntoOrderMapBinary(const orderTag& entity_tag,
 
   while (left < right) 
   {
-    std::cout << "right: " << right << '\n';
-    std::cout << "left: " << left << '\n';
+    // std::cout << "right: " << right << '\n';
+    // std::cout << "left: " << left << '\n';
     size_t mid = (left + right) / 2; 
     if (right - left == previous_left_right_difference)
     {
@@ -364,8 +364,8 @@ void insertEntityIntoOrderMapBinary(const orderTag& entity_tag,
       closer_right_neighbor_or_entity = getCloserOfTwoEntitiesToOrigin(entity_tag, order_list[mid+1]);
     }
 
-    std::cout << "closer left: " <<  closer_left_neighbor_or_entity<< '\n';
-    std::cout << "closer right: " <<  closer_right_neighbor_or_entity<< '\n';
+    // std::cout << "closer left: " <<  closer_left_neighbor_or_entity<< '\n';
+    // std::cout << "closer right: " <<  closer_right_neighbor_or_entity<< '\n';
 
     const bool this_entity_closer_than_left  
         = (closer_left_neighbor_or_entity == entity_tag.entity) ? true : false;
@@ -374,14 +374,14 @@ void insertEntityIntoOrderMapBinary(const orderTag& entity_tag,
 
     if (this_entity_closer_than_left && !this_entity_closer_than_right)
     {
-      std::cout << "spot found: " << '\n';
+      // std::cout << "spot found: " << '\n';
       index = mid+1;
       break;
     }
     if (this_entity_closer_than_left && this_entity_closer_than_right
        && mid == order_list.size()-1)
     {
-      std::cout << "spot found: " << '\n';
+      // std::cout << "spot found: " << '\n';
       index = mid+1;
       break;
     }
@@ -399,7 +399,7 @@ void insertEntityIntoOrderMapBinary(const orderTag& entity_tag,
       index = mid;
     }
   }
-  std::cout << "inserting entity:  " << entity_tag.entity << "at index: "<< index <<'\n';
+  // std::cout << "inserting entity:  " << entity_tag.entity << "at index: "<< index <<'\n';
   if (order_list.size() < 2 && index != 0) { order_list.push_back(entity_tag); }
   else if (order_list.size() > 2 && index >= order_list.size()) 
   {
