@@ -45,6 +45,7 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     .is_restingbod = false,
     .vertices = vertices,
     .edges = edge_map,
+    .face_count = 1,
     .face_vertex_map = face_map,
     .face_corner_map = face_corner_map,
     .face_vertex_corner_map = face_vertex_corner_map,

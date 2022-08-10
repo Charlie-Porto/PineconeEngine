@@ -34,6 +34,8 @@ struct RigidObject {
   VertexVertexMap vertex_vertex_map;
   EdgeMap edges;
   FaceVertexMap face_vertex_map;
+  uint32_t base_face_id;
+  int face_count;
 
   VertexMap camera_transformed_vertices;
   VertexPixelMap vertex_pixels;

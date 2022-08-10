@@ -18,8 +18,9 @@ namespace pce3d {
 class DevRenderSystem {
 public:
 
-void AddPointToPointColorMap(const glm::dvec3& point, const std::vector<int>& color) {
+void AddPointToPointColorMap(const glm::dvec3& point, const std::vector<int>& color, double radius = 1.0) {
   point_color_map_[point] = color;
+  point_radius_map_[point] = radius;
 } 
 
 
@@ -31,14 +32,16 @@ void RenderPoints(const glm::dvec3& cam_transform, const glm::dquat& cam_versor)
     // rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
     // const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
     const glm::dvec3 vs_intersection = glm::normalize(point);
-    const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
-    pce::quickdraw::drawFilledCircleClean(pixel, 500.0 / distance, color);
+    const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, true);
+    pce::quickdraw::drawFilledCircleClean(pixel, point_radius_map_.at(point) * 50.0 / distance, color);
   }
   point_color_map_.clear();
+  point_radius_map_.clear();
 }
 
 private:
   std::unordered_map<glm::dvec3, std::vector<int>> point_color_map_;
+  std::unordered_map<glm::dvec3, double> point_radius_map_;
 
 };
 }

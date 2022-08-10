@@ -39,8 +39,8 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollis
   
   const glm::dvec3 a_hitpoint_direction = glm::normalize(b_center - a_center);
   const glm::dvec3 b_hitpoint_direction = glm::normalize(a_center - b_center);
-  // std::cout << "a_velocity_vect: "<< a_velocity_vect.x << ", " << a_velocity_vect.y << ", " << a_velocity_vect.z << '\n';
-  // std::cout << "b_velocity_vect: "<< b_velocity_vect.x << ", " << b_velocity_vect.y << ", " << b_velocity_vect.z << '\n';
+  std::cout << "a_velocity_vect: "<< a_velocity_vect.x << ", " << a_velocity_vect.y << ", " << a_velocity_vect.z << '\n';
+  std::cout << "b_velocity_vect: "<< b_velocity_vect.x << ", " << b_velocity_vect.y << ", " << b_velocity_vect.z << '\n';
 
   const double a_velocity_magnitude = sqrt(glm::dot(a_velocity_vect, a_velocity_vect));
   const double b_velocity_magnitude = sqrt(glm::dot(b_velocity_vect, b_velocity_vect));

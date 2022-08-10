@@ -51,8 +51,7 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
   pce3d::forge::createFaceVertexCornerMaps(vertices, face_vertex_map, 
                                            face_corner_map, 
                                            face_vertex_corner_map, vertex_face_corner_map,
-                                           center);
-
+                                           center, true);
 
 
   Entity new_entity = pce3d::forge::forgeBaseEntity(center);
@@ -63,6 +62,8 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
     .is_deadbod = true,
     .is_restingbod = true,
     .vertices = vertices,
+    .base_face_id = 1,
+    .face_count = 5,
     .vertex_vertex_map = vvmap,
     .edges = edge_map,
     .face_corner_map = face_corner_map,

@@ -77,6 +77,26 @@ std::vector<uint32_t> calculateClosestPolyhedronFaceToPoint(
           closest_vertex};
 }
 
+
+uint32_t calculateClosestVertexOfFaceToOrigin(const std::vector<uint32_t>& face_vertex_ids, 
+                                              const VertexDistanceMap& vertex_distance_map)
+{
+  uint32_t closest_vertex_id = face_vertex_ids[0];
+  double closest_vertex_distance = vertex_distance_map.at(closest_vertex_id);
+
+  for (auto const& vertex_id : face_vertex_ids)
+  {
+    if (vertex_distance_map.at(vertex_id) < closest_vertex_distance)
+    {
+      closest_vertex_id = vertex_id;
+      closest_vertex_distance = vertex_distance_map.at(vertex_id);
+    }
+  }
+
+  return closest_vertex_id;
+}
+
+
 }
 }
 

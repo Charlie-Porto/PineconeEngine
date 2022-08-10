@@ -37,7 +37,8 @@ void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& 
                                 FaceCornerMap& face_corner_map,
                                 FaceVertexCornerMap& face_vertex_corner_map,
                                 VertexFaceCornerMap& vertex_face_corner_map,
-                                const glm::dvec3& center_point);
+                                const glm::dvec3& center_point,
+                                bool vertices_normalized_to_object_center = false);
 
 
 

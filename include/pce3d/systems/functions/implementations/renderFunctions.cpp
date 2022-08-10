@@ -24,7 +24,7 @@ std::vector<uint32_t> getFacesOrderedForRender(const uint32_t closest_vertex_id,
     // std::cout << "calculating corner distance" << '\n';
     const double corner_distance = pce3d::maths::calculateDistanceBetweenVectors(face_corner_map.at(corner_id), glm::dvec3(0, 0, 0));
     // std::cout << "corner_distance: " << corner_distance << '\n';
-    dev_render_system.AddPointToPointColorMap(face_corner_map.at(corner_id), {255, 30, 30, 255});
+    // dev_render_system.AddPointToPointColorMap(face_corner_map.at(corner_id), {255, 30, 100, 255});
     // std::cout << "corner distance: "<< corner_distance << '\n';
     if (corner_distance_order.empty()) 
     { 
@@ -110,6 +110,56 @@ std::vector<std::pair<uint32_t, double>> orderFacesByCameraProximity(
   }
   return faces_furthest_to_closest;
 }
+
+
+
+std::vector<uint32_t> getPyramidFacesOrderedForRender(const uint32_t closest_vertex_id, 
+                                                      const uint32_t base_face_id,
+                                                      const VertexMap vertices,
+                                                      const FaceVertexMap& face_vertex_map,
+                                                      const VertexDistanceMap& vertex_distance_map,
+                                                      const VertexFaceCornerMap& vertex_face_corner_map,
+                                                      const FaceCornerMap& face_corner_map)
+{
+  FaceOrderRenderHeadNode* head_node = new FaceOrderRenderHeadNode(
+                                              {vertices.at(face_vertex_map.at(base_face_id)[0]),
+                                               vertices.at(face_vertex_map.at(base_face_id)[1]),
+                                               vertices.at(face_vertex_map.at(base_face_id)[2])},
+                                               base_face_id);
+
+  for (auto const& [face, vertices] : face_vertex_map)
+  {
+    if (face == base_face_id) { continue; }
+    
+    const uint32_t face_closest_vertex_id = pce3d::maths::calculateClosestVertexOfFaceToOrigin(
+                                              face_vertex_map.at(face), vertex_distance_map);
+    // std::cout << "face: " << face << '\n';
+    // std::cout << " getting face corner " << '\n';
+    const glm::dvec3 face_corner = face_corner_map.at(vertex_face_corner_map.at(face_closest_vertex_id).at(face));
+    // std::cout << " face corner created " << '\n';
+    // const glm::dvec3 face_corner = face_corner_map.at(face_closest_corner_id);
+    FaceOrderRenderNode* node = new FaceOrderRenderNode(face_corner, face);
+
+    head_node->InsertWithPlaneComparison(node); 
+  }
+  std::vector<uint32_t> ordered_faces = head_node->GetListAtHeadNode();
+
+  for (auto const& face : ordered_faces) 
+  {
+    std::cout << face << '\n';
+  }
+
+  std::cout << "deleting head node"  << '\n';
+  delete head_node;
+  std::cout << "head node deleted"  << '\n';
+
+  return ordered_faces;
+}                                                    
+
+
+
+
+
 
 }
 }

@@ -17,6 +17,7 @@ system that handles the rendering of on-screen entities
 #include "objects/orderTag.hpp"
 
 extern ControlPanel control;
+extern pce3d::DevRenderSystem dev_render_system;
 
 namespace pce3d {
 class RenderSystem : public ISystem {
@@ -33,6 +34,7 @@ public:
     /* render objects in order of furthest from camera to closest */
     // for (auto const& entity_pair : order_of_render) {
     for (auto const& entity : order_of_render) {
+      std::cout << "entity: " << entity << '\n';
       // auto const entity = entity_pair.first;
       // auto const entity = entity_pair.entity;
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
@@ -40,6 +42,7 @@ public:
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& surface = control.GetComponent<pce::Surface>(entity);
       auto const& shade = control.GetComponent<pce::FaceShade>(entity);
+      std::cout << "face count: " << rigid_object.face_count << '\n';
 
       /* check if item is on screen */
       if (position.center_of_mass_radar_pixel == glm::dvec2(0, 0)) {
@@ -68,13 +71,31 @@ public:
         // std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
             // rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
 
+        // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id), {0, 155, 55, 255}, 4.0);
         // std::cout << "calling faces order function" << '\n';
-        std::vector<uint32_t> faces_in_render_order = render::getFacesOrderedForRender(radar.closest_vertex_id,
-                                                                                       rigid_object.vertex_face_corner_map,
-                                                                                       rigid_object.camera_rotated_face_corner_map);
+        std::vector<uint32_t> faces_in_render_order{};
+        if (rigid_object.face_count == 6)
+        {
+          std::cout << "getting rect faces ordered for render " << '\n';
+          faces_in_render_order = render::getFacesOrderedForRender(radar.closest_vertex_id,
+                                                                  rigid_object.vertex_face_corner_map,
+                                                                  rigid_object.camera_rotated_face_corner_map);
+        }
+        else if (rigid_object.face_count == 4 || rigid_object.face_count == 5)
+        {
+          std::cout << "getting pyramid faces ordered for render " << '\n';
+          faces_in_render_order = render::getPyramidFacesOrderedForRender(
+                                      radar.closest_vertex_id,
+                                      rigid_object.base_face_id,
+                                      rigid_object.camera_transformed_vertices,
+                                      rigid_object.face_vertex_map,
+                                      rigid_object.vertex_distance_map,
+                                      rigid_object.vertex_face_corner_map,
+                                      rigid_object.camera_rotated_face_corner_map);
+        }
         
         for (size_t i = 0; i < faces_in_render_order.size(); ++i) {
-          std::cout << "face: " << faces_in_render_order[i] << '\n';
+          // std::cout << "face: " << faces_in_render_order[i] << '\n';
           // uint32_t face = faces_in_render_order[i].first;
             uint32_t face = faces_in_render_order[i];
 
