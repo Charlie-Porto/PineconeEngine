@@ -7,7 +7,7 @@
 namespace pce3d {
 namespace render_order {
 
-  OrderRenderListNode::OrderRenderListNode(const orderTag& tag) : close_child_{NULL}, far_child_{NULL}, order_tag_{tag} {}
+  OrderRenderListNode::OrderRenderListNode(const orderTag& tag) : order_tag_{tag}, close_child_{NULL}, far_child_{NULL} {}
 
   void OrderRenderListNode::InsertNodeInTree(OrderRenderListNode* node)
   {

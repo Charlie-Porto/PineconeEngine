@@ -2,7 +2,7 @@
 #define face_shade_component_cpp
 
 #include <unordered_map>
-#include <glm_hash.hpp>
+#include "../utilities/functions/glm_hash.hpp"
 
 namespace pce {
 

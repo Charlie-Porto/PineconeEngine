@@ -17,8 +17,6 @@ std::vector<uint32_t> getFacesOrderedForRender(const uint32_t closest_vertex_id,
   std::vector<std::pair<uint32_t, double>> corner_distance_order{};
   /* returns faces connected to the closest vertex, in order. */
   // std::cout << "beginning loop" << '\n';
-  const size_t size = vertex_face_corner_map.at(closest_vertex_id).size();
-  // if (size < 1) { std::cout << "SIZE OF VECTOR FACE CORNER MAP == 0" << '\n';}
   for (auto const& [face_id, corner_id] : vertex_face_corner_map.at(closest_vertex_id))
   {
     // std::cout << "calculating corner distance" << '\n';

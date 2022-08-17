@@ -7,7 +7,7 @@ namespace pce3d {
 namespace render {
 
 FaceOrderRenderNode::FaceOrderRenderNode(const glm::dvec3& closest_corner, const uint32_t id) 
-  : closest_corner_(closest_corner), face_id_(id), close_child_(NULL), far_child_(NULL)
+  : face_id_(id), closest_corner_(closest_corner), close_child_(NULL), far_child_(NULL)
 {
   closest_corner_distance_ = pce3d::maths::calculateDistanceBetweenVectors(closest_corner, glm::dvec3(0, 0, 0));
 }

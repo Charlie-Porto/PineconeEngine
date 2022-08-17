@@ -62,14 +62,17 @@ public:
           std::cout << "Physics System: collision with deadbod" << '\n';
 
           bool execute_redirection = true;
+          bool nerf_new_speed = false;
           if (a_force.sequential_collisions_by_entity.find(entity_b) != a_force.sequential_collisions_by_entity.end() 
           && a_rigid_object.entity_time_collision_map.find(entity_b) != a_rigid_object.entity_time_collision_map.end())
           {
             if (a_force.sequential_collisions_by_entity.at(entity_b) >= 1 
-             && pce::CoreManager::time_ - a_rigid_object.entity_time_collision_map.at(entity_b) < 0.5) 
+             && pce::CoreManager::time_ - a_rigid_object.entity_time_collision_map.at(entity_b) < 0.7) 
             {
-              // std::cout << "COLLISION NULLIFIED" << '\n';
+              std::cout << "sequential collisions incremented" << '\n';
               std::cout << a_force.sequential_collisions_by_entity.at(entity_b) << '\n';
+              a_motion.velocity = a_motion.velocity * 0.5;
+              nerf_new_speed = true;
               // execute_redirection = false;
               ++a_force.sequential_collisions_by_entity[entity_b];
               a_rigid_object.entity_time_collision_map[entity_b] = pce::CoreManager::time_;
@@ -113,7 +116,17 @@ public:
               b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
               b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])},
               net_elasticity);
-            
+
+            if (nerf_new_speed) 
+            { 
+              glm::vec3 nerfed_velocity =  a_motion.velocity * ((1.0 / a_force.sequential_collisions_by_entity.at(entity_b)) * 2.0);
+              const double nerfed_velocity_length = sqrt(glm::dot(nerfed_velocity, nerfed_velocity));
+              const double a_motion_velocity_length = sqrt(glm::dot(a_motion.velocity, a_motion.velocity));
+              if (nerfed_velocity_length < a_motion_velocity_length)
+              {
+                a_motion.velocity = nerfed_velocity;
+              }
+            }
             // std::cout << "speed: " << a_motion.speed << '\n';
             // std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
 
@@ -184,8 +197,14 @@ public:
     time_change_ = std::max(pce::CoreManager::time_ - previous_time_, 0.01);
     time_change_ = std::min(time_change_, 5.0);
     previous_time_ = pce::CoreManager::time_;
-    checkPotentialCollisions(potential_colliding_entities);
-    for (auto const& entity : entities) {
+
+    if (!potential_colliding_entities.empty())
+    {
+      checkPotentialCollisions(potential_colliding_entities);
+    }
+
+    for (auto const& entity : entities) 
+    {
       auto const& force = control.GetComponent<pce::Force>(entity);
       auto& motion = control.GetComponent<pce::Motion>(entity);
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);

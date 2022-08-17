@@ -9,7 +9,7 @@ system to render specific points to assist the dev process
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_double.hpp>
 #include "../maths/functions/quaternion_functions.hpp"
-#include <glm_hash.hpp>
+#include "../utilities/functions/glm_hash.hpp"
 #include "functions/spaceMapFunctions.hpp"
 #include "functions/radarFunctions.hpp"
 #include "../utilities/functions/quickdraw.hpp"

@@ -6,7 +6,7 @@
 #include <vector>
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
-#include <glm_hash.hpp>
+#include "../utilities/functions/glm_hash.hpp"
 
 namespace pce {
 

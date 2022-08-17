@@ -8,7 +8,7 @@ namespace pce3d {
 namespace render {
 
 FaceOrderRenderHeadNode::FaceOrderRenderHeadNode(const std::vector<glm::dvec3>& plane_points, const uint32_t id)
-  : plane_points_(plane_points), face_id_(id), close_child_(NULL), far_child_(NULL)
+  : face_id_(id), plane_points_(plane_points), close_child_(NULL), far_child_(NULL)
 {}
 
 

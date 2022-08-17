@@ -11,7 +11,7 @@ system for mapping physical 3space onto a smaller set of data
 #include <unordered_map>
 #include <vector>
 #include <glm/vec3.hpp>
-#include <glm_hash.hpp>
+#include "../utilities/functions/glm_hash.hpp"
 #include <pcecs/ecs/System.cpp>
 #include "functions/spaceMapFunctions.hpp"
 #include "functions/radarFunctions.hpp"
@@ -35,80 +35,87 @@ public:
 /* ---------------------------------------- setup --------------------------------- */
   void DoPreLoopSetup() {
     std::cout << "Doing Pre-Loop Setup" << '\n';
-    for (auto const& entity : entities) {
-      auto & rigid_object = control.GetComponent<pce::RigidObject>(entity); 
-      if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
+    // if (entities.empty()) 
+    // {
+    //   std::cout << "no entities" << '\n';
+    // }
+    // else
+    // {
+      for (auto const& entity : entities) {
+        auto & rigid_object = control.GetComponent<pce::RigidObject>(entity); 
+        if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
 
-      // const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
-      const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
-      std::vector<glm::ivec3> indices{};
-      // indices.insert(indices.end(), vertex_indices.begin(), vertex_indices.end());
+        // const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+        const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+        std::vector<glm::ivec3> indices{};
+        // indices.insert(indices.end(), vertex_indices.begin(), vertex_indices.end());
 
-      for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
-        std::cout << "getting face indices" << '\n';
-        
-        std::vector<glm::ivec3> face_indices{};
-        switch (vertex_ids.size()) 
-        {
-          case 4: 
-            face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
-                                                          rigid_object.vertices,
-                                                          map_dimensions_,
-                                                          meter_index_ratio_);
-            break;
-          case 3:
-            face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
-                                                              rigid_object.vertices,
-                                                              map_dimensions_,
-                                                              meter_index_ratio_);
-            break;
-          default:
-            break;
-        }
-        indices.insert(indices.end(), face_indices.begin(), face_indices.end());
-        for (auto const& index : face_indices) {
-          if (index == glm::ivec3(5045, 4971, 5000))
-          // if (index == glm::ivec3(5056, 4969, 5048))
+        for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
+          std::cout << "getting face indices" << '\n';
+          
+          std::vector<glm::ivec3> face_indices{};
+          switch (vertex_ids.size()) 
           {
-            std::cout << "added now to face map!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << '\n';
-            std::cout << "to entity: " << entity << '\n';
+            case 4: 
+              face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                            rigid_object.vertices,
+                                                            map_dimensions_,
+                                                            meter_index_ratio_);
+              break;
+            case 3:
+              face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                                rigid_object.vertices,
+                                                                map_dimensions_,
+                                                                meter_index_ratio_);
+              break;
+            default:
+              break;
           }
-          rigid_object.index_face_map[index] = face;
-          rigid_object.face_index_map[face] = index;
+          indices.insert(indices.end(), face_indices.begin(), face_indices.end());
+          for (auto const& index : face_indices) {
+            if (index == glm::ivec3(5045, 4971, 5000))
+            // if (index == glm::ivec3(5056, 4969, 5048))
+            {
+              std::cout << "added now to face map!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << '\n';
+              std::cout << "to entity: " << entity << '\n';
+            }
+            rigid_object.index_face_map[index] = face;
+            rigid_object.face_index_map[face] = index;
+          }
         }
-      }
 
-      if (rigid_object.is_deadbod) {
-        /* put deadbod location -> entity mapping into map */
-        for (auto const& index : indices) {
-          if (index == glm::ivec3(5045, 4971, 5000))
-          // if (index == glm::ivec3(5056, 4969, 5048))
-          {
-            std::cout << "added now!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << '\n';
-            std::cout << "to entity: " << entity << '\n';
+        if (rigid_object.is_deadbod) {
+          /* put deadbod location -> entity mapping into map */
+          for (auto const& index : indices) {
+            if (index == glm::ivec3(5045, 4971, 5000))
+            // if (index == glm::ivec3(5056, 4969, 5048))
+            {
+              std::cout << "added now!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << '\n';
+              std::cout << "to entity: " << entity << '\n';
+            }
+            if (deadbod_map_.find(index) == deadbod_map_.end()) {
+              deadbod_map_[index] = {entity};
+            } else {
+              if (!std::count(deadbod_map_.at(index).begin(), deadbod_map_.at(index).end(), entity)) {
+                deadbod_map_.at(index).push_back(entity); 
+              }
+            }
           }
-          if (deadbod_map_.find(index) == deadbod_map_.end()) {
-            deadbod_map_[index] = {entity};
-          } else {
-            if (!std::count(deadbod_map_.at(index).begin(), deadbod_map_.at(index).end(), entity)) {
-              deadbod_map_.at(index).push_back(entity); 
+        }
+        else if (rigid_object.is_restingbod) {
+          /* put restingbod location -> entity mapping into map */
+          for (auto const& index : indices) {
+            if (restingbod_map_.find(index) == restingbod_map_.end()) {
+              restingbod_map_[index] = {entity};
+            } else {
+              if (!std::count(restingbod_map_.at(index).begin(), restingbod_map_.at(index).end(), entity)) {
+                restingbod_map_.at(index).push_back(entity); 
+              }
             }
           }
         }
       }
-      else if (rigid_object.is_restingbod) {
-        /* put restingbod location -> entity mapping into map */
-        for (auto const& index : indices) {
-          if (restingbod_map_.find(index) == restingbod_map_.end()) {
-            restingbod_map_[index] = {entity};
-          } else {
-            if (!std::count(restingbod_map_.at(index).begin(), restingbod_map_.at(index).end(), entity)) {
-              restingbod_map_.at(index).push_back(entity); 
-            }
-          }
-        }
-      }
-    }
+    // }
   }
  
 
@@ -119,8 +126,6 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
     // auto point = glm::dvec3(5045, 4971, 5000);
     // std::cout << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
     const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
-    glm::dvec3 p = converted_point;
-    // std::cout << "p: " << p.x << ", " << p.y << ", " << p.z << '\n';
     glm::dvec3 rotated_point = converted_point - cam_transform;
     double distance = sqrt(glm::dot(rotated_point, rotated_point));
     rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
@@ -143,7 +148,7 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
       if (rigid_object.is_deadbod) { continue; }
       const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
       // std::cout << "first index: " << indices[0].x << ", " << indices[0].y << ", " << indices[0].z << '\n';
-      std::cout << "restingbods" << '\n'; 
+      // std::cout << "restingbods" << '\n'; 
       if (rigid_object.is_restingbod)
       {
         for (auto const& index : indices) {
@@ -159,7 +164,7 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
         continue;
       }
 
-      std::cout << "livebods" << '\n'; 
+      // std::cout << "livebods" << '\n'; 
       /* put vertices into livebody space map */
       for (auto const& index : indices) 
       {
@@ -171,7 +176,7 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
           if (!std::count(livebod_map_.at(index).begin(), livebod_map_.at(index).end(), entity)) {
              livebod_map_.at(index).push_back(entity); 
              potential_colliding_entities_[entity] = livebod_map_.at(index)[0];
-             std::cout << "SpaceMapSystem: collision with livebod" << '\n';
+            //  std::cout << "SpaceMapSystem: collision with livebod" << '\n';
              continue;
           }
         }
@@ -183,35 +188,33 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
             continue;
           }
           if (deadbod_map_.find(index) != deadbod_map_.end()) {
-            for (auto const& a : deadbod_map_.at(index))
-            {
-              std::cout << "entity at index: " << a << '\n';
-            }
-            std::cout << index.x << ", " << index.y << ", " << index.z << '\n';
+            // for (auto const& a : deadbod_map_.at(index))
+            // {
+            //   std::cout << "entity at index: " << a << '\n';
+            // }
+            // std::cout << index.x << ", " << index.y << ", " << index.z << '\n';
             uint32_t deadbod_entity = deadbod_map_.at(index)[0];
             potential_colliding_entities_[entity] = deadbod_entity; 
             auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
-            for (auto const& [mindex, face] : deadbod_rigid_object.index_face_map)
-            {
-               std::cout << mindex.x << ", " << mindex.y << ", " << mindex.z << '\n';
-            }
+            // for (auto const& [mindex, face] : deadbod_rigid_object.index_face_map)
+            // {
+            //    std::cout << mindex.x << ", " << mindex.y << ", " << mindex.z << '\n';
+            // }
             // if (deadbod_rigid_object.index_face_map.find(index) == deadbod_rigid_object.index_face_map.end())
             // {
               //  deadbod_rigid_object.index_face_map[index] == deadbod_rigid_object.base_face_id;
             // }
             deadbod_rigid_object.entity_face_collision_map[entity] 
                 = deadbod_rigid_object.index_face_map.at(index);
-            std::cout << "inserted into deadbod's ---------------------------------------" << '\n'; 
-            std::cout << " entity: " << entity << '\n'; 
-            std::cout << " deadbod_entity: " << deadbod_entity << '\n'; 
+            // std::cout << "inserted into deadbod's ---------------------------------------" << '\n'; 
+            // std::cout << " entity: " << entity << '\n'; 
+            // std::cout << " deadbod_entity: " << deadbod_entity << '\n'; 
             // std::cout << "SpaceMapSystem: collision with deadbod" << '\n';
           }
         }
       }
-      
-      std::cout << "space map system: success" << '\n'; 
-
     }
+    // std::cout << "space map system: success" << '\n'; 
   }
 
   std::unordered_map<glm::ivec3, std::vector<uint32_t>> deadbod_map_;

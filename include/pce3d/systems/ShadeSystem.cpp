@@ -17,6 +17,7 @@ system for calculating amount of light reaching object faces
 #include "../maths/functions/quaternion_functions.hpp"
   
 extern ControlPanel control;
+extern pce3d::DevRenderSystem dev_render_system;
 
 namespace pce3d {
 class ShadeSystem : public ISystem {
@@ -42,6 +43,17 @@ public:
           glm::dvec3 vertex_a = rigid_object.vertices.at(vertices[1]) - rigid_object.vertices.at(vertices[0]);
           glm::dvec3 vertex_b = rigid_object.vertices.at(vertices[2]) - rigid_object.vertices.at(vertices[0]);
           const glm::dvec3 normal_vect = glm::cross(vertex_a, vertex_b);
+          // const glm::dvec3 avg_vertex = (rigid_object.vertices.at(vertices[0]) 
+          //                              + rigid_object.vertices.at(vertices[1]) 
+          //                              + rigid_object.vertices.at(vertices[2])) / 3.0;
+          // const glm::dvec3 face_normal_vect_point = avg_vertex + normal_vect;
+          // const glm::dvec3 testp = (rigid_object.vertices.at(vertices[0])
+          //                        + rigid_object.vertices.at(vertices[1])) / 2.0;
+          // dev_render_system.AddPointToPointColorMap(face_normal_vect_point, {200, 0, 2, 255}, 1.0);
+          // dev_render_system.AddPointToPointColorMap(rigid_object.vertices.at(vertices[0]), {200, 0, 2, 255}, 5.0);
+          // std::cout << rigid_object.vertices.at(vertices[0]).x << ", "
+                    // << rigid_object.vertices.at(vertices[0]).y << ", "
+                    // << rigid_object.vertices.at(vertices[0]).z << "\n";
           face_shade.face_shade_map[face] = shade::calculateFaceBrightness(LIGHT_FLOW_DIRECTION_, normal_vect);
         }
       }

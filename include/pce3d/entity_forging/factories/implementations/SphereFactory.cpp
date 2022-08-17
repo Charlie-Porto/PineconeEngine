@@ -35,16 +35,16 @@ SphereFactory::SphereFactory(
   
 
 void SphereFactory::CreateSphereParticle() {
-  // const double xpos = kelp::random::getRandomDoubleByTargetWithVariance(factory_location_.x, x_variance_);
-  // const double ypos = kelp::random::getRandomDoubleByTargetWithVariance(factory_location_.y, y_variance_);
-  // const double zpos = kelp::random::getRandomDoubleByTargetWithVariance(factory_location_.z, z_variance_);
+  // const double xpos = pce3d::random::getRandomDoubleByTargetWithVariance(factory_location_.x, x_variance_);
+  // const double ypos = pce3d::random::getRandomDoubleByTargetWithVariance(factory_location_.y, y_variance_);
+  // const double zpos = pce3d::random::getRandomDoubleByTargetWithVariance(factory_location_.z, z_variance_);
   const double xpos = factory_location_.x;
   const double ypos = factory_location_.y;
   const double zpos = factory_location_.z;
   const glm::dvec3 e_position = glm::dvec3(xpos, ypos, zpos);
-  // const double vx = kelp::random::getRandomDoubleByTargetWithVariance(velocity_.x, velocity_component_variance_);
-  // const double vy = kelp::random::getRandomDoubleByTargetWithVariance(velocity_.y, velocity_component_variance_);
-  // const double vz = kelp::random::getRandomDoubleByTargetWithVariance(velocity_.z, velocity_component_variance_);
+  // const double vx = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.x, velocity_component_variance_);
+  // const double vy = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.y, velocity_component_variance_);
+  // const double vz = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.z, velocity_component_variance_);
   // const glm::dvec3 e_velocity = glm::dvec3(vx, vz, vy);
   const glm::dvec3 e_velocity = glm::dvec3(0, 0, 0);
   const double e_gforce = gravitational_force_;
@@ -54,7 +54,7 @@ void SphereFactory::CreateSphereParticle() {
       radius_max_
     , e_position
     // , {13, 170, 100, 255}
-    , kelp::random::getRandomColor()
+    , pce3d::random::getRandomColor()
     , e_velocity
     , e_gforce);
 }

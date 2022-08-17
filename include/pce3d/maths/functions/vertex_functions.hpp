@@ -13,7 +13,7 @@ functions to relating to polyhedron vertices
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include "vector_functions.hpp"
-#include <glm_hash.hpp>
+#include "../../utilities/functions/glm_hash.hpp"
 
 namespace pce3d {
 namespace maths {

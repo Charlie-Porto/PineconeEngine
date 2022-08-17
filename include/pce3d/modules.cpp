@@ -13,6 +13,7 @@ including not-yet-included implementation files
 #include "maths/functions/implementations/triangle_functions.cpp"
 #include "maths/functions/implementations/vector_functions.cpp"
 #include "maths/functions/implementations/vertex_functions.cpp"
+#include "maths/functions/implementations/pce_psuedo_randomness.cpp"
 #include "maths/functions/sign.hpp"
 
 /* utilities */

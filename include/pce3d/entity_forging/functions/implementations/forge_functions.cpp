@@ -37,7 +37,6 @@ void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& 
 
       const glm::dvec3 face_corner_direction = glm::normalize((connected_vertex_a-mvertex + connected_vertex_b-mvertex));
       const glm::dvec3 face_corner_point = vertices.at(vertex_list[i]) + face_corner_direction + psuedo_center_point;
-      auto const A = face_corner_point;
       
       
       face_corner_map[current_id] = face_corner_point;

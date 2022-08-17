@@ -44,6 +44,7 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
     {4, {1, 5, 3}},
     {5, {1, 2, 3, 4}}
   };
+
   FaceCornerMap face_corner_map{};
   FaceVertexCornerMap face_vertex_corner_map{};
   VertexFaceCornerMap vertex_face_corner_map{};
