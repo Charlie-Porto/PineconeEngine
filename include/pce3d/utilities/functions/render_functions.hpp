@@ -6,6 +6,7 @@
 functions to render things
 -----------------------------------------------------------------*/
 
+#include <utility>
 #include <vector>
 #include <glm/vec2.hpp>
 #include "raster_functions.hpp"
@@ -33,9 +34,13 @@ void renderLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std:
 
 void renderLineAsRendererIs(const glm::dvec2& point_a, const glm::dvec2& point_b);
 
+void renderPreSdlConvertedLineAsRendererIs(const glm::dvec2& point_a, const glm::dvec2& point_b);
+
 void setRendererColor(std::vector<int> color);
 
 void renderFilledTriangle();
+
+void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<int> color);
 
 }
 }

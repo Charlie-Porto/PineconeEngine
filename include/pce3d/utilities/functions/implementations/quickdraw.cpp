@@ -116,10 +116,12 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
   const glm::dvec2 b = pce::convert::convertCartesianCoordinatesToSDL(q.B * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   const glm::dvec2 c = pce::convert::convertCartesianCoordinatesToSDL(q.C * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   const glm::dvec2 d = pce::convert::convertCartesianCoordinatesToSDL(q.D * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  /* draw diagonals */
-  SDL_RenderDrawLine(Simulation::renderer, b.x, b.y, d.x, d.y);                                           
-  SDL_RenderDrawLine(Simulation::renderer, a.x, a.y, c.x, c.y);                                           
 
+  /* draw diagonals */
+  // std::cout << "drawing quadrilateral diagonals" << '\n';
+  std::vector<glm::dvec2> points = {a, b, c, d}; 
+  pce::render::renderQuadrilateralDiagonals(points, color);
+  
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 

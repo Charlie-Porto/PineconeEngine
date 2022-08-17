@@ -39,21 +39,27 @@ void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<in
   sortTriangleVertices(triangle);
   
   pce::render::setRendererColor(color);
-  const double size_tolerance = 0.1;
-  if (abs(triangle.A.y - triangle.B.y) < (size_tolerance )
-      && abs(triangle.A.y - triangle.C.y) < (size_tolerance )
-      && abs(triangle.B.y - triangle.C.y) < (size_tolerance  )
+  // pce::render::setRendererColor({200, 0, 0, 255});
+  const double size_tolerance = 0.01;
+  if (abs(triangle.A.y - triangle.B.y) < (size_tolerance * zoom_ratio)
+   && abs(triangle.A.y - triangle.C.y) < (size_tolerance * zoom_ratio)
   ) { 
     // pce::quickdraw::drawLine(triangle.A, triangle.B, color);
     // pce::quickdraw::drawLine(triangle.C, triangle.B, color);
     // pce::quickdraw::drawLine(triangle.A, triangle.C, color);
   } else {
+
+    pce::render::renderLineAsRendererIs(triangle.A, triangle.B);
+    pce::render::renderLineAsRendererIs(triangle.A, triangle.C);
+    pce::render::renderLineAsRendererIs(triangle.B, triangle.C);
+
     rasterizeAndRenderTriangleTopHalf(triangle, color);
-    if (abs(triangle.B.y - triangle.C.y) > size_tolerance * zoom_ratio ) {
+    if ( abs(triangle.B.y - triangle.C.y) > size_tolerance * zoom_ratio ) {
+      // pce::render::setRendererColor({0, 200, 0, 255});
       rasterizeAndRenderTriangleLowerHalf(triangle, color);
     }
-    pce::render::setRendererColor({0, 0, 0, 255});
   }
+  pce::render::setRendererColor({0, 0, 0, 255});
 }
 
 
@@ -98,11 +104,8 @@ void rasterizeAndRenderTriangleTopHalf(const maths::Triangle& triangle, const st
   const double long_angle_sign = pce::math::sign(triangle.C.x - triangle.A.x);
   const double short_angle_sign = pce::math::sign(triangle.B.x - triangle.A.x);
   
-  // double long_side_x_crawl_distance = std::min(tan(long_angle), sqrt(glm::dot(triangle.A - triangle.C, triangle.A - triangle.C)));
-  // double short_side_x_crawl_distance = std::min(tan(short_angle), sqrt(glm::dot(triangle.A - triangle.B, triangle.A - triangle.B)));
   double long_side_x_crawl_distance = std::min(tan(long_angle), sqrt(glm::dot(triangle.A - triangle.C, triangle.A - triangle.C)));
   double short_side_x_crawl_distance = std::min(tan(short_angle), sqrt(glm::dot(triangle.A - triangle.B, triangle.A - triangle.B)));
-
 
   double crawl_number = 0;
   if (long_angle > angle_threshold_for_render) { long_side_x_crawl_distance = 0.0; }
@@ -116,15 +119,13 @@ void rasterizeAndRenderTriangleTopHalf(const maths::Triangle& triangle, const st
         = glm::dvec2(
             triangle.A.x + std::min(short_side_x_crawl_distance * crawl_number, abs(triangle.B.x - triangle.A.x)) * short_angle_sign, 
             i);
-        // = glm::dvec2(triangle.A.x + short_side_x_crawl_distance * crawl_number * short_angle_sign, i);
 
     pce::render::renderLineAsRendererIs(long_side_crawl_point, short_side_crawl_point);
     ++crawl_number;
   }
 
-  const glm::dvec2 final_long_crawl = glm::dvec2(triangle.A.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, triangle.B.y);
-  pce::render::renderLineAsRendererIs(triangle.B, final_long_crawl);
-
+  // const glm::dvec2 final_long_crawl = glm::dvec2(triangle.A.x + long_side_x_crawl_distance * std::max(1.0, crawl_number) * long_angle_sign, triangle.B.y);
+  // pce::render::renderLineAsRendererIs(triangle.B, final_long_crawl);
 
 }
 
@@ -137,20 +138,15 @@ void rasterizeAndRenderTriangleLowerHalf(const maths::Triangle& triangle, const 
   const double long_angle = acos(glm::dot(long_side, height_vector) 
                             / (sqrt(glm::dot(long_side, long_side)) 
                             * sqrt(glm::dot(height_vector, height_vector))));
-  // std::cout << "long_angle" << long_angle / PI * 180.0 << '\n';
   const double short_angle = acos(glm::dot(short_side, height_vector) 
                             / (sqrt(glm::dot(short_side, short_side)) 
                             * sqrt(glm::dot(height_vector, height_vector))));
-  // std::cout << "short_angle: " << short_angle / PI * 180.0 << '\n';
-  // std::cout << "short_angle: " << short_angle << '\n';
 
   const double long_angle_sign = pce::math::sign(triangle.A.x - triangle.C.x);
   const double short_angle_sign = pce::math::sign(triangle.B.x - triangle.C.x);
   double long_side_x_crawl_distance = std::min(tan(long_angle), sqrt(glm::dot(triangle.C - triangle.A, triangle.C - triangle.A)));
   double short_side_x_crawl_distance = std::min(tan(short_angle), sqrt(glm::dot(triangle.C - triangle.B, triangle.C - triangle.B)));
-  // double long_side_x_crawl_distance = tan(long_angle);
-  // double short_side_x_crawl_distance = tan(short_angle);
-  // std::cout << "short_side_x_crawl_distance: " << short_side_x_crawl_distance << '\n';
+
   double crawl_number = 0;
   if (long_angle > angle_threshold_for_render) { long_side_x_crawl_distance = 0.0; }
   if (short_angle > angle_threshold_for_render) { short_side_x_crawl_distance = 0.0; }
@@ -163,10 +159,6 @@ void rasterizeAndRenderTriangleLowerHalf(const maths::Triangle& triangle, const 
         = glm::dvec2(
             triangle.C.x + std::min(short_side_x_crawl_distance * crawl_number, abs(triangle.B.x - triangle.C.x)) * short_angle_sign, 
             i);
-    // auto const long_side_crawl_point 
-    //     = glm::dvec2(triangle.C.x + long_side_x_crawl_distance * crawl_number * long_angle_sign, i);
-    // auto const short_side_crawl_point 
-    //     = glm::dvec2(triangle.C.x + short_side_x_crawl_distance * crawl_number * short_angle_sign, i);
     pce::render::renderLineAsRendererIs(long_side_crawl_point, short_side_crawl_point);
     ++crawl_number;
   }
