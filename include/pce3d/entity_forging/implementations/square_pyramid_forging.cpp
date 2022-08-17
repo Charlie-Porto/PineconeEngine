@@ -33,8 +33,8 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
     {1, {1, 2, 3, 4}},
     {2, {4, 5, 1}},
     {3, {1, 5, 2}},
-    {4, {3, 5, 2}},
-    {5, {4, 5, 3}}
+    {4, {3, 2, 5}},
+    {5, {4, 3, 5}}
   };
 
   VertexVertexMap vvmap = {

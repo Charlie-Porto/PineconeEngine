@@ -31,7 +31,7 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
   };
   
   FaceVertexMap face_vertex_map = {
-    {1, {1, 4, 2}},
+    {1, {1, 2, 4}},
     {2, {3, 2, 1}},
     {3, {3, 4, 2}},
     {4, {1, 4, 3}},
@@ -43,6 +43,7 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
     {3, {1, 2, 4}},
     {4, {1, 2, 3}}
   };
+
   FaceCornerMap face_corner_map{};
   FaceVertexCornerMap face_vertex_corner_map{};
   VertexFaceCornerMap vertex_face_corner_map{};

@@ -107,7 +107,7 @@ void Core3D::UpdateCore3D() {
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // std::cout << "render system updated" << '\n';
   // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
-  dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
+  // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 
 }

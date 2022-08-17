@@ -32,7 +32,7 @@ public:
 
   bool CheckIfEntityStillExists(Entity entity)
 	{
-		if (mEntityManager->activeEntityHistory.find(entity))
+		if (mEntityManager->activeEntityHistory.find(entity) != mEntityManager->activeEntityHistory.end())
 		{
 		  return mEntityManager->activeEntityHistory.at(entity);
 		}
