@@ -9,9 +9,21 @@ namespace pce3d {
 namespace forge {
 
 
-Entity forgeRectPrismEntity(const double w, const double h, const double l,
-                            const glm::dvec3& center, const double angle, const glm::dvec3& axis,
-                            const std::vector<int>& color) {
+
+Entity forgeRectPrismEntity(
+    const double w
+  , const double h
+  , const double l
+  , const glm::dvec3& center
+  , const double angle
+  , const glm::dvec3& axis
+  , const std::vector<int>& color
+  , bool is_livebod
+  , const double g_force
+  , const glm::dvec3& velocity
+  , const glm::dvec3& axis_of_rotation
+  , const double rotation_speed)
+  {
 
   /* create new entity's major attributes */
   VertexMap e_vertex_map = calculateRectPrismOriginalVertexLocations(w, h, l, center);
@@ -38,8 +50,9 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = w * h * l,
-    .is_deadbod = true,
+    .is_deadbod = is_livebod ? false : true,
     .is_restingbod = false,
+    .is_complex_livebod = is_livebod ? true : false,
     .vertices = e_vertex_map,
     .vertex_vertex_map = vvmap,
     .base_face_id = 1,
@@ -54,6 +67,18 @@ Entity forgeRectPrismEntity(const double w, const double h, const double l,
     .entity_face_collision_map = {}
   });
   control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
+  control.AddComponent(new_entity, pce::Motion{
+    .speed = 0.0,
+    .direction = glm::dvec3(0, 0, 0),
+    .velocity = velocity,
+    .rotational_speed = rotation_speed,
+    .rotational_axis = axis_of_rotation,
+    .duration = 0.1,
+    .previous_resting_position = center,
+    .stationary_counter = 0
+  });
+  control.AddComponent(new_entity, pce::Force{ .of_gravity = g_force });
+    
 
   for (auto const& [vertex, face_corners] : vertex_face_corner_map) {
     std::cout << "vertex: " << vertex << '\n';

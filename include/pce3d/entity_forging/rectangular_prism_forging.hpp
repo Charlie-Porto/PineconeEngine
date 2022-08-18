@@ -25,9 +25,19 @@ using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using VertexVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 
-Entity forgeRectPrismEntity(const double w, const double h, const double l,
-                            const glm::dvec3& center, const double angle, const glm::dvec3& axis,
-                            const std::vector<int>& color);
+Entity forgeRectPrismEntity(
+    const double w
+  , const double h
+  , const double l
+  , const glm::dvec3& center
+  , const double angle
+  , const glm::dvec3& axis
+  , const std::vector<int>& color
+  , bool is_livebod = false
+  , const double g_force = 0.0
+  , const glm::dvec3& velocity = glm::dvec3(0, 0, 0)
+  , const glm::dvec3& axis_of_rotation = glm::dvec3(1, 0, 0)
+  , const double rotation_speed = 0.0);
 
 
 VertexMap calculateRectPrismOriginalVertexLocations(const double w, const double h, const double l, 

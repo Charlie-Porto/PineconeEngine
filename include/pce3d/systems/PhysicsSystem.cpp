@@ -15,6 +15,7 @@ system for handling physics
 
 #include "functions/physicsFunctions.hpp"
 #include "../maths/functions/vector_functions.hpp"
+#include "../maths/functions/quaternion_functions.hpp"
 
 extern ControlPanel control;
 
@@ -209,6 +210,20 @@ public:
       auto& motion = control.GetComponent<pce::Motion>(entity);
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
+
+      if (rigid_object.is_complex_livebod)
+      {
+        for (auto& [id, vertex] : rigid_object.vertices)
+        {
+          const double rotation_amount = motion.rotational_speed; 
+          const glm::dvec3 normalized_vertex = rigid_object.vertices.at(id) - position.actual_center_of_mass;
+          const glm::dvec3 rotated_point
+              = pce::rotateVector3byAngleAxis(normalized_vertex, rotation_amount, motion.rotational_axis);
+          vertex = rotated_point + position.actual_center_of_mass;
+        }
+
+        continue;
+      }
       
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {
         const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
@@ -217,8 +232,6 @@ public:
         
         const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
 
-        // std::cout <<  sqrt(glm::dot(position_change, position_change)) << '\n';
-        // std::cout << "speed: " << motion.speed << '\n';
         if (sqrt(glm::dot(position_change, position_change)) < 0.01) 
         {
           ++motion.stationary_counter;

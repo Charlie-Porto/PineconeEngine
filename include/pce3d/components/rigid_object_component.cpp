@@ -30,6 +30,7 @@ struct RigidObject {
   double mass;
   bool is_deadbod;
   bool is_restingbod;
+  bool is_complex_livebod;
 
   VertexMap vertices;
   VertexVertexMap vertex_vertex_map;
