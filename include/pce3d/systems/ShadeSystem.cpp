@@ -93,7 +93,7 @@ public:
       /* update spheres */
       else {
         /* if close to sphere, do shortcut alg to avoid exp complexity */
-        if (rigid_object.vertex_distance_map.at(1) < 15.0) { 
+        if (rigid_object.vertex_distance_map.at(1) < 25.0) { 
           std::unordered_map<glm::dvec2, glm::dvec2> center_pixel 
                                      = {{position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_,
                                          position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_}};

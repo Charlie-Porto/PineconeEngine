@@ -17,20 +17,29 @@ glm::dvec2 convertPointOnViewSphereToPixel(const glm::dvec3& point, bool is_cent
 if (!is_first_pass) {
   if (point.z < -0.2) {
     // return glm::dvec2(0, 0); 
-    if (is_center_of_gravity) {return glm::dvec2(0, 0); }
+    if (is_center_of_gravity) 
+    {
+      return glm::dvec2(0, 0); 
+    }
     // else {return glm::dvec2(point.x, point.y) * 200.0; }
     // else {return glm::dvec2(point.x, point.y); }
   }
   if (abs(atan(point.x/point.z) / PI * 180.0) > 70.0) {
     // return glm::dvec2(0, 0);
-    if (is_center_of_gravity) {return glm::dvec2(0, 0); }
+    if (is_center_of_gravity) 
+    {
+      return glm::dvec2(0, 0); 
+    }
     // else {return glm::dvec2(point.x, point.y) * 200.0; }
     // else {return glm::dvec2(point.x * 200.0, point.y * 100.0); }
     // else {return glm::dvec2(point.x, point.y); }
   }
   if (abs(atan(point.y/point.z) / PI * 180.0) > 50.0) {
     // return glm::dvec2(0, 0); 
-    if (is_center_of_gravity) {return glm::dvec2(0, 0); }
+    if (is_center_of_gravity) 
+    {
+      return glm::dvec2(0, 0); 
+    }
     // else {return glm::dvec2(point.x, point.y) * 200.0; }
     // else {return glm::dvec2(point.x * 100.0, point.y * 200.0); }
     // else {return glm::dvec2(point.x, point.y); }

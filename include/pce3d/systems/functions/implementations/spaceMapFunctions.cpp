@@ -48,24 +48,7 @@ std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
 }
 
 
-// std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& face,
-//                                                 const VertexMap& vertices, const glm::dvec3& mdim,
-//                                                 const double mir) {
-//   std::vector<glm::ivec3> tri_face_indices{};
-//   const std::vector<uint32_t> sorted_face = pce::maths::sortVerticesByDistance(vertices, face);
-//   const glm::dvec3 face_crawl_direction = pce::maths::determineCrawlDirection(vertices, sorted_face);
-//   const glm::dvec3 line_crawl_direction = glm::normalize(vertices.at(sorted_face[0]) 
-//                                                        - vertices.at(sorted_face[2]));
-  
-//   glm::dvec3 current_line_point = vertices.at(sorted_face[2]);
-//   /* PICK UP HERE */
-// }
-
 std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices) {
-  // std::cout << "v0" << vertices[0].x << ", " << vertices[0].y << ", " << vertices[0].z << '\n';
-  // std::cout << "v1" << vertices[1].x << ", " << vertices[1].y << ", " << vertices[1].z << '\n';
-  // std::cout << "v2" << vertices[2].x << ", " << vertices[2].y << ", " << vertices[2].z << '\n';
-  // std::cout << "v3" << vertices[3].x << ", " << vertices[3].y << ", " << vertices[3].z << '\n';
   std::vector<glm::dvec3> ordered_vertices{vertices[0]};
   std::unordered_map<glm::dvec3, double> distance_map{};
   distance_map[ordered_vertices[0]] = 0.0;
@@ -80,18 +63,9 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
 
     for (size_t j = 0; j < smaller_size; ++j) {
       if (distance < distance_map.at(ordered_vertices[j])) {
-        // std::cout << "j: " << j << '\n';
-        // if (i == vertices.size()-1) {
-        //   std::cout << "i equals vertices.size() - 1" << '\n';
-        //   auto d = ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.end());
-        //   has_been_added = true;
-        //   continue;
-        // } 
-        // else {
           ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.begin()+i);
           has_been_added = true;
           continue;
-        // }
       }
       if (has_been_added) { break; }
     }
@@ -119,22 +93,14 @@ std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
   std::vector<glm::dvec3> vertices = orderVerticesByDistanceFromFirst({
     unordered_vertices.at(face[0]), unordered_vertices.at(face[1]), unordered_vertices.at(face[2]), unordered_vertices.at(face[3]) });
   std::vector<glm::ivec3> indices{};
-  // std::cout << "v0" << vertices[0].x << ", " << vertices[0].y << ", " << vertices[0].z << '\n';
-  // std::cout << "v1" << vertices[1].x << ", " << vertices[1].y << ", " << vertices[1].z << '\n';
-  // std::cout << "v2" << vertices[2].x << ", " << vertices[2].y << ", " << vertices[2].z << '\n';
-  // std::cout << "v3" << vertices[3].x << ", " << vertices[3].y << ", " << vertices[3].z << '\n';
 
   const glm::dvec3 i_crawl_direction = glm::normalize(vertices[3] - vertices[0]); 
   const glm::dvec3 j_crawl_direction = glm::normalize(vertices[1] - vertices[0]);
-  // const glm::dvec3 i_crawl_direction = glm::normalize(vertices[0] - vertices[1]); 
-  // const glm::dvec3 j_crawl_direction = glm::normalize(vertices[0] - vertices[2]);
 
   const double i_distance = sqrt(glm::dot(vertices[0] - vertices[3],
                                           vertices[0] - vertices[3]));
   const double j_distance = sqrt(glm::dot(vertices[0] - vertices[1],
                                           vertices[0] - vertices[1]));
-  // std::cout << "j_distance: "  << j_distance << '\n';
-  // std::cout << "i_distance: "  << i_distance << '\n';
 
   glm::dvec3 i_position = vertices[0];
   double i_dist_traveled = 0.0;
@@ -142,13 +108,10 @@ std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
     double j_dist_traveled = 0.0;
     glm::dvec3 j_position = i_position; 
     while (j_dist_traveled <= j_distance) {
-    // while (j_dist_traveled <= 1) {
       indices.push_back(findIndexOfPoint(j_position, mdim, mir));
       j_position += j_crawl_direction; 
       j_dist_traveled += 1.0;
     }
-    // i_position += i_crawl_direction;  
-    // i_dist_traveled += 1.0;
     i_position = (i_position + i_crawl_direction);
     i_dist_traveled = (i_dist_traveled + 1.0);
   }

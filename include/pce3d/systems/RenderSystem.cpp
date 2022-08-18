@@ -30,15 +30,15 @@ public:
 
   void UpdateEntities(const std::vector<uint32_t> order_of_render){
     /* render objects in order of furthest from camera to closest */
+    // std::cout << "updating render system" << '\n';
 
     for (auto const& entity : order_of_render) {
       // std::cout << "entity: " << entity << '\n';
-      auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto const& radar = control.GetComponent<pce::Radar>(entity);
+      auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto const& surface = control.GetComponent<pce::Surface>(entity);
       auto const& shade = control.GetComponent<pce::FaceShade>(entity);
-      // std::cout << "face count: " << rigid_object.face_count << '\n';
 
       /* check if item is on screen */
       if (position.center_of_mass_radar_pixel == glm::dvec2(0, 0)) {
@@ -63,7 +63,7 @@ public:
       }
 
       /* handle rendering of non-sphere entities */ 
-      if (rigid_object.radius == 0) {
+      else if (rigid_object.radius == 0) {
         // std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
             // rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
 

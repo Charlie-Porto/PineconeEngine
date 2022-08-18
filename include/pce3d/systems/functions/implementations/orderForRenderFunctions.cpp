@@ -14,12 +14,14 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   uint32_t small_entity = a_entity_tag.entity;
   orderTag small_tag = a_entity_tag;
   orderTag big_tag = b_entity_tag;
-
-  bool swap = false;
   
-  // if (b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance == 0)
-  // {
-  //   swap = true;
+  bool swap = false;
+
+  /* NOTE: this swap is critical */
+  if (b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance == 0)
+  {
+    swap = true;
+  }
   //   // std::cout << "swapping big and small entities reason 1 " << '\n';
   // } else if (b_entity_tag.farthest_vertex_distance - b_entity_tag.closest_vertex_distance
   //          < a_entity_tag.farthest_vertex_distance - a_entity_tag.closest_vertex_distance)
@@ -29,13 +31,13 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   //   // std::cout << b_entity_tag.farthest_vertex_distance - b_entity_tag.closest_vertex_distance << '\n';
   //   // std::cout << a_entity_tag.farthest_vertex_distance - a_entity_tag.closest_vertex_distance << '\n';
   // }
-  // if (swap) 
-  // {
+  if (swap) 
+  {
     big_entity = a_entity_tag.entity;
     small_entity = b_entity_tag.entity;
     small_tag = b_entity_tag;
     big_tag = a_entity_tag;
-  // }
+  }
  
   auto& big_rigid_object = control.GetComponent<pce::RigidObject>(big_entity);
   auto const& big_radar = control.GetComponent<pce::Radar>(big_entity);
@@ -75,8 +77,8 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   dev_render_system.AddPointToPointColorMap( big_rigid_object.camera_rotated_face_corner_map.at(big_rigid_object.face_vertex_corner_map.at(big_closest_face).at(big_radar.closest_vertex_id)), {255, 25, 25, 255}, 2.0);
   dev_render_system.AddPointToPointColorMap(face_point, {200, 50, 200, 255}, 8.0);
   
-  std::cout << "face_point_magnitude: " << face_point_magnitude << '\n';
-  std::cout << "small tag closest vertex distance: " << small_tag.closest_vertex_distance << '\n';
+  // std::cout << "face_point_magnitude: " << face_point_magnitude << '\n';
+  // std::cout << "small tag closest vertex distance: " << small_tag.closest_vertex_distance << '\n';
 
   const double tolerance = .001;
   if (face_point_magnitude - small_tag.closest_vertex_distance > tolerance)

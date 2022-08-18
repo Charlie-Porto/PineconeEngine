@@ -35,87 +35,68 @@ public:
 /* ---------------------------------------- setup --------------------------------- */
   void DoPreLoopSetup() {
     std::cout << "Doing Pre-Loop Setup" << '\n';
-    // if (entities.empty()) 
-    // {
-    //   std::cout << "no entities" << '\n';
-    // }
-    // else
-    // {
-      for (auto const& entity : entities) {
-        auto & rigid_object = control.GetComponent<pce::RigidObject>(entity); 
-        if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
+    for (auto const& entity : entities) {
+      auto & rigid_object = control.GetComponent<pce::RigidObject>(entity); 
+      if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {continue;}
 
-        // const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
-        const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
-        std::vector<glm::ivec3> indices{};
-        // indices.insert(indices.end(), vertex_indices.begin(), vertex_indices.end());
+      // const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      std::vector<glm::ivec3> indices{};
+      // indices.insert(indices.end(), vertex_indices.begin(), vertex_indices.end());
 
-        for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
-          std::cout << "getting face indices" << '\n';
-          
-          std::vector<glm::ivec3> face_indices{};
-          switch (vertex_ids.size()) 
-          {
-            case 4: 
-              face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
-                                                            rigid_object.vertices,
-                                                            map_dimensions_,
-                                                            meter_index_ratio_);
-              break;
-            case 3:
-              face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
-                                                                rigid_object.vertices,
-                                                                map_dimensions_,
-                                                                meter_index_ratio_);
-              break;
-            default:
-              break;
-          }
-          indices.insert(indices.end(), face_indices.begin(), face_indices.end());
-          for (auto const& index : face_indices) {
-            if (index == glm::ivec3(5045, 4971, 5000))
-            // if (index == glm::ivec3(5056, 4969, 5048))
-            {
-              std::cout << "added now to face map!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << '\n';
-              std::cout << "to entity: " << entity << '\n';
-            }
-            rigid_object.index_face_map[index] = face;
-            rigid_object.face_index_map[face] = index;
-          }
+      for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
+        std::cout << "getting face indices" << '\n';
+        
+        std::vector<glm::ivec3> face_indices{};
+        switch (vertex_ids.size()) 
+        {
+          case 4: 
+            face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                          rigid_object.vertices,
+                                                          map_dimensions_,
+                                                          meter_index_ratio_);
+            break;
+          case 3:
+            face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                              rigid_object.vertices,
+                                                              map_dimensions_,
+                                                              meter_index_ratio_);
+            break;
+          default:
+            break;
         }
-
-        if (rigid_object.is_deadbod) {
-          /* put deadbod location -> entity mapping into map */
-          for (auto const& index : indices) {
-            // if (index == glm::ivec3(5045, 4971, 5000))
-            // if (index == glm::ivec3(5056, 4969, 5048))
-            // {
-              // std::cout << "added now!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << '\n';
-              // std::cout << "to entity: " << entity << '\n';
-            // }
-            if (deadbod_map_.find(index) == deadbod_map_.end()) {
-              deadbod_map_[index] = {entity};
-            } else {
-              if (!std::count(deadbod_map_.at(index).begin(), deadbod_map_.at(index).end(), entity)) {
-                deadbod_map_.at(index).push_back(entity); 
-              }
-            }
-          }
+        indices.insert(indices.end(), face_indices.begin(), face_indices.end());
+        for (auto const& index : face_indices) {
+          rigid_object.index_face_map[index] = face;
+          rigid_object.face_index_map[face] = index;
         }
-        else if (rigid_object.is_restingbod) {
-          /* put restingbod location -> entity mapping into map */
-          for (auto const& index : indices) {
-            if (restingbod_map_.find(index) == restingbod_map_.end()) {
-              restingbod_map_[index] = {entity};
-            } else {
-              if (!std::count(restingbod_map_.at(index).begin(), restingbod_map_.at(index).end(), entity)) {
-                restingbod_map_.at(index).push_back(entity); 
-              }
+      }
+
+      if (rigid_object.is_deadbod) {
+        /* put deadbod location -> entity mapping into map */
+        for (auto const& index : indices) {
+          if (deadbod_map_.find(index) == deadbod_map_.end()) {
+            deadbod_map_[index] = {entity};
+          } else {
+            if (!std::count(deadbod_map_.at(index).begin(), deadbod_map_.at(index).end(), entity)) {
+              deadbod_map_.at(index).push_back(entity); 
             }
           }
         }
       }
-    // }
+      else if (rigid_object.is_restingbod) {
+        /* put restingbod location -> entity mapping into map */
+        for (auto const& index : indices) {
+          if (restingbod_map_.find(index) == restingbod_map_.end()) {
+            restingbod_map_[index] = {entity};
+          } else {
+            if (!std::count(restingbod_map_.at(index).begin(), restingbod_map_.at(index).end(), entity)) {
+              restingbod_map_.at(index).push_back(entity); 
+            }
+          }
+        }
+      }
+    }
   }
  
 
@@ -136,7 +117,6 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
 }
 
 /* ---------------------------------------- update --------------------------------- */
-/* passing the camera versor to render index points during developement */
   void UpdateEntities() 
   {
     livebod_map_.clear();
@@ -146,6 +126,8 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
     {
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
       if (rigid_object.is_deadbod) { continue; }
+      
+      // std::cout << "finding indices" << '\n';
       const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
       // std::cout << "first index: " << indices[0].x << ", " << indices[0].y << ", " << indices[0].z << '\n';
       // std::cout << "restingbods" << '\n'; 
