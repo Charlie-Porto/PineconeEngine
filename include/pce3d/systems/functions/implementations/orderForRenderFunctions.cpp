@@ -17,20 +17,16 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   
   bool swap = false;
 
-  /* NOTE: this swap is critical */
-  if (b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance == 0)
+  /* NOTE: this swap capability is critical */
+  if (b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance == 0
+   || a_entity_tag.closest_vertex_distance - a_entity_tag.farthest_vertex_distance == 0)
   {
     swap = true;
   }
-  //   // std::cout << "swapping big and small entities reason 1 " << '\n';
-  // } else if (b_entity_tag.farthest_vertex_distance - b_entity_tag.closest_vertex_distance
-  //          < a_entity_tag.farthest_vertex_distance - a_entity_tag.closest_vertex_distance)
-  // {
-  //   swap = true;
-  //   // std::cout << "swapping big and small entities reason 2 " << '\n';
-  //   // std::cout << b_entity_tag.farthest_vertex_distance - b_entity_tag.closest_vertex_distance << '\n';
-  //   // std::cout << a_entity_tag.farthest_vertex_distance - a_entity_tag.closest_vertex_distance << '\n';
-  // }
+  else if (big_tag.closest_vertex_distance < small_tag.closest_vertex_distance)
+  {
+    swap = true;
+  }
   if (swap) 
   {
     big_entity = a_entity_tag.entity;
@@ -38,7 +34,7 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     small_tag = b_entity_tag;
     big_tag = a_entity_tag;
   }
- 
+
   auto& big_rigid_object = control.GetComponent<pce::RigidObject>(big_entity);
   auto const& big_radar = control.GetComponent<pce::Radar>(big_entity);
   uint32_t big_closest_face = 1;
@@ -46,44 +42,40 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   
   for (auto const& [face, corner] : big_rigid_object.vertex_face_corner_map.at(big_radar.closest_vertex_id)) 
   {
-    // std::cout << "face id: " << face << '\n';
-    // const double distance = sqrt(glm::dot(
-      // big_rigid_object.camera_rotated_face_corner_map.at(corner) - small_tag.closest_vertex_location,
-      // big_rigid_object.camera_rotated_face_corner_map.at(corner) - small_tag.closest_vertex_location));
-    
     const double distance = pce3d::maths::calculateDistanceBetweenVectors(
-      big_rigid_object.camera_rotated_face_corner_map.at(corner), glm::dvec3(0, 0, 0));
-    // std::cout << "corner distance: " << distance << '\n';
+      big_rigid_object.camera_rotated_face_corner_map.at(corner), small_tag.closest_vertex_location);
 
-    dev_render_system.AddPointToPointColorMap( big_rigid_object.camera_rotated_face_corner_map.at(corner), {0, 255, 25, 255}, 4.0);
     if (distance < big_closest_face_corner_distance) 
     {
-      // std::cout << "updating closest face: " << face <<'\n';
       big_closest_face_corner_distance = distance;
       big_closest_face = face;
     }
   }
 
-  // std::cout << "closest face id: " << big_closest_face << '\n';
-
-  const glm::dvec3 face_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
+  const glm::dvec3 big_entity_face_plane_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[1]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[2]),
     small_tag.closest_vertex_location);
   
-  const double face_point_magnitude = sqrt(glm::dot(face_point, face_point));
+  const double face_point_magnitude = sqrt(glm::dot(big_entity_face_plane_point, big_entity_face_plane_point));
 
-  dev_render_system.AddPointToPointColorMap( big_rigid_object.camera_rotated_face_corner_map.at(big_rigid_object.face_vertex_corner_map.at(big_closest_face).at(big_radar.closest_vertex_id)), {255, 25, 25, 255}, 2.0);
-  dev_render_system.AddPointToPointColorMap(face_point, {200, 50, 200, 255}, 8.0);
+  dev_render_system.AddPointToPointColorMap(big_entity_face_plane_point, {200, 50, 100, 255}, 7.0);
+  // dev_render_system.AddPointToPointColorMap(small_tag.closest_vertex_location, {100, 200, 10, 255}, 4.0);
+  dev_render_system.AddPointToPointColorMap(
+    big_rigid_object.camera_rotated_face_corner_map.at(
+      big_rigid_object.face_vertex_corner_map.at(
+        big_closest_face).at(big_radar.closest_vertex_id)), {0, 255, 29, 255}, 7.0);
   
-  // std::cout << "face_point_magnitude: " << face_point_magnitude << '\n';
-  // std::cout << "small tag closest vertex distance: " << small_tag.closest_vertex_distance << '\n';
+  const glm::dvec3 face_corner = big_rigid_object.camera_rotated_face_corner_map.at( big_rigid_object.face_vertex_corner_map.at( big_closest_face).at(big_radar.closest_vertex_id));
+  const double face_corner_magnitude = sqrt(glm::dot(face_corner, face_corner));
 
   const double tolerance = .001;
   if (face_point_magnitude - small_tag.closest_vertex_distance > tolerance)
+  // if (face_point_magnitude - face_corner_magnitude > tolerance)
   {
-    return face_point_magnitude <= small_tag.closest_vertex_distance
+    // return face_point_magnitude <= face_corner_magnitude
+    return face_point_magnitude < small_tag.closest_vertex_distance
       ? big_entity : small_entity;
   }
   else
