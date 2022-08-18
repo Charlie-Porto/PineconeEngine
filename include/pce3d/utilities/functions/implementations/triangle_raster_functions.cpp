@@ -11,26 +11,6 @@ namespace raster {
 const double zoom_ratio = pce3d::Core3D::ORDINARY_ZOOM_INDEX_;
 const double PI = 3.14159265;
 
-void fastRasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<int>& color) {
-  /* concluded: not actually faster. in fact, much slower. */
-  auto triangle = tri;
-  triangle.A *= zoom_ratio;
-  triangle.B *= zoom_ratio;
-  triangle.C *= zoom_ratio;
-  sortTriangleVertices(triangle);
-
-  /* for the longest side */
-  const glm::dvec2 direction = glm::normalize(triangle.A - triangle.C);
-  
-  glm::dvec2 point = triangle.C;
-  while (point.y < triangle.A.y) {
-    pce::render::setRendererColor({0, 0, 0, 255});
-    pce::render::setRendererColor(color);
-    pce::render::renderLineAsRendererIs(triangle.B, point);
-    point += direction;
-  }
-}
-
 void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<int>& color) {
   auto triangle = tri;
   triangle.A *= zoom_ratio;
@@ -61,7 +41,6 @@ void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<in
   }
   pce::render::setRendererColor({0, 0, 0, 255});
 }
-
 
 void sortTriangleVertices(maths::Triangle& triangle) {
   std::vector<glm::dvec2> sorted_points = {triangle.A, triangle.B, triangle.C};

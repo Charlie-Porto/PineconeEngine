@@ -122,9 +122,9 @@ public:
 /* ---------------------------------------- draw --------------------------------- */
 void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_transform) {
   std::cout << "-----" << '\n';
-  for (auto const& [point, entity] : deadbod_map_) {
+  // for (auto const& [point, entity] : deadbod_map_) {
     // auto point = glm::dvec3(5045, 4971, 5000);
-    std::cout << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
+    // std::cout << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
     // const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
     // glm::dvec3 rotated_point = converted_point - cam_transform;
     // double distance = sqrt(glm::dot(rotated_point, rotated_point));
@@ -132,7 +132,7 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
     // const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
     // const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
     // pce::quickdraw::drawCircle(pixel, 100.0 / distance, {12, 200, 200, 255});
-  }
+  // }
 }
 
 /* ---------------------------------------- update --------------------------------- */

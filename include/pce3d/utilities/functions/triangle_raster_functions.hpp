@@ -23,7 +23,6 @@ namespace raster {
 
 
 void sortTriangleVertices(maths::Triangle& triangle);
-void fastRasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<int>& color);
 void rasterizeAndRenderTriangle(const maths::Triangle& tri, const std::vector<int>& color);
 void rasterizeAndRenderTriangleTopHalf(const maths::Triangle& triangle, const std::vector<int>& color);
 void rasterizeAndRenderTriangleLowerHalf(const maths::Triangle& triangle, const std::vector<int>& color);

@@ -25,6 +25,7 @@ class RadarSystem : public ISystem {
 public:
 
   void UpdateEntities() {
+    std::cout << "---" << '\n';
     for (auto const& entity : entities) {
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
@@ -38,7 +39,7 @@ public:
       radar.closest_vertex_distance = 100000;
       radar.farthest_vertex_distance = 0.0;
       for (auto const& [id, vertex] : rigid_object.camera_transformed_vertices) {
-        dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(id), {100, 20, 220, 255});
+        // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(id), {100, 20, 220, 255});
         const glm::dvec3 screen_plane_intersection_point = glm::normalize(vertex);
         rigid_object.vertex_pixels[id] = radar::convertPointOnViewSphereToPixel(screen_plane_intersection_point, false, false);
         rigid_object.vertex_distance_map[id] = sqrt(glm::dot(vertex, vertex));
@@ -52,7 +53,14 @@ public:
           radar.farthest_vertex_distance = rigid_object.vertex_distance_map.at(id);
         }
       }
-      // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id), {255, 0, 0, 255});
+      auto const point = rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id);
+
+      // std::cout << "point " << ", "
+      //           <<  point.x  << ", "
+      //           <<  point.y  << ", "
+      //           <<  point.z  << "\n";
+                
+      dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id), {255, 0, 0, 255});
       // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.farthest_vertex_id), {0, 255, 0, 255});
     }
   }

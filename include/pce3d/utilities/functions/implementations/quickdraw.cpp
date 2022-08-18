@@ -7,35 +7,6 @@
 namespace pce {
 namespace quickdraw {
 
-
-void drawListOfPixels(const std::vector<glm::dvec2>& pixels, const std::vector<int>& color) {
-  std::vector<glm::dvec2> sdl_pixels;
-  for (auto const& pixel : pixels) {
-    sdl_pixels.push_back(pce::convert::convertCartesianCoordinatesToSDL(pixel * pce3d::Core3D::ORDINARY_ZOOM_INDEX_));
-  }
-  render::renderPixelList(sdl_pixels, color);
-}
-
-
-void drawSinglePixel(const glm::dvec2& pixel, const std::vector<int>& color) {
-  const glm::dvec2 sdl_pixel = convert::convertCartesianCoordinatesToSDL(pixel * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  render::renderPixel(sdl_pixel, color);
-}
-
-
-void drawLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::vector<int>& color) {
-  const glm::dvec2 sdl_pixel_a = pce::convert::convertCartesianCoordinatesToSDL(point_a * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  const glm::dvec2 sdl_pixel_b = pce::convert::convertCartesianCoordinatesToSDL(point_b * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
-  SDL_RenderDrawLine(
-    Simulation::renderer,
-    sdl_pixel_a.x, sdl_pixel_a.y,
-    sdl_pixel_b.x, sdl_pixel_b.y
-  );                                           
-  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
-}
-
-
 void drawCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color) {
   const glm::vec2 sdl_transform = pce::convert::convertCartesianCoordinatesToSDL(center_point * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   render::renderCircle(sdl_transform.x, sdl_transform.y, int(radius * pce3d::Core3D::ORDINARY_ZOOM_INDEX_), color);

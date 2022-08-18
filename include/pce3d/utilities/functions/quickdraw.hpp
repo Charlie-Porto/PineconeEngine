@@ -22,12 +22,6 @@ functions to render simple objects easily
 namespace pce {
 namespace quickdraw {
 
-void drawListOfPixels(const std::vector<glm::dvec2>& pixels, const std::vector<int>& color);
-
-void drawSinglePixel(const glm::dvec2& pixel, const std::vector<int>& color);
-
-void drawLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::vector<int>& color);
-
 void drawCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
 
 void drawFilledCircle(const glm::dvec2& center_point, double radius, const std::vector<int>& color);
