@@ -135,11 +135,9 @@ public:
         } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
       }
       
-      /* handle active-active collision */
-      /* CURRENTLY ONLY PARTICLES */
-      if (!a_rigid_object.is_deadbod && !b_rigid_object.is_deadbod
-      //  && !a_rigid_object.is_restingbod && !b_rigid_object.is_restingbod) {
-       && !a_rigid_object.is_restingbod) 
+      /* handle active-active particle collision */
+      if (!a_rigid_object.is_deadbod && !b_rigid_object.is_deadbod && !b_rigid_object.is_complex_livebod
+       && !a_rigid_object.is_restingbod && !a_rigid_object.is_complex_livebod) 
       {
         auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
         // std::cout << "entity_a: " << entity_a<< '\n';
@@ -164,9 +162,6 @@ public:
         if (are_colliding) 
         {
           b_rigid_object.is_restingbod = false;
-          // std::cout << "entity" << entity_b << "switched to Livebod" << '\n';
-          // std::cout << "Physics System: collision with livebod" << '\n';
-             
           physics::updateBothEntityInfoAfterTwoParticleCollision(
             a_position.actual_center_of_mass, 
             a_rigid_object.radius,
@@ -176,10 +171,10 @@ public:
             b_rigid_object.radius,
             b_motion, 
             b_rigid_object.mass);
-
-          // std::cout << "Physics System: collision with livebod has been executed" << '\n';
           entities_updated_.push_back(entity_a);
-          if (!b_rigid_object.is_deadbod) {
+
+          if (!b_rigid_object.is_deadbod) 
+          {
             entities_updated_.push_back(entity_b);
           }
         }
@@ -211,27 +206,39 @@ public:
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
 
+      const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
+        motion.previous_resting_position, motion.velocity, time_change_,
+        force.of_gravity, motion.duration);
+
+      const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
+
       if (rigid_object.is_complex_livebod)
       {
+        position.actual_center_of_mass = new_position;
         for (auto& [id, vertex] : rigid_object.vertices)
         {
+          vertex = vertex + position_change;
           const double rotation_amount = motion.rotational_speed; 
-          const glm::dvec3 normalized_vertex = rigid_object.vertices.at(id) - position.actual_center_of_mass;
+          const glm::dvec3 normalized_vertex = vertex - position.actual_center_of_mass;
           const glm::dvec3 rotated_point
               = pce::rotateVector3byAngleAxis(normalized_vertex, rotation_amount, motion.rotational_axis);
           vertex = rotated_point + position.actual_center_of_mass;
         }
+        for (auto& [id, corner] : rigid_object.face_corner_map)
+        {
+          corner = corner + position_change;
+          const double rotation_amount = motion.rotational_speed; 
+          const glm::dvec3 normalized_corner = corner - position.actual_center_of_mass;
+          const glm::dvec3 rotated_point
+              = pce::rotateVector3byAngleAxis(normalized_corner, rotation_amount, motion.rotational_axis);
+          corner = rotated_point + position.actual_center_of_mass;
+        }
+
 
         continue;
       }
       
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {
-        const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
-          motion.previous_resting_position, motion.velocity, time_change_,
-          force.of_gravity, motion.duration);
-        
-        const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
-
         if (sqrt(glm::dot(position_change, position_change)) < 0.01) 
         {
           ++motion.stationary_counter;

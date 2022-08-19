@@ -69,7 +69,7 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
       }
       if (has_been_added) { break; }
     }
-    if (!has_been_added) { ordered_vertices.push_back(vertices[i]); std::cout << "pushing back" << '\n';}
+    if (!has_been_added) { ordered_vertices.push_back(vertices[i]);}
 
     // std::cout << "ordered_vertices:" << '\n';
     // for (auto const& vertex : ordered_vertices) {
@@ -138,7 +138,7 @@ std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& fac
   double current_sweep_crawl_distance = 0.0;
   const double total_sweep_crawl_distance = pce3d::maths::calculateDistanceBetweenVectors(
                                                 sweep_start_vertex, sweep_end_vertex);
-  std::cout << "total_sweep_crawl_distance: " << total_sweep_crawl_distance << '\n';
+  // std::cout << "total_sweep_crawl_distance: " << total_sweep_crawl_distance << '\n';
 
   while (current_sweep_crawl_distance <= total_sweep_crawl_distance)
   {

@@ -101,20 +101,27 @@ public:
  
 
 /* ---------------------------------------- draw --------------------------------- */
-void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_transform) {
-  std::cout << "-----" << '\n';
-  // for (auto const& [point, entity] : deadbod_map_) {
-    // auto point = glm::dvec3(5045, 4971, 5000);
-    // std::cout << "point: " << point.x << ", " << point.y << ", " << point.z << '\n';
-    // const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
-    // glm::dvec3 rotated_point = converted_point - cam_transform;
-    // double distance = sqrt(glm::dot(rotated_point, rotated_point));
-    // rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
-    // const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
-    // const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
-    // pce::quickdraw::drawCircle(pixel, 100.0 / distance, {12, 200, 200, 255});
-  // }
-}
+  void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_transform) {
+    std::cout << "-----" << '\n';
+    for (auto const& [point, entity] : deadbod_map_) {
+      const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
+      glm::dvec3 rotated_point = converted_point - cam_transform;
+      double distance = sqrt(glm::dot(rotated_point, rotated_point));
+      rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
+      const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
+      const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
+      pce::quickdraw::drawCircle(pixel, 10.0 / distance, {12, 200, 200, 255});
+    }
+    for (auto const& [point, entity] : livebod_map_) {
+      const glm::dvec3 converted_point = pce3d::space_map::findPointOfIndex(point, map_dimensions_, meter_index_ratio_);
+      glm::dvec3 rotated_point = converted_point - cam_transform;
+      double distance = sqrt(glm::dot(rotated_point, rotated_point));
+      rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
+      const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
+      const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
+      pce::quickdraw::drawCircle(pixel, 10.0 / distance, {12, 200, 200, 255});
+    }
+  }
 
 /* ---------------------------------------- update --------------------------------- */
   void UpdateEntities() 
@@ -124,16 +131,62 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
     potential_colliding_entities_.clear();
     for (auto const& entity : entities) 
     {
-      auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
+      auto& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
       if (rigid_object.is_deadbod) { continue; }
+
+      rigid_object.entity_face_collision_map.clear();
+      rigid_object.entity_index_collision_map.clear();
       
-      // std::cout << "finding indices" << '\n';
-      const std::vector<glm::ivec3> indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      bool check_for_collision = true; 
+      
+      /* update position: complex livebody */
+      if (rigid_object.is_complex_livebod)
+      {
+        // std::cout << "updating complex livebod position" << '\n';
+        std::vector<glm::ivec3> indices{};
+        for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
+          // std::cout << "face: " << face << '\n';    
+          std::vector<glm::ivec3> face_indices{};
+          switch (vertex_ids.size()) 
+          {
+            case 4: 
+              // std::cout << "case 4" << '\n';
+              face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                            rigid_object.vertices,
+                                                            map_dimensions_,
+                                                            meter_index_ratio_);
+              break;
+            case 3:
+              face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                                rigid_object.vertices,
+                                                                map_dimensions_,
+                                                                meter_index_ratio_);
+              break;
+            default:
+              break;
+          }
+          indices.insert(indices.end(), face_indices.begin(), face_indices.end());
+          for (auto const& index : face_indices) {
+            rigid_object.index_face_map[index] = face;
+            rigid_object.face_index_map[face] = index;
+
+            if (livebod_map_.find(index) == livebod_map_.end()) {
+              livebod_map_[index] = {entity};
+            } else {
+              if (!std::count(livebod_map_.at(index).begin(), livebod_map_.at(index).end(), entity)) {
+                livebod_map_.at(index).push_back(entity); 
+              }
+            }
+          }
+        }
+      }
+
       // std::cout << "first index: " << indices[0].x << ", " << indices[0].y << ", " << indices[0].z << '\n';
       // std::cout << "restingbods" << '\n'; 
-      if (rigid_object.is_restingbod)
+      else if (rigid_object.is_restingbod)
       {
-        for (auto const& index : indices) {
+        for (auto const& index : vertex_indices) {
           if (restingbod_map_.find(index) == restingbod_map_.end()) 
           {
             restingbod_map_[index] = {entity};
@@ -148,22 +201,38 @@ void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_tr
 
       // std::cout << "livebods" << '\n'; 
       /* put vertices into livebody space map */
-      for (auto const& index : indices) 
-      {
-        bool check_for_collision = true;
-        if (livebod_map_.find(index) == livebod_map_.end()) 
+      else {
+        for (auto const& index : vertex_indices) 
         {
-          livebod_map_[index] = {entity};
-        } else {
-          if (!std::count(livebod_map_.at(index).begin(), livebod_map_.at(index).end(), entity)) {
-             livebod_map_.at(index).push_back(entity); 
-             potential_colliding_entities_[entity] = livebod_map_.at(index)[0];
-            //  std::cout << "SpaceMapSystem: collision with livebod" << '\n';
-             continue;
+          if (livebod_map_.find(index) == livebod_map_.end()) 
+          {
+            livebod_map_[index] = {entity};
+          } else {
+            if (!std::count(livebod_map_.at(index).begin(), livebod_map_.at(index).end(), entity)) {
+              livebod_map_.at(index).push_back(entity); 
+              potential_colliding_entities_[entity] = livebod_map_.at(index)[0];
+              //  std::cout << "SpaceMapSystem: collision with livebod" << '\n';
+
+              if (rigid_object.entity_index_collision_map.find(livebod_map_.at(index)[0])
+                == rigid_object.entity_index_collision_map.end())
+              {
+                rigid_object.entity_index_collision_map[livebod_map_.at(index)[0]] 
+                  = {space_map::findPointOfIndex(index, map_dimensions_, meter_index_ratio_)};
+              }
+              else
+              {
+                rigid_object.entity_index_collision_map.at(livebod_map_.at(index)[0]).push_back(
+                  space_map::findPointOfIndex(index, map_dimensions_, meter_index_ratio_));
+              }
+              continue;
+            }
           }
         }
+      }
 
-        if (check_for_collision)
+      if (check_for_collision)
+      {
+        for (auto const& index : vertex_indices)
         {
           if (restingbod_map_.find(index) != restingbod_map_.end()) {
             potential_colliding_entities_[entity] = restingbod_map_.at(index)[0];

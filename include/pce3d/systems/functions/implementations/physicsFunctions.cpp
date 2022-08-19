@@ -32,6 +32,7 @@ bool determineIfParticlesAreColliding(
 }
 
 
+
 std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollision(
     const glm::dvec3& a_center, const double a_radius, const glm::dvec3& a_velocity_vect, const double a_mass,
     const glm::dvec3& b_center, const double b_radius, const glm::dvec3& b_velocity_vect, const double b_mass) 
@@ -50,6 +51,7 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocityVectorsAfterTwoParticleCollis
  
   return std::make_pair(a_magnitude_in_a_direction, b_magnitude_in_b_direction);
 }
+
 
 
 void updateBothEntityInfoAfterTwoParticleCollision(
@@ -86,6 +88,7 @@ void updateBothEntityInfoAfterTwoParticleCollision(
 }
 
 
+
 bool determineIfParticleIsCollidingWithFace(
     const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
@@ -101,6 +104,7 @@ bool determineIfParticleIsCollidingWithFace(
   
   return (distance < p_radius) ? true : false;
 }
+
 
 
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
@@ -132,6 +136,7 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
 }
 
 
+
 glm::dvec3 calculateStartPositionAfterLiveParticleDeadFaceCollision(
     const glm::dvec3 A
   , const glm::dvec3 B
@@ -144,6 +149,7 @@ glm::dvec3 calculateStartPositionAfterLiveParticleDeadFaceCollision(
   const glm::dvec3 plane_point = pce3d::maths::calculateClosestPointInPlaneToPoint(A, B, C, particle_position);
   return plane_point + particle_radius * normal_vector;
 }
+
 
 
 void updateLiveParticleInfoAfterDeadFaceCollision(
@@ -170,11 +176,9 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
 
   motion.duration = 0.0;
   motion.speed = sqrt(glm::dot(motion.velocity, motion.velocity));
-  
-  
-
-
 }
+
+
 
 
 

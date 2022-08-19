@@ -19,6 +19,7 @@ using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
 using IndexFaceMap = std::unordered_map<glm::ivec3, uint32_t>;
 using FaceIndexMap = std::unordered_map<uint32_t, glm::ivec3>;
 using EntityFaceCollisionMap = std::unordered_map<uint32_t, uint32_t>;
+using EntityIndexCollisionMap = std::unordered_map<uint32_t, std::vector<glm::dvec3>>;
 using EntityTimeCollisionMap = std::unordered_map<uint32_t, double>;
 using FaceCornerMap = std::unordered_map<uint32_t, glm::dvec3>;
 using FaceVertexCornerMap = std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>>;
@@ -52,6 +53,7 @@ struct RigidObject {
   FaceIndexMap face_index_map;  
   EntityFaceCollisionMap entity_face_collision_map;
   EntityTimeCollisionMap entity_time_collision_map;
+  EntityIndexCollisionMap entity_index_collision_map;
 };
 
 }

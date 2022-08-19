@@ -42,6 +42,7 @@ public:
 
       /* check if item is on screen */
       if (position.center_of_mass_radar_pixel == glm::dvec2(0, 0)) {
+        // std::cout << "skipping render; off screen per radar system" << '\n';
         continue;
       }
 
@@ -74,8 +75,8 @@ public:
         {
           // std::cout << "getting rect faces ordered for render " << '\n';
           faces_in_render_order = render::getFacesOrderedForRender(radar.closest_vertex_id,
-                                                                  rigid_object.vertex_face_corner_map,
-                                                                  rigid_object.camera_rotated_face_corner_map);
+                                                                   rigid_object.vertex_face_corner_map,
+                                                                   rigid_object.camera_rotated_face_corner_map);
         }
         else if (rigid_object.face_count == 4 || rigid_object.face_count == 5)
         {

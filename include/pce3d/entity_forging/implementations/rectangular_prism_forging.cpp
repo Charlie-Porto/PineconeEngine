@@ -64,7 +64,9 @@ Entity forgeRectPrismEntity(
     .vertex_face_corner_map = vertex_face_corner_map,
     .index_face_map = {},
     .face_index_map = {},
-    .entity_face_collision_map = {}
+    .entity_face_collision_map = {},
+    .entity_time_collision_map = {},
+    .entity_index_collision_map = {}
   });
   control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::Motion{
