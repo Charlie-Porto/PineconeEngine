@@ -30,6 +30,8 @@ glm::dvec3 findPointOfIndex(const glm::ivec3& index, const glm::ivec3& mdim, con
 
 std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, const glm::dvec3& mdim, const double mir);
 
+std::unordered_map<uint32_t, glm::ivec3> findIndicesGivenVerticesLabeled(const VertexMap& vertices, const glm::dvec3& mdim, const double mir);
+
 std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices);
 
 std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,

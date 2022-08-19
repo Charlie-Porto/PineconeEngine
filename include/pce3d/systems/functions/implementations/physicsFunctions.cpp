@@ -180,6 +180,232 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
 
 
 
+std::pair<std::pair<bool, glm::dvec3>, std::pair<bool, glm::dvec3>> 
+calculateLiveBodHitPointsAndIfVertex(
+    const uint32_t entity_a
+  , const uint32_t entity_b
+  , pce::RigidObject& a_rigid_object
+  , pce::RigidObject& b_rigid_object
+  , pce::Position& a_position
+  , pce::Position& b_position
+)
+{
+  glm::dvec3 a_hit_point = a_position.actual_center_of_mass;
+  glm::dvec3 b_hit_point = b_position.actual_center_of_mass;
+  std::pair<bool, glm::dvec3> a_pair = std::make_pair(false, a_position.actual_center_of_mass);
+  std::pair<bool, glm::dvec3> b_pair = std::make_pair(false, b_position.actual_center_of_mass);
+
+  const glm::dvec3 collision_point = pce3d::space_map::findPointOfIndex(
+    a_rigid_object.entity_index_collision_map.at(entity_b)[0],
+    pce3d::Core3D::SPACE_MAP_DIMENSIONS, 
+    pce3d::Core3D::COLLISION_METER_INDEX_RATIO);
+
+  /* find entity a hitpoint */
+  if (a_rigid_object.entity_vertex_collision_map.find(entity_b) 
+   != a_rigid_object.entity_vertex_collision_map.end())
+  {
+    std::cout << "entity A: vertex collision" << '\n';
+    const uint32_t a_hitpoint_id = a_rigid_object.entity_vertex_collision_map.at(entity_b);
+    a_hit_point = a_rigid_object.vertices.at(a_hitpoint_id);
+    if (a_rigid_object.radius != 0)
+    {
+      std::cout << "entity A is a particle" << '\n';
+      const glm::dvec3 hit_point_direction = glm::normalize(collision_point - a_position.actual_center_of_mass);
+      a_hit_point += a_rigid_object.radius * hit_point_direction;
+    }
+    a_pair = std::make_pair(true, a_hit_point);
+  }
+  else
+  {
+    std::cout << "entity A: face collision" << '\n';
+    assert(a_rigid_object.entity_face_collision_map.find(entity_b) != a_rigid_object.entity_face_collision_map.end());
+    const uint32_t a_hit_face_id = a_rigid_object.entity_face_collision_map.at(entity_b);
+
+    a_hit_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
+      a_rigid_object.vertices.at(a_rigid_object.face_vertex_map.at(a_hit_face_id)[0]),
+      a_rigid_object.vertices.at(a_rigid_object.face_vertex_map.at(a_hit_face_id)[1]),
+      a_rigid_object.vertices.at(a_rigid_object.face_vertex_map.at(a_hit_face_id)[2]),
+      collision_point);
+    a_pair = std::make_pair(false, a_hit_point);
+  }
+
+  /* find entity b hitpoint */
+  if (b_rigid_object.entity_vertex_collision_map.find(entity_a) 
+   != b_rigid_object.entity_vertex_collision_map.end())
+  {
+    std::cout << "entity B: vertex collision" << '\n';
+    const uint32_t b_hitpoint_id = b_rigid_object.entity_vertex_collision_map.at(entity_a);
+    b_hit_point = b_rigid_object.vertices.at(b_hitpoint_id);
+    if (b_rigid_object.radius != 0)
+    {
+      std::cout << "entity B is a particle" << '\n';
+      const glm::dvec3 hit_point_direction = glm::normalize(collision_point - b_position.actual_center_of_mass);
+      b_hit_point += b_rigid_object.radius * hit_point_direction;
+    }
+    b_pair = std::make_pair(true, b_hit_point);
+  }
+  else
+  {
+    std::cout << "entity B: face collision" << '\n';
+    assert(b_rigid_object.entity_face_collision_map.find(entity_a) != b_rigid_object.entity_face_collision_map.end());
+    const uint32_t b_hit_face_id = b_rigid_object.entity_face_collision_map.at(entity_a);
+
+    b_hit_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_hit_face_id)[0]),
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_hit_face_id)[1]),
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_hit_face_id)[2]),
+      collision_point);
+    b_pair = std::make_pair(false, b_hit_point);
+  }
+
+  return std::make_pair(a_pair, b_pair);
+}
+
+
+
+glm::dvec3 calculateMomentumVectorAtSurfacePoint(
+    const glm::dvec3 point
+  , const uint32_t face
+  , const pce::RigidObject& rigid_object
+  , const pce::Position& position
+  , const pce::Motion& motion
+)
+{
+  const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point;
+  glm::dvec3 face_normal_line = center_to_point_vector;
+
+  if (rigid_object.radius == 0 && face != 0)
+  {
+    // std::cout << "doing special face normal line calc" << '\n';
+    face_normal_line = pce3d::maths::calculateNormalVectorInDirectionOfPoint(
+      rigid_object.vertices.at(rigid_object.face_vertex_map.at(face)[0]),
+      rigid_object.vertices.at(rigid_object.face_vertex_map.at(face)[1]),
+      rigid_object.vertices.at(rigid_object.face_vertex_map.at(face)[2]),
+      position.actual_center_of_mass);
+  }
+
+  const double angle = pce3d::maths::calculateAngleDegreesBetweenVectors(face_normal_line, center_to_point_vector)
+                       / 3.14159265 * 180.0;
+  // std::cout << "point angle relative to center: " << angle << '\n';
+
+  /* A: calculate linear component */
+  const double linear_allocation_percentage = angle == 0 ? 1.0 : 90.0 / angle;
+  // std::cout << "linear allocation: " << linear_allocation_percentage << '\n';
+  const glm::dvec3 linear_momentum_component = motion.direction * motion.speed * linear_allocation_percentage * rigid_object.mass;
+
+  // std::cout << "speed: " << motion.speed << '\n';
+  // std::cout << "motion.direction: "
+            // << motion.direction.x << ", " 
+            // << motion.direction.y << ", " 
+            // << motion.direction.z << '\n';
+  // std::cout << "linear_momentum_component: "
+            // << linear_momentum_component.x << ", " 
+            // << linear_momentum_component.y << ", " 
+            // << linear_momentum_component.z << '\n';
+
+
+  /* B: calculate rotational component */
+  const double rotation_direction = pce::math::sign(motion.rotational_speed);
+  const glm::dvec3 incrementally_rotated_point = pce::rotateVector3byAngleAxis(
+    center_to_point_vector,
+    0.001, 
+    motion.rotational_axis);
+
+  const glm::dvec3 rotation_velocity_vector 
+    = glm::normalize(center_to_point_vector + incrementally_rotated_point) * motion.rotational_speed;
+
+  
+  const double rotational_allocation_percentage = angle == 90.0 ? 90.0 / .001 : (90.0 / (90.0 - angle)) - 1.0;
+  // std::cout << "rotational allocation: " << rotational_allocation_percentage << '\n';
+  const glm::dvec3 rotational_momentum_component = rotation_velocity_vector * rotational_allocation_percentage  * rigid_object.mass;
+  /* C: combine */
+  // std::cout << "rotational_momentum_component: "
+            // << rotational_momentum_component.x << ", " 
+            // << rotational_momentum_component.y << ", " 
+            // << rotational_momentum_component.z << '\n';
+
+  const glm::dvec3 total_momentum = linear_momentum_component + rotational_momentum_component;
+  std::cout << "total_momentum: "
+            << total_momentum.x << ", " 
+            << total_momentum.y << ", " 
+            << total_momentum.z << '\n';
+
+  return (total_momentum);
+}
+
+
+
+void updateEntityDataFromLiveBodCollision(
+    const uint32_t entity_a
+  , const uint32_t entity_b
+  , pce::RigidObject& a_rigid_object
+  , pce::Position& a_position
+  , pce::Surface& a_surface
+  , pce::Motion& a_motion
+  , pce::Force& a_force
+  , pce::RigidObject& b_rigid_object
+  , pce::Position& b_position
+  , pce::Surface& b_surface
+  , pce::Motion& b_motion
+  , pce::Force& b_force
+)
+{
+  const std::pair<std::pair<bool, glm::dvec3>, std::pair<bool, glm::dvec3>>
+  entityAandB_hitpoints = calculateLiveBodHitPointsAndIfVertex(
+    entity_a,
+    entity_b,
+    a_rigid_object,
+    b_rigid_object,
+    a_position,
+    b_position
+  );
+
+  const glm::dvec3 a_hitpoint = entityAandB_hitpoints.first.second;
+  const glm::dvec3 b_hitpoint = entityAandB_hitpoints.second.second;
+
+  // std::cout << "a_hitpoint: "
+            // << a_hitpoint.x << ", " 
+            // << a_hitpoint.y << ", " 
+            // << a_hitpoint.z << '\n';
+  // std::cout << "b_hitpoint: "
+            // << b_hitpoint.x << ", " 
+            // << b_hitpoint.y << ", " 
+            // << b_hitpoint.z << '\n';
+  
+  uint32_t a_face = 1;
+  uint32_t b_face = 1;
+  
+  if (a_rigid_object.radius == 0)
+  {
+    a_face = !entityAandB_hitpoints.first.first
+      ? a_rigid_object.entity_face_collision_map.at(entity_b)
+      : 0;
+  }
+
+  if (b_rigid_object.radius == 0)
+  {
+  b_face = !entityAandB_hitpoints.second.first
+    ? b_rigid_object.entity_face_collision_map.at(entity_a)
+    : 0;
+  }
+
+  const glm::dvec3 a_momentum = calculateMomentumVectorAtSurfacePoint(
+    a_hitpoint,
+    a_face,
+    a_rigid_object,
+    a_position,
+    a_motion
+  );
+
+  const glm::dvec3 b_momentum = calculateMomentumVectorAtSurfacePoint(
+    b_hitpoint,
+    b_face,
+    b_rigid_object,
+    b_position,
+    b_motion
+  );
+
+}
 
 
 

@@ -6,6 +6,8 @@
 glm::dvec3 pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.1, -0.9, -0.2);
 double pce3d::Core3D::LENSE_CURVE_ = 0.1;
 double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 15.0;
+double pce3d::Core3D::COLLISION_METER_INDEX_RATIO = 1.0;
+glm::ivec3 pce3d::Core3D::SPACE_MAP_DIMENSIONS = glm::ivec3(10000, 10000, 10000);
 
 
 #include "modules.cpp"
@@ -76,6 +78,7 @@ void Core3D::RegisterCoreSystems() {
   control.AssignSystemComponents<pce3d::RegisterForOrderOfRenderSystem, pce::Radar, pce::Render, pce::RigidObject, pce::OrderOfRenderRegistration>();
 
   space_map_system_ = control.RegisterSystem<pce3d::SpaceMapSystem>();
+  space_map_system_->SetMainParameters(pce3d::Core3D::COLLISION_METER_INDEX_RATIO, pce3d::Core3D::SPACE_MAP_DIMENSIONS);
   control.AssignSystemComponents<pce3d::SpaceMapSystem, pce::RigidObject>();
 
   physics_system_ = control.RegisterSystem<pce3d::PhysicsSystem>();

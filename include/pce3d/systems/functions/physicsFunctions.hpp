@@ -12,6 +12,8 @@ free functions to assist the physics system
 #include <glm/geometric.hpp>
 #include "../../maths/functions/plane_functions.hpp"
 #include "../../maths/functions/quaternion_functions.hpp"
+#include "../../maths/functions/sign.hpp"
+#include "../../pce3d.hpp"
 
 
 namespace pce3d {
@@ -68,6 +70,38 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
     const std::vector<glm::dvec3>& face_vertices, double elasticity);
      
 
+std::pair<std::pair<bool, glm::dvec3>, std::pair<bool, glm::dvec3>> 
+calculateLiveBodHitPointsAndIfVertex(
+    const uint32_t entity_a
+  , const uint32_t entity_b
+  , pce::RigidObject& a_rigid_object
+  , pce::RigidObject& b_rigid_object
+  , pce::Position& a_position
+  , pce::Position& b_position
+);
+
+glm::dvec3 calculateMomentumVectorAtSurfacePoint(
+    const glm::dvec3 point
+  , const uint32_t face
+  , const pce::RigidObject& rigid_object
+  , const pce::Position& position
+  , const pce::Motion& motion
+);
+
+void updateEntityDataFromLiveBodCollision(
+    const uint32_t entity_a
+  , const uint32_t entity_b
+  , pce::RigidObject& a_rigid_object
+  , pce::Position& a_position
+  , pce::Surface& a_surface
+  , pce::Motion& a_motion
+  , pce::Force& a_force
+  , pce::RigidObject& b_rigid_object
+  , pce::Position& b_position
+  , pce::Surface& b_surface
+  , pce::Motion& b_motion
+  , pce::Force& b_force
+);
 
 
 }

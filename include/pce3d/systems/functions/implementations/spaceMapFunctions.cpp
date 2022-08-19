@@ -32,6 +32,18 @@ std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, cons
 }
 
 
+
+std::unordered_map<uint32_t, glm::ivec3> findIndicesGivenVerticesLabeled(const VertexMap& vertices, const glm::dvec3& mdim, const double mir)
+{
+  std::unordered_map<uint32_t, glm::ivec3> indices{};
+  for (auto const& [id, vertex] : vertices) {
+    indices[id] = findIndexOfPoint(vertex, mdim, mir);
+  }
+  return indices;
+}
+
+
+
 std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
                                         const VertexMap& vertices, const glm::dvec3& mdim,
                                         const double mir) {

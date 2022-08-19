@@ -28,9 +28,16 @@ public:
     : meter_index_ratio_(meter_index_ratio), map_dimensions_(map_dimensions) {
     deadbod_map_ = {};
     livebod_map_ = {};
+    livebod_vertex_map_ = {};
     restingbod_map_ = {};
     potential_colliding_entities_ = {};
  }
+
+  void SetMainParameters(const double meter_index_ratio, const glm::ivec3 map_dimensions)
+  {
+    meter_index_ratio_ = meter_index_ratio;
+    map_dimensions_ = map_dimensions;
+  }
   
 /* ---------------------------------------- setup --------------------------------- */
   void DoPreLoopSetup() {
@@ -45,7 +52,6 @@ public:
       // indices.insert(indices.end(), vertex_indices.begin(), vertex_indices.end());
 
       for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
-        std::cout << "getting face indices" << '\n';
         
         std::vector<glm::ivec3> face_indices{};
         switch (vertex_ids.size()) 
@@ -127,6 +133,7 @@ public:
   void UpdateEntities() 
   {
     livebod_map_.clear();
+    livebod_vertex_map_.clear();
     restingbod_map_.clear();
     potential_colliding_entities_.clear();
     for (auto const& entity : entities) 
@@ -137,12 +144,22 @@ public:
       rigid_object.entity_face_collision_map.clear();
       rigid_object.entity_index_collision_map.clear();
       
-      const std::vector<glm::ivec3> vertex_indices = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      const std::vector<glm::ivec3> vertex_indices 
+        = space_map::findIndicesGivenVertices(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      const std::unordered_map<uint32_t, glm::ivec3> labeled_vertex_indices 
+        = space_map::findIndicesGivenVerticesLabeled(rigid_object.vertices, map_dimensions_, meter_index_ratio_);
+      
       bool check_for_collision = true; 
       
       /* update position: complex livebody */
-      if (rigid_object.is_complex_livebod)
+      if (!rigid_object.is_restingbod)
       {
+        for (auto const& [id, index] : labeled_vertex_indices)
+        {
+          livebod_vertex_map_[index][entity] = id;
+        }
+
+
         // std::cout << "updating complex livebod position" << '\n';
         std::vector<glm::ivec3> indices{};
         for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
@@ -150,6 +167,9 @@ public:
           std::vector<glm::ivec3> face_indices{};
           switch (vertex_ids.size()) 
           {
+            case 1:
+              face_indices = vertex_indices;
+              break;
             case 4: 
               // std::cout << "case 4" << '\n';
               face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
@@ -166,19 +186,75 @@ public:
             default:
               break;
           }
+
           indices.insert(indices.end(), face_indices.begin(), face_indices.end());
-          for (auto const& index : face_indices) {
+
+          for (auto const& index : face_indices) 
+          {
             rigid_object.index_face_map[index] = face;
             rigid_object.face_index_map[face] = index;
 
-            if (livebod_map_.find(index) == livebod_map_.end()) {
+            if (livebod_map_.find(index) == livebod_map_.end()) 
+            {
               livebod_map_[index] = {entity};
-            } else {
+              livebod_index_face_map_[index][entity] = face;
+            } 
+
+            else 
+            {
               if (!std::count(livebod_map_.at(index).begin(), livebod_map_.at(index).end(), entity)) {
                 livebod_map_.at(index).push_back(entity); 
+                potential_colliding_entities_[entity] = livebod_map_.at(index)[0];
+
+                std::cout << "livebod collision detected: "<< entity << '\n';
+
+                auto& other_rigid_object = control.GetComponent<pce::RigidObject>(livebod_map_.at(index)[0]);
+
+                bool original_entity_finished = false;
+                bool other_entity_finished = false;
+                if (livebod_vertex_map_.find(index) != livebod_vertex_map_.end())
+                {
+                  if (livebod_vertex_map_.at(index).find(entity) != livebod_vertex_map_.at(index).end())
+                  {
+                    rigid_object.entity_vertex_collision_map[livebod_map_.at(index)[0]] 
+                      = livebod_vertex_map_.at(index).at(entity);
+                    original_entity_finished = true;
+                  }
+                }
+                if (!original_entity_finished)
+                {
+                  rigid_object.entity_index_collision_map[livebod_map_.at(index)[0]] = {index};
+                  rigid_object.entity_face_collision_map[livebod_map_.at(index)[0]] = face;
+                }
+
+                if (livebod_vertex_map_.find(index) != livebod_vertex_map_.end())
+                {
+                  if (livebod_vertex_map_.at(index).find(livebod_map_.at(index)[0]) != livebod_vertex_map_.at(index).end())
+                  {
+                    other_rigid_object.entity_vertex_collision_map[livebod_map_.at(index)[0]] 
+                      = livebod_vertex_map_.at(index).at(livebod_map_.at(index)[0]);
+                    other_entity_finished = true;
+                  }
+                }
+                if (!other_entity_finished)
+                {
+                  other_rigid_object.entity_index_collision_map[livebod_map_.at(index)[0]] = {index};
+                  other_rigid_object.entity_face_collision_map[entity] = livebod_index_face_map_.at(index).at(livebod_map_.at(index)[0]);
+                }
+
+                // if (rigid_object.entity_index_collision_map.find(livebod_map_.at(index)[0])
+                  // == rigid_object.entity_index_collision_map.end())
+                // {
+                  rigid_object.entity_index_collision_map[livebod_map_.at(index)[0]] = {index};
+                // }
+                // else
+                // {
+                  // rigid_object.entity_index_collision_map.at(livebod_map_.at(index)[0]).push_back(index);
+                // }
               }
             }
           }
+
         }
       }
 
@@ -199,68 +275,23 @@ public:
         continue;
       }
 
-      // std::cout << "livebods" << '\n'; 
-      /* put vertices into livebody space map */
-      else {
-        for (auto const& index : vertex_indices) 
-        {
-          if (livebod_map_.find(index) == livebod_map_.end()) 
-          {
-            livebod_map_[index] = {entity};
-          } else {
-            if (!std::count(livebod_map_.at(index).begin(), livebod_map_.at(index).end(), entity)) {
-              livebod_map_.at(index).push_back(entity); 
-              potential_colliding_entities_[entity] = livebod_map_.at(index)[0];
-              //  std::cout << "SpaceMapSystem: collision with livebod" << '\n';
-
-              if (rigid_object.entity_index_collision_map.find(livebod_map_.at(index)[0])
-                == rigid_object.entity_index_collision_map.end())
-              {
-                rigid_object.entity_index_collision_map[livebod_map_.at(index)[0]] 
-                  = {space_map::findPointOfIndex(index, map_dimensions_, meter_index_ratio_)};
-              }
-              else
-              {
-                rigid_object.entity_index_collision_map.at(livebod_map_.at(index)[0]).push_back(
-                  space_map::findPointOfIndex(index, map_dimensions_, meter_index_ratio_));
-              }
-              continue;
-            }
-          }
-        }
-      }
 
       if (check_for_collision)
       {
         for (auto const& index : vertex_indices)
         {
-          if (restingbod_map_.find(index) != restingbod_map_.end()) {
+          if (restingbod_map_.find(index) != restingbod_map_.end()) 
+          {
             potential_colliding_entities_[entity] = restingbod_map_.at(index)[0];
             continue;
           }
-          if (deadbod_map_.find(index) != deadbod_map_.end()) {
-            // for (auto const& a : deadbod_map_.at(index))
-            // {
-            //   std::cout << "entity at index: " << a << '\n';
-            // }
-            // std::cout << index.x << ", " << index.y << ", " << index.z << '\n';
+          else if (deadbod_map_.find(index) != deadbod_map_.end()) 
+          {
             uint32_t deadbod_entity = deadbod_map_.at(index)[0];
             potential_colliding_entities_[entity] = deadbod_entity; 
             auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
-            // for (auto const& [mindex, face] : deadbod_rigid_object.index_face_map)
-            // {
-            //    std::cout << mindex.x << ", " << mindex.y << ", " << mindex.z << '\n';
-            // }
-            // if (deadbod_rigid_object.index_face_map.find(index) == deadbod_rigid_object.index_face_map.end())
-            // {
-              //  deadbod_rigid_object.index_face_map[index] == deadbod_rigid_object.base_face_id;
-            // }
-            deadbod_rigid_object.entity_face_collision_map[entity] 
-                = deadbod_rigid_object.index_face_map.at(index);
-            // std::cout << "inserted into deadbod's ---------------------------------------" << '\n'; 
-            // std::cout << " entity: " << entity << '\n'; 
-            // std::cout << " deadbod_entity: " << deadbod_entity << '\n'; 
-            // std::cout << "SpaceMapSystem: collision with deadbod" << '\n';
+            deadbod_rigid_object.entity_face_collision_map[entity] = deadbod_rigid_object.index_face_map.at(index);
+            rigid_object.entity_face_collision_map[deadbod_entity] = rigid_object.index_face_map.at(index);
           }
         }
       }
@@ -271,6 +302,8 @@ public:
   std::unordered_map<glm::ivec3, std::vector<uint32_t>> deadbod_map_;
   std::unordered_map<glm::ivec3, std::vector<uint32_t>> restingbod_map_;
   std::unordered_map<glm::ivec3, std::vector<uint32_t>> livebod_map_;
+  std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>> livebod_vertex_map_;
+  std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>> livebod_index_face_map_;
   std::unordered_map<uint32_t, uint32_t> potential_colliding_entities_;
 
   double meter_index_ratio_;

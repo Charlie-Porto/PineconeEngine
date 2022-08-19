@@ -16,6 +16,7 @@ system for handling physics
 #include "functions/physicsFunctions.hpp"
 #include "../maths/functions/vector_functions.hpp"
 #include "../maths/functions/quaternion_functions.hpp"
+#include "functions/spaceMapFunctions.hpp"
 
 extern ControlPanel control;
 
@@ -43,9 +44,34 @@ public:
       auto& a_position = control.GetComponent<pce::Position>(entity_a);
       auto& b_position = control.GetComponent<pce::Position>(entity_b);
       auto& a_motion = control.GetComponent<pce::Motion>(entity_a);
+      auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
       auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
       auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
       auto& a_force = control.GetComponent<pce::Force>(entity_a);
+      auto& b_force = control.GetComponent<pce::Force>(entity_a);
+
+      if (a_rigid_object.is_complex_livebod || b_rigid_object.is_complex_livebod)
+      {
+        std::cout << "PHYSICS SYSTEM: CHECKING FOR COLLISION WITH COMPLEX LIVEBOD" << '\n';
+
+        pce3d::physics::updateEntityDataFromLiveBodCollision(
+          entity_a,
+          entity_b,
+          a_rigid_object,
+          a_position,
+          a_surface,
+          a_motion,
+          a_force,
+          b_rigid_object,
+          b_position,
+          b_surface,
+          b_motion,
+          b_force
+        );
+
+
+        continue;
+      }
       
       /* handle live-dead collision */
       if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
@@ -139,7 +165,6 @@ public:
       if (!a_rigid_object.is_deadbod && !b_rigid_object.is_deadbod && !b_rigid_object.is_complex_livebod
        && !a_rigid_object.is_restingbod && !a_rigid_object.is_complex_livebod) 
       {
-        auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
         // std::cout << "entity_a: " << entity_a<< '\n';
         // std::cout << "speed: " << a_motion.speed << '\n';
         // std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';

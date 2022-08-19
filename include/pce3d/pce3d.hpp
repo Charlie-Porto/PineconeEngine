@@ -52,6 +52,8 @@ public:
   static glm::dvec3 LIGHT_FLOW_DIRECTION_;
   static double LENSE_CURVE_;
   static double ORDINARY_ZOOM_INDEX_;
+  static double COLLISION_METER_INDEX_RATIO;
+  static glm::ivec3 SPACE_MAP_DIMENSIONS;
 
 
 private:
