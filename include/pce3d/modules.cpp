@@ -43,6 +43,7 @@ including not-yet-included implementation files
 #include "entity_forging/implementations/triangle_pyramid_forging.cpp"
 #include "entity_forging/implementations/square_pyramid_forging.cpp"
 #include "entity_forging/implementations/base_entity_forging.cpp"
+#include "entity_forging/implementations/panel_forging.cpp"
 #include "entity_forging/functions/implementations/forge_functions.cpp"
 #include "entity_forging/factories/implementations/SphereFactory.cpp"
 

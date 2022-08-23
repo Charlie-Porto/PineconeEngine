@@ -29,15 +29,24 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   // }
   // if (abs(b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance) 
     // < abs(a_entity_tag.closest_vertex_distance - a_entity_tag.farthest_vertex_distance))
+
   if (big_tag.closest_vertex_distance < small_tag.closest_vertex_distance)
   {
     swap = true;
+    // std::cout << "1swap" << '\n';
+  }
+  if (big_tag.farthest_vertex_distance < small_tag.farthest_vertex_distance)
+  {
+    swap = true;
+    // std::cout << "2swap" << '\n';
   }
   if (pce3d::maths::calculateDistanceBetweenVectors(a_rigid_object.vertices.at(a_radar.closest_vertex_id), a_rigid_object.vertices.at(a_radar.farthest_vertex_id))
    >  pce3d::maths::calculateDistanceBetweenVectors(b_rigid_object.vertices.at(b_radar.closest_vertex_id), b_rigid_object.vertices.at(b_radar.farthest_vertex_id)))
   {
     swap = true;
+    // std::cout << "3swap" << '\n';
   }
+
   if (swap) 
   {
     big_entity = a_entity_tag.entity;
@@ -48,6 +57,8 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
 
   auto& big_rigid_object = control.GetComponent<pce::RigidObject>(big_entity);
   auto& big_radar = control.GetComponent<pce::Radar>(big_entity);
+  auto& sm_rigid_object = control.GetComponent<pce::RigidObject>(small_entity);
+  auto& sm_radar = control.GetComponent<pce::Radar>(small_entity);
 
   uint32_t big_closest_face = 1;
   double big_closest_face_corner_distance = 10000;
@@ -68,12 +79,13 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[1]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[2]),
-    small_tag.closest_vertex_location
+    // small_tag.closest_vertex_location
+    sm_rigid_object.camera_transformed_vertices.at(sm_radar.farthest_vertex_id)
   );
   
   const double face_point_magnitude = sqrt(glm::dot(big_entity_face_plane_point, big_entity_face_plane_point));
-  dev_render_system.AddPointToPointColorMap(a_rigid_object.camera_transformed_vertices.at(a_radar.farthest_vertex_id), {129, 160, 200, 255}, 7.0);
-  dev_render_system.AddPointToPointColorMap(b_rigid_object.camera_transformed_vertices.at(b_radar.farthest_vertex_id), {129, 160, 200, 255}, 7.0);
+  // dev_render_system.AddPointToPointColorMap(a_rigid_object.camera_transformed_vertices.at(a_radar.farthest_vertex_id), {129, 160, 200, 255}, 7.0);
+  // dev_render_system.AddPointToPointColorMap(b_rigid_object.camera_transformed_vertices.at(b_radar.farthest_vertex_id), {129, 160, 200, 255}, 7.0);
 
   dev_render_system.AddPointToPointColorMap(big_tag.closest_vertex_location, {200, 100, 200, 255}, 7.0);
   dev_render_system.AddPointToPointColorMap(small_tag.closest_vertex_location, {20, 100, 200, 255}, 7.0);
@@ -92,7 +104,8 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   // if (face_point_magnitude - face_corner_magnitude > tolerance)
   {
     // return face_point_magnitude <= face_corner_magnitude
-    return face_point_magnitude < small_tag.closest_vertex_distance
+    // return face_point_magnitude < small_tag.closest_vertex_distance
+    return face_point_magnitude < small_tag.farthest_vertex_distance
       ? big_entity : small_entity;
   }
   else
