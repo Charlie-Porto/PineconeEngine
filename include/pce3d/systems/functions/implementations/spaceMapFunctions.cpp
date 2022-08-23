@@ -15,12 +15,14 @@ glm::ivec3 findIndexOfPoint(const glm::dvec3& point, const glm::ivec3& mdim, con
 }
 
 
+
 glm::dvec3 findPointOfIndex(const glm::ivec3& index, const glm::ivec3& mdim, const double mir) {
   glm::ivec3 p = index - ((mdim / int(mir)) / 2);
   // std::cout << "~~~~~~~~~p: " << p.x << ", " << p.y << ", " << p.z << '\n';
   p = p * int(mir);
   return glm::dvec3(p.x, p.y, p.z);
 }
+
 
 
 std::vector<glm::ivec3> findIndicesGivenVertices(const VertexMap& vertices, const glm::dvec3& mdim, const double mir) {
@@ -58,6 +60,7 @@ std::vector<glm::ivec3> findFaceIndices(const std::vector<uint32_t>& face,
   }
   return face_indices;
 }
+
 
 
 std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::dvec3>& vertices) {
@@ -174,7 +177,274 @@ std::vector<glm::ivec3> findTriangleFaceIndices(const std::vector<uint32_t>& fac
   return indices;
 }
 
+std::vector<glm::ivec3> findFaceIndicesGeneral(
+    const uint32_t entity
+  , const uint32_t face
+  , pce::RigidObject& rigid_object
+  , const glm::ivec3& mdim
+  , const double mir
+)
+{
+  std::vector<glm::ivec3> face_indices{};
+  const size_t size = rigid_object.face_vertex_map.at(face).size();
+  switch (size) 
+  {
+    case 1:
+      face_indices = {space_map::findIndexOfPoint(rigid_object.vertices.at(1), mdim, mir)};
+      // std::cout << "ONLY ONE FACE INDEX: "
+                // << face_indices[0].x << ", "
+                // << face_indices[0].y << ", "
+                // << face_indices[0].z << '\n';
+                 
+      break;
+    case 4: 
+      face_indices = space_map::findRectFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                    rigid_object.vertices,
+                                                    mdim,
+                                                    mir);
+      break;
+    case 3:
+      face_indices = space_map::findTriangleFaceIndices(rigid_object.face_vertex_map.at(face),
+                                                        rigid_object.vertices,
+                                                        mdim,
+                                                        mir);
+      break;
+    default:
+      break;
+  }
 
+  return face_indices;
+}
+
+
+
+std::unordered_map<uint32_t, glm::ivec3> updateBodVertexMap(
+    const uint32_t entity
+  , pce::RigidObject& rigid_object
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& bod_vertex_map_ 
+  , const glm::ivec3 mdim
+  , const double mir
+)
+{
+  const std::unordered_map<uint32_t, glm::ivec3> labeled_vertex_indices 
+    = space_map::findIndicesGivenVerticesLabeled(rigid_object.vertices, mdim, mir);
+  for (auto const& [id, index] : labeled_vertex_indices) 
+  {
+    bod_vertex_map_[index] = std::unordered_map<uint32_t, uint32_t>{{entity, id}};
+  }
+
+  return labeled_vertex_indices;
+}
+
+
+
+std::unordered_map<uint32_t, std::vector<glm::ivec3>> updateBodEdgeMap(
+    const uint32_t entity
+  , pce::RigidObject& rigid_object
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& bod_edge_map_ 
+  , const glm::ivec3 mdim
+  , const double mir
+)
+{
+  std::unordered_map<uint32_t, std::vector<glm::ivec3>> edge_indices_map{};
+
+  for (auto const& [edge, vpair] : rigid_object.edges)
+  {
+    const uint32_t& start_vertex_id = vpair.first;
+    const uint32_t& end_vertex_id = vpair.second;
+
+    const double distance = pce3d::maths::calculateDistanceBetweenVectors(
+      rigid_object.vertices.at(start_vertex_id), rigid_object.vertices.at(end_vertex_id)
+    );
+
+    const glm::dvec3 crawl_direction 
+      = glm::normalize((rigid_object.vertices.at(start_vertex_id) - rigid_object.vertices.at(end_vertex_id)));
+    double i = 0.0; 
+
+    while (i < distance)
+    {
+      const glm::dvec3 current_point = rigid_object.vertices.at(start_vertex_id) - crawl_direction * i;
+      const glm::ivec3 current_point_index = findIndexOfPoint(current_point, mdim, mir);
+      edge_indices_map[edge].push_back(current_point_index);
+
+      bod_edge_map_[current_point_index][entity] = edge;
+
+      i += pce3d::Core3D::COLLISION_METER_INDEX_RATIO;
+    }
+
+  }
+
+  return edge_indices_map;
+}
+
+
+
+void updateLiveBodIndicesAndCheckForLiveBodCollision(
+    const uint32_t entity
+  , pce::RigidObject& rigid_object
+  , const glm::ivec3 mdim
+  , const double mir
+  , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& livebod_map
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_index_face_map
+  , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+)
+{
+  for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map)
+  {
+    std::vector<glm::ivec3> face_indices = space_map::findFaceIndicesGeneral(
+      entity,
+      face, 
+      rigid_object,
+      mdim, mir
+    );
+
+    for (auto const& index : face_indices)
+    {
+      // std::cout << "index: " << index.x << ", " << index.y << ", " << index.z << '\n';
+
+      rigid_object.index_face_map[index] = face;
+      rigid_object.face_index_map[face] = index;
+
+      size_t points = 0;
+      /* check if this index has been occupied yet */
+      if (livebod_map.find(index) == livebod_map.end()) 
+      {
+        livebod_map[index] = {entity};
+
+        if (livebod_vertex_map.find(index) != livebod_vertex_map.end())
+        {
+          if (livebod_vertex_map.at(index).find(entity) == livebod_vertex_map.at(index).end())
+          {
+            ++points;
+          }
+        }
+        else if (livebod_edge_map.find(index) != livebod_edge_map.end())
+        {
+          if (livebod_edge_map.at(index).find(entity) == livebod_edge_map.at(index).end())
+          {
+            ++points;
+          }
+        }
+        if (points == 2)
+        {
+          livebod_index_face_map[index][entity] = face;
+        }
+      } 
+      /* else if index is occupied, check if occupied by this entity or another */
+      else if (!std::count(livebod_map.at(index).begin(), livebod_map.at(index).end(), entity))
+      {
+        const uint32_t& other_entity = livebod_map.at(index)[0];
+        auto& other_rigid_object = control.GetComponent<pce::RigidObject>(other_entity);
+
+        std::cout << "LOGGING LIVEBOD COLLISION BETWEEN ENTITIES:" << entity << ", " << other_entity << '\n';
+
+        rigid_object.entity_index_collision_map[other_entity] = {index};
+        other_rigid_object.entity_index_collision_map[entity] = {index};
+
+        assert(livebod_map.at(index).size() >= 1);
+        livebod_map.at(index).push_back(entity); 
+        assert(livebod_map.at(index).size() >= 2);
+        potential_colliding_entities[entity] = other_entity;
+
+
+        bool original_entity_done = false;
+        bool other_entity_done = false;
+
+        /* check if entity index point is a vertex and if so log it as such */
+        if (livebod_vertex_map.find(index) != livebod_vertex_map.end())
+        {
+          if (livebod_vertex_map.at(index).find(entity) != livebod_vertex_map.at(index).end())
+          {
+            rigid_object.entity_vertex_collision_map[other_entity] 
+              = livebod_vertex_map.at(index).at(entity);
+            original_entity_done = true;
+          }
+        }
+        if (!original_entity_done)
+        {
+          rigid_object.entity_face_collision_map[other_entity] = face;
+        }
+
+        /* check if other_entity index point is a vertex and if so log it as such */
+        if (livebod_vertex_map.find(index) != livebod_vertex_map.end())
+        {
+          if (livebod_vertex_map.at(index).find(other_entity) != livebod_vertex_map.at(index).end())
+          {
+            other_rigid_object.entity_vertex_collision_map[entity] 
+              = livebod_vertex_map.at(index).at(other_entity);
+            other_entity_done = true;
+          }
+        }
+        if (!other_entity_done)
+        {
+          other_rigid_object.entity_face_collision_map[entity] = face;
+        }
+
+      }
+    }
+  }
+}
+
+
+
+void doPreLoopMapUpdate(
+    const uint32_t entity
+  , pce::RigidObject& rigid_object
+  , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& bod_map_
+  , const glm::ivec3 mdim
+  , const double mir
+)
+{
+
+  for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map) {
+        
+    std::vector<glm::ivec3> face_indices = pce3d::space_map::findFaceIndicesGeneral(
+      entity,
+      face,
+      rigid_object,
+      mdim,
+      mir
+    );
+    for (auto const& index : face_indices) {
+      rigid_object.index_face_map[index] = face;
+      rigid_object.face_index_map[face] = index;
+      bod_map_[index].push_back(entity);
+    }
+  }
+}
+
+
+void checkForCollisionWithNonLiveBods(
+    const uint32_t entity
+  , pce::RigidObject& rigid_object
+  , std::unordered_map<uint32_t, glm::ivec3>& vertex_indices
+  , const glm::ivec3 mdim
+  , const double mir
+  , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& deadbod_map
+  , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& restingbod_map
+  , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+)
+{
+  for (auto const& [id, index] : vertex_indices)
+  {
+    if (restingbod_map.find(index) != restingbod_map.end()) 
+    {
+      potential_colliding_entities[entity] = restingbod_map.at(index)[0];
+      continue;
+    }
+    else if (deadbod_map.find(index) != deadbod_map.end()) 
+    {
+      std::cout << "LOGGING DEADBOD MAP COLLISION" << '\n';
+      uint32_t deadbod_entity = deadbod_map.at(index)[0];
+      potential_colliding_entities[entity] = deadbod_entity; 
+      auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
+      deadbod_rigid_object.entity_face_collision_map[entity] = deadbod_rigid_object.index_face_map.at(index);
+      rigid_object.entity_face_collision_map[deadbod_entity] = rigid_object.index_face_map.at(index);
+    }
+  }
+}
 
 
 }

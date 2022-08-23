@@ -18,10 +18,10 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     {1, {1, 2, 3, 4}}
   };
   EdgeMap edge_map = { 
-    std::make_pair(1, 2),
-    std::make_pair(2, 3),
-    std::make_pair(3, 4),
-    std::make_pair(4, 1)
+    {1, std::make_pair(1, 2)},
+    {2, std::make_pair(2, 3)},
+    {3, std::make_pair(3, 4)},
+    {4, std::make_pair(4, 1)}
   };
 
   FaceCornerMap face_corner_map{};
@@ -69,9 +69,9 @@ Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
     {1, {1, 2, 3}}
   };
   EdgeMap edge_map = {
-    std::make_pair(1, 2),
-    std::make_pair(2, 3),
-    std::make_pair(3, 1),
+    {1, std::make_pair(1, 2)},
+    {2, std::make_pair(2, 3)},
+    {3, std::make_pair(3, 1)},
   };
   FaceCornerMap face_corner_map{};
   FaceVertexCornerMap face_vertex_corner_map{};

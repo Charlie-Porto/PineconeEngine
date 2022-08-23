@@ -22,12 +22,12 @@ Entity forgeTrianglePyramidEntity(const double h, const double base_side_length,
   };
 
   EdgeMap edge_map = {
-    std::make_pair(1, 2),
-    std::make_pair(2, 3),
-    std::make_pair(3, 1),
-    std::make_pair(1, 4),
-    std::make_pair(2, 4),
-    std::make_pair(3, 4)
+    {1, std::make_pair(1, 2)},
+    {2, std::make_pair(2, 3)},
+    {3, std::make_pair(3, 1)},
+    {4, std::make_pair(1, 4)},
+    {5, std::make_pair(2, 4)},
+    {6, std::make_pair(3, 4)}
   };
   
   FaceVertexMap face_vertex_map = {

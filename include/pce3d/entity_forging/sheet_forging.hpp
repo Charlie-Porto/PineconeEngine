@@ -18,10 +18,6 @@ extern ControlPanel control;
 namespace pce3d {
 namespace forge {
 
-using Entity = uint32_t;
-using VertexMap = std::unordered_map<uint32_t, glm::dvec3>;
-using EdgeMap = std::vector<std::pair<uint32_t, uint32_t>>;
-using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 
 Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& center, 
                             const double angle, const glm::dvec3& axis_of_rotation,

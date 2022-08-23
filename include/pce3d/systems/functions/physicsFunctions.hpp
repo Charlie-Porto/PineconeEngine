@@ -61,14 +61,14 @@ glm::dvec3 calculateStartPositionAfterLiveParticleDeadFaceCollision(
   , const glm::dvec3 C
   , const glm::dvec3 plane_side_direction
   , const glm::dvec3 particle_position
-  , const double particle_radius);
-
+  , const double particle_radius
+);
 
 void updateLiveParticleInfoAfterDeadFaceCollision(
     const glm::dvec3& p_center, const double p_radius, 
     const double mass, pce::Motion& motion,
-    const std::vector<glm::dvec3>& face_vertices, double elasticity);
-     
+    const std::vector<glm::dvec3>& face_vertices, double elasticity
+);
 
 std::pair<std::pair<bool, glm::dvec3>, std::pair<bool, glm::dvec3>> 
 calculateLiveBodHitPointsAndIfVertex(
@@ -80,6 +80,21 @@ calculateLiveBodHitPointsAndIfVertex(
   , pce::Position& b_position
 );
 
+glm::dvec3 calculateFaceNormalVector(
+    const glm::dvec3 point
+  , const uint32_t face
+  , const pce::RigidObject& rigid_object
+  , const pce::Position& position
+);
+
+std::pair<double, double> calculateLinearAndRotationalMomentumAllocationsAtPoint(
+    const glm::dvec3 point
+  , const uint32_t face
+  , const pce::RigidObject& rigid_object
+  , const pce::Position& position
+  , const pce::Motion& motion
+);
+
 glm::dvec3 calculateMomentumVectorAtSurfacePoint(
     const glm::dvec3 point
   , const uint32_t face
@@ -87,6 +102,37 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   , const pce::Position& position
   , const pce::Motion& motion
 );
+
+std::pair<glm::dvec3, glm::dvec3> calculateMomentumVectorsAfterLiveBodCollision(
+    const double l_mass   
+  , const double s_mass
+  , const glm::dvec3 l_momentum
+  , const glm::dvec3 s_momentum
+  , const pce::Surface& l_surface
+  , const pce::Surface& s_surface
+  , const glm::dvec3& l_surface_point
+  , const glm::dvec3& s_surface_point
+  , const glm::dvec3& l_s_hitpoint_wire
+);
+
+void updateLinearMotionAfterCollision(
+    const double linear_allocation_at_point
+  , const double rotational_allocation_at_point
+  , const glm::dvec3 new_total_momentum_at_point
+  , const double mass
+  , pce::Motion& motion
+);
+
+void updateRotationalMotionAfterCollision(
+    const double rotational_allocation_at_point
+  , const double linear_allocation_at_point
+  , const glm::dvec3 point
+  , const glm::dvec3 center_of_mass
+  , const glm::dvec3 new_total_momentum_at_point
+  , pce::Motion& motion
+  , const double mass
+);
+
 
 void updateEntityDataFromLiveBodCollision(
     const uint32_t entity_a

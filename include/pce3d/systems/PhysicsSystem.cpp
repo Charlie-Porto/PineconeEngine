@@ -52,29 +52,37 @@ public:
 
       if (a_rigid_object.is_complex_livebod || b_rigid_object.is_complex_livebod)
       {
-        std::cout << "PHYSICS SYSTEM: CHECKING FOR COLLISION WITH COMPLEX LIVEBOD" << '\n';
+        // if (a_force.sequential_collisions_by_entity.find(entity_b) == a_force.sequential_collisions_by_entity.end() 
+        // ||  a_force.sequential_collisions_by_entity.at(entity_b) == 0)
+        // {
+          std::cout << "PHYSICS SYSTEM: CHECKING FOR COLLISION WITH COMPLEX LIVEBOD" << '\n';
 
-        pce3d::physics::updateEntityDataFromLiveBodCollision(
-          entity_a,
-          entity_b,
-          a_rigid_object,
-          a_position,
-          a_surface,
-          a_motion,
-          a_force,
-          b_rigid_object,
-          b_position,
-          b_surface,
-          b_motion,
-          b_force
-        );
-
+          pce3d::physics::updateEntityDataFromLiveBodCollision(
+            entity_a,
+            entity_b,
+            a_rigid_object,
+            a_position,
+            a_surface,
+            a_motion,
+            a_force,
+            b_rigid_object,
+            b_position,
+            b_surface,
+            b_motion,
+            b_force
+          );
+        // }
+        // ++a_force.sequential_collisions_by_entity[entity_b];
+        // if (a_force.sequential_collisions_by_entity.at(entity_b) > 1)
+        // {
+          // a_force.sequential_collisions_by_entity[entity_b] = 0;
+        // }
 
         continue;
       }
       
       /* handle live-dead collision */
-      if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
+      else if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
                                      && b_rigid_object.is_deadbod) {
         std::cout << "Physics System: checking for collision" << '\n';
         const bool are_colliding = physics::determineIfParticleIsCollidingWithFace(
@@ -161,7 +169,7 @@ public:
         } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
       }
       
-      /* handle active-active particle collision */
+      // /* handle active-active particle collision */
       if (!a_rigid_object.is_deadbod && !b_rigid_object.is_deadbod && !b_rigid_object.is_complex_livebod
        && !a_rigid_object.is_restingbod && !a_rigid_object.is_complex_livebod) 
       {
@@ -240,23 +248,31 @@ public:
       if (rigid_object.is_complex_livebod)
       {
         position.actual_center_of_mass = new_position;
+        motion.direction = glm::normalize(position_change);
+        motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
         for (auto& [id, vertex] : rigid_object.vertices)
         {
           vertex = vertex + position_change;
-          const double rotation_amount = motion.rotational_speed; 
-          const glm::dvec3 normalized_vertex = vertex - position.actual_center_of_mass;
-          const glm::dvec3 rotated_point
-              = pce::rotateVector3byAngleAxis(normalized_vertex, rotation_amount, motion.rotational_axis);
-          vertex = rotated_point + position.actual_center_of_mass;
+          if (motion.rotational_speed != 0)
+          {
+            const double rotation_amount = motion.rotational_speed; 
+            const glm::dvec3 normalized_vertex = vertex - position.actual_center_of_mass;
+            const glm::dvec3 rotated_point
+                = pce::rotateVector3byAngleAxis(normalized_vertex, rotation_amount, motion.rotational_axis);
+            vertex = rotated_point + position.actual_center_of_mass;
+          }
         }
         for (auto& [id, corner] : rigid_object.face_corner_map)
         {
           corner = corner + position_change;
-          const double rotation_amount = motion.rotational_speed; 
-          const glm::dvec3 normalized_corner = corner - position.actual_center_of_mass;
-          const glm::dvec3 rotated_point
-              = pce::rotateVector3byAngleAxis(normalized_corner, rotation_amount, motion.rotational_axis);
-          corner = rotated_point + position.actual_center_of_mass;
+          if (motion.rotational_speed != 0)
+          {
+            const double rotation_amount = motion.rotational_speed; 
+            const glm::dvec3 normalized_corner = corner - position.actual_center_of_mass;
+            const glm::dvec3 rotated_point
+                = pce::rotateVector3byAngleAxis(normalized_corner, rotation_amount, motion.rotational_axis);
+            corner = rotated_point + position.actual_center_of_mass;
+          }
         }
 
 

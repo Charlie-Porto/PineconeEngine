@@ -19,14 +19,14 @@ Entity forgeSquarePyramidEntity(const double h, const double base_side_length,
   };
 
   EdgeMap edge_map = {
-    std::make_pair(1, 2),
-    std::make_pair(2, 3),
-    std::make_pair(3, 4),
-    std::make_pair(4, 1),
-    std::make_pair(1, 5),
-    std::make_pair(2, 5),
-    std::make_pair(3, 5),
-    std::make_pair(4, 5)
+    {1, std::make_pair(1, 2)},
+    {2, std::make_pair(2, 3)},
+    {3, std::make_pair(3, 4)},
+    {4, std::make_pair(4, 1)},
+    {5, std::make_pair(1, 5)},
+    {6, std::make_pair(2, 5)},
+    {7, std::make_pair(3, 5)},
+    {8, std::make_pair(4, 5)}
   };
 
   FaceVertexMap face_vertex_map = {
