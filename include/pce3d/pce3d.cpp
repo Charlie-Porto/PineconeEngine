@@ -94,23 +94,23 @@ void Core3D::PrepareForAllSystemsGo() {
 
 void Core3D::UpdateCore3D() {
   camera_operator_system_->UpdateCamera(camera_);
-  // std::cout << "cam system updated" << '\n';
+  std::cout << "cam system updated" << '\n';
   camera_transform_system_->UpdateEntities(-camera_.position, camera_.rotation_versor);
-  // std::cout << "cam transform system updated" << '\n';
+  std::cout << "cam transform system updated" << '\n';
   space_map_system_->UpdateEntities();
-  // std::cout << "space_map system updated" << '\n';
+  std::cout << "space_map system updated" << '\n';
   physics_system_->UpdateEntities(space_map_system_->potential_colliding_entities_);
-  // std::cout << "physics system updated" << '\n';
+  std::cout << "physics system updated" << '\n';
   radar_system_->UpdateEntities();
-  // std::cout << "radar system updated" << '\n';
+  std::cout << "radar system updated" << '\n';
   shade_system_->UpdateEntities(camera_.rotation_versor); 
-  // std::cout << "shade system updated" << '\n';
+  std::cout << "shade system updated" << '\n';
   register_for_render_order_system_->RegisterUnRegisteredEntities();
-  // std::cout << "order register system updated" << '\n';
+  std::cout << "order register system updated" << '\n';
   render_order_system_->UpdateEntities(register_for_render_order_system_->order_of_ordering_);
-  // std::cout << "render order system updated" << '\n';
+  std::cout << "render order system updated" << '\n';
   render_system_->UpdateEntities(render_order_system_->order_list_);
-  // std::cout << "render system updated" << '\n';
+  std::cout << "render system updated" << '\n';
   // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }

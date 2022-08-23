@@ -8,7 +8,7 @@ namespace forge {
 
 Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& center, 
                             const double angle, const glm::dvec3& axis_of_rotation,
-                            const std::vector<int>& color) {
+                            const std::vector<int>& color, const bool is_transparent) {
   VertexMap vertices{};
   vertices[1] = glm::dvec3(center + glm::dvec3(w/2.0, 0, -l/2.0));
   vertices[2] = glm::dvec3(center + glm::dvec3(-w/2.0, 0, -l/2.0));
@@ -37,7 +37,7 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
   pce3d::forge::rotateVertices(vertices, angle, axis_of_rotation, center);
 
   Entity new_entity = pce3d::forge::forgeBaseEntity(center);
-  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
+  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9, .is_transparent = is_transparent});
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = w * l,
@@ -58,7 +58,7 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
 
 
 Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
-                                const std::vector<int>& color) {
+                               const std::vector<int>& color, const bool is_transparent) {
   const glm::dvec3 point_avg = (triangle_points[0] + triangle_points[1]  + triangle_points[2]) / 3.0;
   VertexMap vertices = {
     {1, triangle_points[0]},

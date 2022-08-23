@@ -117,7 +117,6 @@ public:
   }
 
 
-
   void UpdateEntities() 
   {
     livebod_map_.clear();
@@ -136,7 +135,8 @@ public:
       rigid_object.entity_edge_collision_map.clear();
       rigid_object.entity_vertex_collision_map.clear();
       rigid_object.entity_index_collision_map.clear();
-
+       
+      
       std::unordered_map<uint32_t, glm::ivec3>  vertex_indices = pce3d::space_map::updateBodVertexMap(
         entity,
         rigid_object,
@@ -144,6 +144,8 @@ public:
         map_dimensions_,
         meter_index_ratio_ 
       );
+      std::cout << "entity: " << entity << '\n';
+      std::cout << "vertex indices updated" << '\n';
 
       std::unordered_map<uint32_t, std::vector<glm::ivec3>>  edge_indices = pce3d::space_map::updateBodEdgeMap(
         entity,
@@ -152,6 +154,7 @@ public:
         map_dimensions_,
         meter_index_ratio_ 
       );
+      std::cout << "edge indices updated" << '\n';
       
       pce3d::space_map::updateLiveBodIndicesAndCheckForLiveBodCollision(
         entity,
@@ -164,6 +167,8 @@ public:
         livebod_index_face_map_,
         potential_colliding_entities_
       );
+
+      std::cout << "live bod collision checked" << '\n';
 
       pce3d::space_map::checkForCollisionWithNonLiveBods(
         entity,

@@ -252,8 +252,10 @@ public:
         motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
         for (auto& [id, vertex] : rigid_object.vertices)
         {
-          vertex = vertex + position_change;
-          if (motion.rotational_speed != 0)
+          // std::cout << "vertex before: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
+          // vertex = vertex + position_change;
+          // std::cout << "vertex after: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
+          if (motion.rotational_speed > 0.01)
           {
             const double rotation_amount = motion.rotational_speed; 
             const glm::dvec3 normalized_vertex = vertex - position.actual_center_of_mass;
@@ -265,7 +267,7 @@ public:
         for (auto& [id, corner] : rigid_object.face_corner_map)
         {
           corner = corner + position_change;
-          if (motion.rotational_speed != 0)
+          if (motion.rotational_speed > .01)
           {
             const double rotation_amount = motion.rotational_speed; 
             const glm::dvec3 normalized_corner = corner - position.actual_center_of_mass;

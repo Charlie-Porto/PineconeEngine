@@ -100,7 +100,7 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   , const uint32_t face
   , const pce::RigidObject& rigid_object
   , const pce::Position& position
-  , const pce::Motion& motion
+  , pce::Motion& motion
 );
 
 std::pair<glm::dvec3, glm::dvec3> calculateMomentumVectorsAfterLiveBodCollision(

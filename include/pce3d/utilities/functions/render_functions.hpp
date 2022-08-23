@@ -14,6 +14,9 @@ functions to render things
 
 /* include Simulation.h so that the renderer can be accessed */
 #include "../../../pceSDL/core/Simulation.hpp"
+#include "../../pce3d.hpp"
+
+// extern double pce3d::Core3D::ORDINARY_ZOOM_INDEX_;
 
 extern glm::vec2 convertCartesianCoordinatesToSDL(glm::vec2 point);
 
@@ -41,6 +44,8 @@ void setRendererColor(std::vector<int> color);
 void renderFilledTriangle();
 
 void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<int> color);
+
+void renderTransparentObject(const pce::RigidObject& rigid_object, const std::vector<int>& color);
 
 }
 }

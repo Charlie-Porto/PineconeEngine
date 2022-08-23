@@ -322,8 +322,8 @@ const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point
 
   double rotational_allocation_percentage = angle == 90.0 ? 90.0 / .001 : (90.0 / (90.0 - angle)) - 1.0;
 
-  if (isnan(linear_allocation_percentage)) {linear_allocation_percentage = 0.0; }
-  if (isnan(rotational_allocation_percentage)) {rotational_allocation_percentage = 0.0; }
+  if (isnan(linear_allocation_percentage)) {linear_allocation_percentage = 0.5; }
+  if (isnan(rotational_allocation_percentage)) {rotational_allocation_percentage = 0.5; }
 
   return std::make_pair(linear_allocation_percentage, rotational_allocation_percentage);
 }
@@ -335,7 +335,7 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   , const uint32_t face
   , const pce::RigidObject& rigid_object
   , const pce::Position& position
-  , const pce::Motion& motion
+  , pce::Motion& motion
 )
 {
   const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point;
@@ -359,6 +359,12 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   /* A: calculate linear component */
   const double linear_allocation_percentage = (90.0 - abs(angle)) / 90.0;
   std::cout << "linear allocation: " << linear_allocation_percentage << '\n';
+
+  if (isnan(motion.direction.x) || isnan(motion.direction.y) || isnan(motion.direction.z))
+  {
+    motion.direction = glm::dvec3(0.001, 0.001, 0.001);
+  }
+
   const glm::dvec3 linear_momentum_component = motion.direction * motion.speed * linear_allocation_percentage * rigid_object.mass;
 
   std::cout << "speed: " << motion.speed << '\n';
@@ -435,8 +441,12 @@ std::pair<glm::dvec3, glm::dvec3> calculateMomentumVectorsAfterLiveBodCollision(
   // std::cout << "a_mag_in_h_dir: " << a_magnitude_in_h_direction << '\n';
   // std::cout << "b_mag_in_h_dir: " << b_magnitude_in_h_direction << '\n';
 
-  const double l_impact_directness = abs(l_magnitude_in_h_direction) / sqrt(glm::dot(l_momentum, l_momentum));
-  const double s_impact_directness = abs(s_magnitude_in_h_direction) / sqrt(glm::dot(s_momentum, s_momentum));
+  double l_impact_directness = abs(l_magnitude_in_h_direction) / sqrt(glm::dot(l_momentum, l_momentum));
+  double s_impact_directness = abs(s_magnitude_in_h_direction) / sqrt(glm::dot(s_momentum, s_momentum));
+  
+  if (isnan(l_impact_directness)) { l_impact_directness = 0.1; }
+  if (isnan(s_impact_directness)) { s_impact_directness = 0.1; }
+
   std::cout << "l_impact_directness: " << l_impact_directness << '\n';
   std::cout << "s_impact_directness: " << s_impact_directness << '\n';
 
@@ -556,15 +566,15 @@ void updateRotationalMotionAfterCollision(
   {
     motion.rotational_speed = new_rotational_speed;
   }
-  std::cout << "rotational_speed: " << motion.rotational_speed  << '\n';
+  // std::cout << "rotational_speed: " << motion.rotational_speed  << '\n';
   if (!isnan(axis.x) && !isnan(axis.y) && !isnan(axis.z))
   {
     motion.rotational_axis += axis;
   }
-  std::cout << "motion.rotational_axis: "
-            << motion.rotational_axis.x << ", "
-            << motion.rotational_axis.y << ", "
-            << motion.rotational_axis.z << "\n";
+  // std::cout << "motion.rotational_axis: "
+            // << motion.rotational_axis.x << ", "
+            // << motion.rotational_axis.y << ", "
+            // << motion.rotational_axis.z << "\n";
 }
 
 

@@ -21,11 +21,11 @@ namespace forge {
 
 Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& center, 
                             const double angle, const glm::dvec3& axis_of_rotation,
-                            const std::vector<int>& color);
+                            const std::vector<int>& color, const bool is_transparent = false);
 
 
 Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
-                                const std::vector<int>& color);
+                                const std::vector<int>& color, const bool is_transparent = false);
 
 
 }

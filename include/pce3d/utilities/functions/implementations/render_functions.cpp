@@ -73,14 +73,13 @@ inline void renderPreSdlConvertedLineAsRendererIs(const glm::dvec2& point_a, con
                                            int(point_b.x), int(point_b.y));
 }
 
-void setRendererColor(std::vector<int> color) {
+inline void setRendererColor(std::vector<int> color) {
   SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
 }
 
 void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<int> color)
 {
   assert(points.size() == 4);
-
   std::vector<std::pair<glm::dvec2, glm::dvec2>> lines{};
   
   glm::dvec2 line_a_start_top_direction = points[3] - points[0];
@@ -118,6 +117,21 @@ void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<in
   }
 
 } 
+
+
+void renderTransparentObject(const pce::RigidObject& rigid_object, const std::vector<int>& color)
+{
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  for (auto const& [edge_id, vertex_ids] : rigid_object.edges)
+  {
+    renderLineAsRendererIs(rigid_object.vertex_pixels.at(vertex_ids.first) * pce3d::Core3D::ORDINARY_ZOOM_INDEX_,
+                           rigid_object.vertex_pixels.at(vertex_ids.second) * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+    // renderLineAsRendererIs(rigid_object.camera_transformed_vertices.at(vertex_ids.first),
+                          //  rigid_object.camera_transformed_vertices.at(vertex_ids.second));
+  }
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
+}
+
 
 } 
 }

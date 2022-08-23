@@ -53,6 +53,7 @@ public:
 
         head_node_tag.entity = entity;
         head_node_tag.closest_vertex_distance = radar.closest_vertex_distance;
+        assert(rigid_object.camera_transformed_vertices.find(radar.closest_vertex_id) != rigid_object.camera_transformed_vertices.end());
         head_node_tag.closest_vertex_location = rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id);
         head_node_tag.farthest_vertex_distance = radar.farthest_vertex_distance;
         
@@ -82,6 +83,7 @@ public:
         auto order_tag_ = orderTag{};
         order_tag_.entity = entity;
         order_tag_.closest_vertex_distance = radar.closest_vertex_distance;
+        assert(rigid_object.camera_transformed_vertices.find(radar.closest_vertex_id) != rigid_object.camera_transformed_vertices.end());
         order_tag_.closest_vertex_location = rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id);
         order_tag_.farthest_vertex_distance = radar.farthest_vertex_distance;
         

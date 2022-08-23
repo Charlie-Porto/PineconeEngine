@@ -64,7 +64,7 @@ public:
       }
 
       /* handle rendering of non-sphere entities */ 
-      else if (rigid_object.radius == 0) {
+      else if (rigid_object.radius == 0 && !surface.is_transparent) {
         // std::vector<std::pair<uint32_t, double>> faces_in_render_order = render::orderFacesByCameraProximity(
             // rigid_object.face_vertex_map, rigid_object.vertex_distance_map);
 
@@ -121,6 +121,10 @@ public:
             pce::quickdraw::drawFilledTriangle(tri, face_color);
           }
         }
+      }
+      else if (rigid_object.radius == 0 && surface.is_transparent) 
+      {
+        pce::render::renderTransparentObject(rigid_object, surface.color);
       }
     }
   }

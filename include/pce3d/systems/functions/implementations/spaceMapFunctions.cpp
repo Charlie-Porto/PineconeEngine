@@ -77,10 +77,14 @@ std::vector<glm::dvec3> orderVerticesByDistanceFromFirst(const std::vector<glm::
     size_t smaller_size = std::min(vertices.size(), ordered_vertices.size());
 
     for (size_t j = 0; j < smaller_size; ++j) {
-      if (distance < distance_map.at(ordered_vertices[j])) {
+      // assert(distance_map.find(ordered_vertices[j]) != distance_map.end());
+      if (distance_map.find(ordered_vertices[j]) != distance_map.end())
+      {
+        if (distance < distance_map.at(ordered_vertices[j])) {
           ordered_vertices.insert(ordered_vertices.begin()+j, vertices.begin()+i, vertices.begin()+i);
           has_been_added = true;
           continue;
+        }
       }
       if (has_been_added) { break; }
     }
@@ -106,7 +110,11 @@ std::vector<glm::ivec3> findRectFaceIndices(const std::vector<uint32_t>& face,
                                             const VertexMap& unordered_vertices, const glm::dvec3& mdim,
                                             const double mir) {
   std::vector<glm::dvec3> vertices = orderVerticesByDistanceFromFirst({
-    unordered_vertices.at(face[0]), unordered_vertices.at(face[1]), unordered_vertices.at(face[2]), unordered_vertices.at(face[3]) });
+    unordered_vertices.at(face[0]), 
+    unordered_vertices.at(face[1]), 
+    unordered_vertices.at(face[2]), 
+    unordered_vertices.at(face[3]) 
+  });
   std::vector<glm::ivec3> indices{};
 
   const glm::dvec3 i_crawl_direction = glm::normalize(vertices[3] - vertices[0]); 
@@ -186,6 +194,7 @@ std::vector<glm::ivec3> findFaceIndicesGeneral(
 )
 {
   std::vector<glm::ivec3> face_indices{};
+  assert(rigid_object.face_vertex_map.find(face) != rigid_object.face_vertex_map.end());
   const size_t size = rigid_object.face_vertex_map.at(face).size();
   switch (size) 
   {
@@ -291,6 +300,7 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
   , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
 )
 {
+  assert(!rigid_object.face_vertex_map.empty());
   for (auto const& [face, vertex_ids] : rigid_object.face_vertex_map)
   {
     std::vector<glm::ivec3> face_indices = space_map::findFaceIndicesGeneral(
@@ -299,7 +309,7 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
       rigid_object,
       mdim, mir
     );
-
+    assert(!face_indices.empty());
     for (auto const& index : face_indices)
     {
       // std::cout << "index: " << index.x << ", " << index.y << ", " << index.z << '\n';
@@ -333,7 +343,8 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
         }
       } 
       /* else if index is occupied, check if occupied by this entity or another */
-      else if (!std::count(livebod_map.at(index).begin(), livebod_map.at(index).end(), entity))
+      else { assert(livebod_map.find(index) != livebod_map.end()); }
+      if (!std::count(livebod_map.at(index).begin(), livebod_map.at(index).end(), entity))
       {
         const uint32_t& other_entity = livebod_map.at(index)[0];
         auto& other_rigid_object = control.GetComponent<pce::RigidObject>(other_entity);
