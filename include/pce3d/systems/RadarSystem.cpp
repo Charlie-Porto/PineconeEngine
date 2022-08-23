@@ -60,7 +60,7 @@ public:
       //           <<  point.y  << ", "
       //           <<  point.z  << "\n";
                 
-      dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id), {255, 0, 0, 255});
+      // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id), {255, 0, 0, 255});
       // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(radar.farthest_vertex_id), {0, 255, 0, 255});
     }
   }
