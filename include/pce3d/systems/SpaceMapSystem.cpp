@@ -3,8 +3,8 @@
 
 /*----------------------------------------------------------------|
 --------------------- Module Description -------------------------|
-system for mapping the virtual 3space onto a relatively small set of data
-* used for collision detection
+system for mapping the virtual 3space onto a relatively small set of data.
+- used for collision detection
 -----------------------------------------------------------------*/
 
 #include <iostream>
@@ -131,6 +131,11 @@ public:
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity); 
       if (rigid_object.is_deadbod) { continue; }
 
+      rigid_object.index_face_map.clear();
+      rigid_object.face_index_map.clear();
+      rigid_object.index_vertex_map.clear();
+      rigid_object.vertex_index_map.clear();
+      
       rigid_object.entity_face_collision_map.clear();
       rigid_object.entity_edge_collision_map.clear();
       rigid_object.entity_vertex_collision_map.clear();
@@ -144,8 +149,8 @@ public:
         map_dimensions_,
         meter_index_ratio_ 
       );
-      std::cout << "entity: " << entity << '\n';
-      std::cout << "vertex indices updated" << '\n';
+      // std::cout << "entity: " << entity << '\n';
+      // std::cout << "vertex indices updated" << '\n';
 
       std::unordered_map<uint32_t, std::vector<glm::ivec3>>  edge_indices = pce3d::space_map::updateBodEdgeMap(
         entity,
@@ -154,7 +159,7 @@ public:
         map_dimensions_,
         meter_index_ratio_ 
       );
-      std::cout << "edge indices updated" << '\n';
+      // std::cout << "edge indices updated" << '\n';
       
       pce3d::space_map::updateLiveBodIndicesAndCheckForLiveBodCollision(
         entity,
@@ -168,8 +173,7 @@ public:
         potential_colliding_entities_
       );
 
-      std::cout << "live bod collision checked" << '\n';
-
+      // std::cout << "live bod collision checked" << '\n';
       pce3d::space_map::checkForCollisionWithNonLiveBods(
         entity,
         rigid_object,
@@ -181,6 +185,12 @@ public:
         potential_colliding_entities_
       );
     }
+
+    // std::cout << "listing potential colliding entities" << '\n';
+    // for (auto const& [ea, eb] : potential_colliding_entities_)
+    // {
+    //   std::cout << ea << ", " << eb << '\n';
+    // }
   }
 
 
@@ -200,7 +210,6 @@ public:
 
   double meter_index_ratio_;
   glm::ivec3 map_dimensions_;
-
 
 };
 }

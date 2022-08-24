@@ -21,6 +21,12 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   auto& a_rigid_object = control.GetComponent<pce::RigidObject>(small_entity);
   auto& b_rigid_object = control.GetComponent<pce::RigidObject>(big_entity);
 
+  if (a_rigid_object.radius > 0 && b_rigid_object.radius > 0)
+  {
+    return a_entity_tag.closest_vertex_distance <= b_entity_tag.closest_vertex_distance
+      ? b_entity_tag.entity : a_entity_tag.entity;
+  }
+
   /* NOTE: this swap capability is critical */
   // if (b_entity_tag.closest_vertex_distance - b_entity_tag.farthest_vertex_distance == 0
   //  || a_entity_tag.closest_vertex_distance - a_entity_tag.farthest_vertex_distance == 0)
@@ -127,8 +133,16 @@ uint32_t getCloserOfTwoEntitiesToOrigin(const orderTag& a_entity_tag, const orde
   {
     return b_entity_tag.entity;
   }
+  if (a_entity_tag.closest_vertex_distance == a_entity_tag.farthest_vertex_distance
+   && b_entity_tag.closest_vertex_distance == b_entity_tag.farthest_vertex_distance)
+  {
+    return a_entity_tag.closest_vertex_distance <= b_entity_tag.closest_vertex_distance
+      ? b_entity_tag.entity : a_entity_tag.entity;
+  }
   else
   {
+    // std::cout << "getting closer of two overlapping" << '\n';
+    // std::cout << "entity a: " << a_entity_tag.entity << " | " << "entity b: " << b_entity_tag.entity << '\n';
     return getCloserOfTwoOverlappingEntitiesToOrigin(a_entity_tag, b_entity_tag);
   }
 }

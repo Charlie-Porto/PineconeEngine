@@ -349,7 +349,7 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
         const uint32_t& other_entity = livebod_map.at(index)[0];
         auto& other_rigid_object = control.GetComponent<pce::RigidObject>(other_entity);
 
-        std::cout << "LOGGING LIVEBOD COLLISION BETWEEN ENTITIES:" << entity << ", " << other_entity << '\n';
+        // std::cout << "LOGGING LIVEBOD COLLISION BETWEEN ENTITIES:" << entity << ", " << other_entity << '\n';
 
         rigid_object.entity_index_collision_map[other_entity] = {index};
         other_rigid_object.entity_index_collision_map[entity] = {index};
@@ -447,7 +447,7 @@ void checkForCollisionWithNonLiveBods(
     }
     else if (deadbod_map.find(index) != deadbod_map.end()) 
     {
-      std::cout << "LOGGING DEADBOD MAP COLLISION" << '\n';
+      // std::cout << "LOGGING DEADBOD MAP COLLISION" << '\n';
       uint32_t deadbod_entity = deadbod_map.at(index)[0];
       potential_colliding_entities[entity] = deadbod_entity; 
       auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);

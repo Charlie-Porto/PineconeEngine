@@ -34,7 +34,7 @@ public:
   {
     for (auto const& [entity_a, entity_b] : potential_colliding_entities_) 
     { 
-      std::cout << "checking potential collision between: " << entity_a << ", " << entity_b << '\n';
+      // std::cout << "checking potential collision between: " << entity_a << ", " << entity_b << '\n';
       if (std::find(entities_updated_.begin(), entities_updated_.end(), entity_a) != entities_updated_.end()) 
       {
         continue;
@@ -83,18 +83,20 @@ public:
       
       /* handle live-dead collision */
       else if (!a_rigid_object.is_deadbod && !a_rigid_object.is_restingbod
-                                     && b_rigid_object.is_deadbod) {
-        std::cout << "Physics System: checking for collision" << '\n';
+                                          && b_rigid_object.is_deadbod) {
+        // std::cout << "Physics System: checking for collision between livebod and deadbod" << '\n';
+        // std::cout << "entity a: " << entity_a << " | " << "entity b: " << entity_b << '\n';
+        assert(b_rigid_object.entity_face_collision_map.find(entity_a) != b_rigid_object.entity_face_collision_map.end());
+        assert(b_rigid_object.face_vertex_map.find(b_rigid_object.entity_face_collision_map.at(entity_a)) != b_rigid_object.face_vertex_map.end());
         const bool are_colliding = physics::determineIfParticleIsCollidingWithFace(
           a_position.actual_center_of_mass, a_rigid_object.radius, a_motion.direction * a_motion.speed, a_rigid_object.mass,
           {b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[0]),
            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
            b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])});
         
-        std::cout << "are colliding obtained " << '\n';
         if (are_colliding) 
         {
-          std::cout << "Physics System: collision with deadbod" << '\n';
+          // std::cout << "Physics System: collision with deadbod" << '\n';
 
           bool execute_redirection = true;
           bool nerf_new_speed = false;

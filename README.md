@@ -13,6 +13,7 @@ the code below pulls up a basic black screen that loops until quit by the user
 #include <pce3d/pce3d.hpp>
 
 ControlPanel control;
+pce3d::DevRenderSystem dev_render_system; // handy for vizualizing engine functionalities while deving
 int main(int argc, const char* argv[]) {
 
   auto core_manager = new pce::CoreManager();

@@ -10,6 +10,8 @@ Prerequisites: set_srand() must be called before random numbers can be generated
 
 #include <cmath>
 #include <vector>
+#include <glm/vec3.hpp>
+#include "sign.hpp"
 
 namespace pce3d {
 namespace random {
@@ -24,6 +26,11 @@ double getRandomDoubleBetweenDoubles(const double x, const double y);
 double getRandomSignedDoubleBetweenDoubles(const double x, const double y);
 double getRandomDoubleByTargetWithVariance(const double target, const double variance);
 
+double GetRandomSignInFormOfDouble();
+
+double getRandomDoubleBetweenOneAndZero();
+
+glm::dvec3 getRandomUnitVector3();
 
 }
 }

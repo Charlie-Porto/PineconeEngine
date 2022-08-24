@@ -11,7 +11,6 @@ namespace render_order {
 
   void OrderRenderListNode::InsertNodeInTree(OrderRenderListNode* node)
   {
-    // std::cout << "inserting entity: " << node->order_tag_.entity << '\n';
     uint32_t closer_entity
         = pce3d::render_order::getCloserOfTwoEntitiesToOrigin(order_tag_, node->order_tag_);
     

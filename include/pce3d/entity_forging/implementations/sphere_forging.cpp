@@ -27,7 +27,7 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
     .entity_index_collision_map = {},
     .entity_time_collision_map = {}
   });
-  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.7});
+  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=1.0});
   control.AddComponent(new_entity, pce::Force{ .of_gravity = gravitational_force });
   control.AddComponent(new_entity, pce::Motion{
     .speed = 0.0,

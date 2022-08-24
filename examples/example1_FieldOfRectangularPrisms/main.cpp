@@ -6,20 +6,19 @@
 #include <pce3d/pce3d.hpp>
 
 #include <pce3d/entity_forging/rectangular_prism_forging.hpp>
-#include <kelp_randomness.hpp>
 
 ControlPanel control;
 
 void createRandomRectPrism() {
-  double w = kelp::random::getRandomDoubleBetweenDoubles(1.0, 100.0);
-  double h = kelp::random::getRandomDoubleBetweenDoubles(1.0, 100.0);
-  double l = kelp::random::getRandomDoubleBetweenDoubles(1.0, 100.0);
+  double w = pce3d::random::getRandomDoubleBetweenDoubles(1.0, 100.0);
+  double h = pce3d::random::getRandomDoubleBetweenDoubles(1.0, 100.0);
+  double l = pce3d::random::getRandomDoubleBetweenDoubles(1.0, 100.0);
 
-  double x = kelp::random::getRandomDoubleBetweenDoubles(2, 1000);
-  double y = kelp::random::getRandomDoubleBetweenDoubles(1, 300);
-  double z = -kelp::random::getRandomDoubleBetweenDoubles(30, 1000);
+  double x = pce3d::random::getRandomDoubleBetweenDoubles(2, 1000);
+  double y = pce3d::random::getRandomDoubleBetweenDoubles(1, 300);
+  double z = -pce3d::random::getRandomDoubleBetweenDoubles(30, 1000);
 
-  std::vector<int> color = kelp::random::getRandomColor();
+  std::vector<int> color = pce3d::random::getRandomColor();
 
   auto a = pce3d::forge::forgeRectPrismEntity(w, h, l, glm::dvec3(x, y, z), {1.0, 0, 0, 0}, color);
   /* 
@@ -35,6 +34,7 @@ int main(int argc, const char* argv[]) {
   control.Init();
   auto core_3d = new pce3d::Core3D();
 
+  core_3d->PrepareForAllSystemsGo();
   for (int i = 0; i < 50; ++i) {
     createRandomRectPrism();
   }

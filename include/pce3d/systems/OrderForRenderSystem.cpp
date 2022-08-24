@@ -66,13 +66,18 @@ public:
       while (i < order_of_ordering.size())
       {
         const uint32_t entity = order_of_ordering[i].first;
+        auto& render = control.GetComponent<pce::Render>(entity);
         if (!control.CheckIfEntityStillExists(entity))
         {
           order_of_ordering.erase(order_of_ordering.begin() + i);
+          if (render.just_registered)
+          {
+            control.RemoveComponent<pce::OrderOfRenderRegistration>(entity); 
+            render.just_registered = false;
+          }
           continue;
         }
         auto const& radar = control.GetComponent<pce::Radar>(entity);
-        auto& render = control.GetComponent<pce::Render>(entity);
         auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
 
         if (render.just_registered) { 
@@ -85,11 +90,13 @@ public:
         order_tag_.closest_vertex_distance = radar.closest_vertex_distance;
         assert(rigid_object.camera_transformed_vertices.find(radar.closest_vertex_id) != rigid_object.camera_transformed_vertices.end());
         order_tag_.closest_vertex_location = rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id);
+        assert(rigid_object.camera_transformed_vertices.find(radar.farthest_vertex_id) != rigid_object.camera_transformed_vertices.end());
         order_tag_.farthest_vertex_distance = radar.farthest_vertex_distance;
         
 
         pce3d::render_order::OrderRenderListNode* node = new pce3d::render_order::OrderRenderListNode(order_tag_);
-
+        
+        // std::cout << "inserting node into tree" << '\n';
         head_node->InsertNodeInTree(node);
         ++i;
       }

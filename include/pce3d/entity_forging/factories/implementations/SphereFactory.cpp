@@ -45,16 +45,18 @@ void SphereFactory::CreateSphereParticle() {
   // const double vx = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.x, velocity_component_variance_);
   // const double vy = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.y, velocity_component_variance_);
   // const double vz = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.z, velocity_component_variance_);
+  const double v_magnitude = pce3d::random::getRandomDoubleBetweenDoubles(20.0, 40.0);
   // const glm::dvec3 e_velocity = glm::dvec3(vx, vz, vy);
-  const glm::dvec3 e_velocity = glm::dvec3(0, 0, 0);
+  // const glm::dvec3 e_velocity = velocity_;
+  const glm::dvec3 e_velocity = pce3d::random::getRandomUnitVector3() * v_magnitude;
   const double e_gforce = gravitational_force_;
 
 
   pce3d::forge::forgeSphereEntity(
       radius_max_
     , e_position
-    // , {13, 170, 100, 255}
-    , pce3d::random::getRandomColor()
+    , {200, 10, 100, 255}
+    // , pce3d::random::getRandomColor()
     , e_velocity
     , e_gforce);
 }

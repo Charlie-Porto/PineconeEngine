@@ -3,8 +3,6 @@
 
 #include "../pce_psuedo_randomness.hpp"
 
-
-
 namespace pce3d {
 namespace random {
 
@@ -59,6 +57,38 @@ double getRandomDoubleByTargetWithVariance(const double target, const double var
   return target + (range_number * multiplier);
   return target + (range_number * 1.0);
 }
+
+
+
+
+double GetRandomSignInFormOfDouble()
+{
+  const int rnum = rand() % 2;
+  const double signed_rnum = double(rnum) - 1.0;
+  return pce::math::sign(signed_rnum);
+}
+
+
+
+
+double getRandomDoubleBetweenOneAndZero()
+{
+  const int big_random = rand() % 1000000;
+  return (double(big_random) / 1000000.0) * GetRandomSignInFormOfDouble();
+}
+
+
+
+
+glm::dvec3 getRandomUnitVector3()
+{
+  return glm::dvec3(
+    getRandomDoubleBetweenOneAndZero(),
+    getRandomDoubleBetweenOneAndZero(),
+    getRandomDoubleBetweenOneAndZero()
+  );
+}
+
 
 }
 }

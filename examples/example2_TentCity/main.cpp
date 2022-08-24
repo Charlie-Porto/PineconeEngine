@@ -8,10 +8,10 @@
 
 #include <pce3d/entity_forging/square_pyramid_forging.hpp>
 #include <pce3d/entity_forging/triangle_pyramid_forging.hpp>
-#include <kelp_randomness.hpp>
 
 
 ControlPanel control;
+pce3d::DevRenderSystem dev_render_system;
 
 
 void makeTentLand() {
@@ -23,14 +23,14 @@ void makeTentLand() {
   const double max_w = 30.0;
 
   for (int i = 0; i < count; ++i) {
-    const double height = kelp::random::getRandomDoubleBetweenDoubles(2.0, max_h);
-    const double width = kelp::random::getRandomDoubleBetweenDoubles(2.0, max_w);
-    const double xpos = kelp::random::getRandomDoubleBetweenZeroAndDouble(max_x);
+    const double height = pce3d::random::getRandomDoubleBetweenDoubles(2.0, max_h);
+    const double width = pce3d::random::getRandomDoubleBetweenDoubles(2.0, max_w);
+    const double xpos = pce3d::random::getRandomDoubleBetweenZeroAndDouble(max_x);
     const double ypos = height/2.0 - 4.0;
-    const double zpos = -kelp::random::getRandomDoubleBetweenZeroAndDouble(max_z);
-    const std::vector<int> color = kelp::random::getRandomColor();
+    const double zpos = -pce3d::random::getRandomDoubleBetweenZeroAndDouble(max_z);
+    const std::vector<int> color = pce3d::random::getRandomColor();
 
-    const int coin = kelp::random::getCoinFlipResult();
+    const int coin = pce3d::random::getCoinFlipResult();
     Entity a;
     switch(coin) {
       case 0:

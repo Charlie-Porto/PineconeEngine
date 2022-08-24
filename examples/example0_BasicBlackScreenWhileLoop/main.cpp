@@ -3,6 +3,7 @@
 #include <pce3d/pce3d.hpp>
 
 ControlPanel control;
+pce3d::DevRenderSystem dev_render_system;
 int main(int argc, const char* argv[]) {
 
   auto core_manager = new pce::CoreManager();

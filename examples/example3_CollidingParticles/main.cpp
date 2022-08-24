@@ -6,15 +6,14 @@
 #include <pce3d/pce3d.hpp>
 
 #include <pce3d/entity_forging/sphere_forging.hpp>
-#include <kelp_randomness.hpp>
 
 void generateParticles(int n) {
   for (int i = 0; i < n; ++i) {
-    const double xpos = kelp::random::getRandomSignedDoubleBetweenDoubles(1, 200);
-    const double ypos = kelp::random::getRandomSignedDoubleBetweenDoubles(1, 200);
-    const double zpos = kelp::random::getRandomDoubleBetweenDoubles(30, 35);
+    const double xpos = pce3d::random::getRandomSignedDoubleBetweenDoubles(1, 200);
+    const double ypos = pce3d::random::getRandomSignedDoubleBetweenDoubles(1, 200);
+    const double zpos = pce3d::random::getRandomDoubleBetweenDoubles(30, 35);
 
-    const double speed = kelp::random::getRandomDoubleBetweenZeroAndDouble(1.0)/10.0;
+    const double speed = pce3d::random::getRandomDoubleBetweenZeroAndDouble(1.0)/10.0;
     const glm::dvec3 dir = glm::dvec3(-xpos, -ypos, zpos);
     const glm::dvec3 vel = dir * speed; 
 
