@@ -90,7 +90,6 @@ void doPreLoopMapUpdate(
   , const double mir
 );
 
-
 void updateLiveBodIndicesAndCheckForLiveBodCollision(
     const uint32_t entity
   , pce::RigidObject& rigid_object
@@ -112,6 +111,8 @@ void checkForCollisionWithNonLiveBods(
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& deadbod_map
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& restingbod_map
   , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
 );
 
 

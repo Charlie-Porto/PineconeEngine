@@ -436,6 +436,8 @@ void checkForCollisionWithNonLiveBods(
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& deadbod_map
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& restingbod_map
   , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
+  , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
 )
 {
   for (auto const& [id, index] : vertex_indices)
@@ -447,12 +449,26 @@ void checkForCollisionWithNonLiveBods(
     }
     else if (deadbod_map.find(index) != deadbod_map.end()) 
     {
-      // std::cout << "LOGGING DEADBOD MAP COLLISION" << '\n';
+      std::cout << "SPACEMAP: DETECTED DEADBOD MAP COLLISION" << '\n';
       uint32_t deadbod_entity = deadbod_map.at(index)[0];
       potential_colliding_entities[entity] = deadbod_entity; 
       auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
       deadbod_rigid_object.entity_face_collision_map[entity] = deadbod_rigid_object.index_face_map.at(index);
-      rigid_object.entity_face_collision_map[deadbod_entity] = rigid_object.index_face_map.at(index);
+
+      if (livebod_vertex_map.find(index) != livebod_vertex_map.end()
+      && livebod_vertex_map.at(index).find(entity) != livebod_vertex_map.at(index).end())
+      {
+        rigid_object.entity_vertex_collision_map[deadbod_entity] = livebod_vertex_map.at(index).at(entity);
+      }
+      else if (livebod_edge_map.find(index) != livebod_edge_map.end()
+      && livebod_edge_map.at(index).find(entity) != livebod_edge_map.at(index).end())
+      {
+        rigid_object.entity_edge_collision_map[deadbod_entity] = livebod_edge_map.at(index).at(entity);
+      }
+      else
+      {
+        rigid_object.entity_face_collision_map[deadbod_entity] = rigid_object.index_face_map.at(index);
+      }
     }
   }
 }

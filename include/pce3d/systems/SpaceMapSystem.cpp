@@ -182,7 +182,9 @@ public:
         meter_index_ratio_,
         deadbod_map_,
         restingbod_map_,
-        potential_colliding_entities_
+        potential_colliding_entities_,
+        livebod_index_vertex_map_,
+        livebod_index_edge_map_
       );
     }
 

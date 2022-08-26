@@ -50,7 +50,6 @@ bool determineIfParticleIsCollidingWithFace(
 
 
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
-    const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
     const std::vector<glm::dvec3>& face_vertices, double elasticity);
 
@@ -133,7 +132,6 @@ void updateRotationalMotionAfterCollision(
   , const double mass
 );
 
-
 void updateEntityDataFromLiveBodCollision(
     const uint32_t entity_a
   , const uint32_t entity_b
@@ -147,6 +145,17 @@ void updateEntityDataFromLiveBodCollision(
   , pce::Surface& b_surface
   , pce::Motion& b_motion
   , pce::Force& b_force
+);
+
+void updateComplexLivebodInfoAfterDeadfaceCollision(
+    const uint32_t entity_a
+  , const uint32_t entity_b
+  , pce::RigidObject& a_rigid_object
+  , pce::Position& a_position
+  , pce::Surface& a_surface
+  , pce::Motion& a_motion
+  , const std::vector<glm::dvec3>& deadbod_face_vertices
+  , double total_surface_elasticity
 );
 
 

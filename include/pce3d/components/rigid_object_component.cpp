@@ -58,11 +58,10 @@ struct RigidObject {
   IndexVertexMap index_vertex_map;
   VertexIndexMap vertex_index_map;
 
-
   EntityFaceCollisionMap entity_face_collision_map;
   EntityVertexCollisionMap entity_vertex_collision_map;
-  EntityIndexCollisionMap entity_index_collision_map;
   EntityEdgeCollisionMap entity_edge_collision_map;
+  EntityIndexCollisionMap entity_index_collision_map;
   EntityTimeCollisionMap entity_time_collision_map;
 };
 

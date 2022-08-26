@@ -50,11 +50,11 @@ public:
       auto& a_force = control.GetComponent<pce::Force>(entity_a);
       auto& b_force = control.GetComponent<pce::Force>(entity_a);
 
-      if (a_rigid_object.is_complex_livebod || b_rigid_object.is_complex_livebod)
+      if (a_rigid_object.is_complex_livebod && b_rigid_object.is_complex_livebod)
       {
-        // if (a_force.sequential_collisions_by_entity.find(entity_b) == a_force.sequential_collisions_by_entity.end() 
-        // ||  a_force.sequential_collisions_by_entity.at(entity_b) == 0)
-        // {
+        if (a_force.sequential_collisions_by_entity.find(entity_b) == a_force.sequential_collisions_by_entity.end() 
+        ||  a_force.sequential_collisions_by_entity.at(entity_b) == 0)
+        {
           std::cout << "PHYSICS SYSTEM: CHECKING FOR COLLISION WITH COMPLEX LIVEBOD" << '\n';
 
           pce3d::physics::updateEntityDataFromLiveBodCollision(
@@ -71,14 +71,47 @@ public:
             b_motion,
             b_force
           );
-        // }
-        // ++a_force.sequential_collisions_by_entity[entity_b];
-        // if (a_force.sequential_collisions_by_entity.at(entity_b) > 1)
-        // {
-          // a_force.sequential_collisions_by_entity[entity_b] = 0;
-        // }
+        }
+        ++a_force.sequential_collisions_by_entity[entity_b];
+        if (a_force.sequential_collisions_by_entity.at(entity_b) > 1)
+        {
+          a_force.sequential_collisions_by_entity[entity_b] = 0;
+        }
 
         continue;
+      }
+
+      else if (a_rigid_object.is_complex_livebod && b_rigid_object.is_deadbod)
+      {
+        if (a_force.sequential_collisions_by_entity.find(entity_b) == a_force.sequential_collisions_by_entity.end() 
+          ||  a_force.sequential_collisions_by_entity.at(entity_b) == 0) {
+          /* assert collision is logged as either a vertex, edge, or face collision */
+          assert(a_rigid_object.entity_vertex_collision_map.find(entity_b) != a_rigid_object.entity_vertex_collision_map.end()
+              || a_rigid_object.entity_edge_collision_map.find(entity_b) != a_rigid_object.entity_edge_collision_map.end()
+              || a_rigid_object.entity_face_collision_map.find(entity_b) != a_rigid_object.entity_face_collision_map.end());
+          
+          const double net_elasticity = a_surface.collision_elasticity_index * b_surface.collision_elasticity_index;
+          
+          pce3d::physics::updateComplexLivebodInfoAfterDeadfaceCollision(
+            entity_a,
+            entity_b,
+            a_rigid_object,
+            a_position,
+            a_surface,
+            a_motion,
+            {b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[0]),
+              b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[1]),
+              b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(b_rigid_object.entity_face_collision_map.at(entity_a))[2])},
+            net_elasticity   
+          );
+        }
+        ++a_force.sequential_collisions_by_entity[entity_b];
+        if (a_force.sequential_collisions_by_entity.at(entity_b) > 1)
+        {
+          a_force.sequential_collisions_by_entity[entity_b] = 0;
+        }
+
+        
       }
       
       /* handle live-dead collision */
@@ -168,7 +201,12 @@ public:
             // std::cout << "direction: "<< a_motion.direction.x << ", " << a_motion.direction.y << ", " << a_motion.direction.z << '\n';
 
           }
-        } else { a_force.sequential_collisions_by_entity[entity_b] = 0; }
+        } 
+        else 
+        { 
+          a_force.sequential_collisions_by_entity[entity_b] = 0; 
+          a_rigid_object.entity_time_collision_map[entity_b] = 0.0;
+        }
       }
       
       // /* handle active-active particle collision */
@@ -236,30 +274,49 @@ public:
 
     for (auto const& entity : entities) 
     {
+      // std::cout << "updating entity: " << entity << '\n';
       auto const& force = control.GetComponent<pce::Force>(entity);
       auto& motion = control.GetComponent<pce::Motion>(entity);
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
+      // std::cout << "velocity: "
+      //           << motion.velocity.x << ", "
+      //           << motion.velocity.y << ", "
+      //           << motion.velocity.z << '\n';
 
       const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
         motion.previous_resting_position, motion.velocity, time_change_,
         force.of_gravity, motion.duration);
 
-      const glm::dvec3 position_change = new_position - position.actual_center_of_mass;
+      // std::cout << "velocity: "
+      //           << motion.velocity.x << ", "
+      //           << motion.velocity.y << ", "
+      //           << motion.velocity.z << '\n';
+      glm::dvec3 position_change = new_position - position.actual_center_of_mass;
+      if (isnan(position_change.x)) {position_change.x = motion.velocity.x; }
+      if (isnan(position_change.y)) {position_change.y = motion.velocity.y; }
+      if (isnan(position_change.z)) {position_change.z = motion.velocity.z; }
 
       if (rigid_object.is_complex_livebod)
       {
         position.actual_center_of_mass = new_position;
+        
+      // std::cout << "new_position: "
+                // << new_position.x << ", "
+                // << new_position.y << ", "
+                // << new_position.z << '\n';
+
+
         motion.direction = glm::normalize(position_change);
         motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
         for (auto& [id, vertex] : rigid_object.vertices)
         {
           // std::cout << "vertex before: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
-          // vertex = vertex + position_change;
+          vertex = vertex + position_change;
           // std::cout << "vertex after: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
           if (motion.rotational_speed > 0.01)
           {
-            const double rotation_amount = motion.rotational_speed; 
+            const double rotation_amount = motion.rotational_speed * time_change_; 
             const glm::dvec3 normalized_vertex = vertex - position.actual_center_of_mass;
             const glm::dvec3 rotated_point
                 = pce::rotateVector3byAngleAxis(normalized_vertex, rotation_amount, motion.rotational_axis);
@@ -271,7 +328,7 @@ public:
           corner = corner + position_change;
           if (motion.rotational_speed > .01)
           {
-            const double rotation_amount = motion.rotational_speed; 
+            const double rotation_amount = motion.rotational_speed * time_change_; 
             const glm::dvec3 normalized_corner = corner - position.actual_center_of_mass;
             const glm::dvec3 rotated_point
                 = pce::rotateVector3byAngleAxis(normalized_corner, rotation_amount, motion.rotational_axis);
@@ -300,8 +357,16 @@ public:
         } 
         else 
         {
+          // std::cout << "position_change: "
+                    // << position_change.x << ", "
+                    // << position_change.y << ", "
+                    // << position_change.z << '\n';
           motion.direction = glm::normalize(position_change);
+          if (isnan(motion.direction.x)) { motion.direction.x = 0; }
+          if (isnan(motion.direction.y)) { motion.direction.y = 0; }
+          if (isnan(motion.direction.z)) { motion.direction.z = 0; }
           motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
+          if (isnan(motion.speed)) { motion.speed = 0.0; }
           // std::cout << "entity: " << entity << '\n';
           // std::cout << "speed: " << motion.speed << '\n';
           // std::cout << "direction: "<< motion.direction.x << ", " << motion.direction.y << ", " << motion.direction.z << '\n';

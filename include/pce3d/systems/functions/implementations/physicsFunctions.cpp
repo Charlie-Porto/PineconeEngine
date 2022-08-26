@@ -107,16 +107,15 @@ bool determineIfParticleIsCollidingWithFace(
 
 
 glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
-    const glm::dvec3& p_center, const double p_radius, 
     const glm::dvec3& p_velocity_vect, const double p_mass,
     const std::vector<glm::dvec3>& face_vertices, double elasticity) 
 {
   /* pick up here */ 
   glm::dvec3 new_velocity_vector = p_velocity_vect;
-  // std::cout << "original velocity: "
-  //           << new_velocity_vector.x << ", " 
-  //           << new_velocity_vector.y << ", " 
-  //           << new_velocity_vector.z << '\n';
+  std::cout << "original velocity: "
+            << new_velocity_vector.x << ", " 
+            << new_velocity_vector.y << ", " 
+            << new_velocity_vector.z << '\n';
 
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
@@ -127,10 +126,10 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
             // << normal_vec.z << '\n';
   const glm::dvec3 reverse_velocity_vect = -p_velocity_vect;
   new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
-  // std::cout << "new velocity: "
-  //           << new_velocity_vector.x << ", " 
-  //           << new_velocity_vector.y << ", " 
-  //           << new_velocity_vector.z << '\n';
+  std::cout << "new velocity: "
+            << new_velocity_vector.x << ", " 
+            << new_velocity_vector.y << ", " 
+            << new_velocity_vector.z << '\n';
   return new_velocity_vector;
 }
 
@@ -157,7 +156,7 @@ void updateLiveParticleInfoAfterDeadFaceCollision(
     const std::vector<glm::dvec3>& face_vertices, double elasticity) 
 {
   const glm::dvec3 nvelocity = physics::calculateVelocityVectorAfterLiveParticleDeadFaceCollision( 
-      p_center, p_radius, motion.direction * motion.speed, mass, face_vertices, elasticity);
+      motion.direction * motion.speed, mass, face_vertices, elasticity);
   
   motion.velocity = nvelocity;
   // std::cout << "nvelocity: "
@@ -295,7 +294,6 @@ std::pair<double, double> calculateLinearAndRotationalMomentumAllocationsAtPoint
 {
 const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point;
   glm::dvec3 face_normal_line = center_to_point_vector;
-
   if (rigid_object.radius == 0 && face != 0)
   {
     // std::cout << "doing special face normal line calc" << '\n';
@@ -339,7 +337,14 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
 )
 {
   const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point;
-  glm::dvec3 face_normal_line = center_to_point_vector;
+
+  assert(!isnan(motion.velocity.x) && !isnan(motion.velocity.y) && !isnan(motion.velocity.z));
+  if (isnan(motion.direction.x) || isnan(motion.direction.y) || isnan(motion.direction.z))
+  {
+    motion.direction = glm::normalize(motion.velocity);
+  }
+
+  glm::dvec3 face_normal_line = -glm::normalize(motion.velocity);
 
   if (rigid_object.radius == 0 && face != 0)
   {
@@ -352,18 +357,13 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   }
 
   double angle = pce3d::maths::calculateAngleDegreesBetweenVectors(face_normal_line, center_to_point_vector);
-
   if (isnan(angle)) { angle = 0.0; }
-   
   std::cout << "point angle relative to center: " << angle << '\n';
+
   /* A: calculate linear component */
   const double linear_allocation_percentage = (90.0 - abs(angle)) / 90.0;
   std::cout << "linear allocation: " << linear_allocation_percentage << '\n';
 
-  if (isnan(motion.direction.x) || isnan(motion.direction.y) || isnan(motion.direction.z))
-  {
-    motion.direction = glm::dvec3(0.001, 0.001, 0.001);
-  }
 
   const glm::dvec3 linear_momentum_component = motion.direction * motion.speed * linear_allocation_percentage * rigid_object.mass;
 
@@ -387,7 +387,8 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   const glm::dvec3 rotation_velocity_vector 
     = glm::normalize(center_to_point_vector + incrementally_rotated_point) * motion.rotational_speed;
 
-  const double rotational_mass_allocation = angle == 0.0 ? 90.0 / .001 : (90.0 / angle);
+  const double rotational_mass_allocation = angle / 90.0;
+  // const double rotational_mass_allocation = (90.0 - abs(angle)) / 90.0;
   // std::cout << "rotational allocation: " << rotational_allocation_percentage << '\n';
   const glm::dvec3 rotational_momentum_component = rotation_velocity_vector * rotational_mass_allocation  * rigid_object.mass;
   /* C: combine */
@@ -503,7 +504,12 @@ void updateLinearMotionAfterCollision(
 )
 {
   const double linear_alloc_percent = (linear_allocation_at_point / (linear_allocation_at_point + rotational_allocation_at_point));
+  std::cout << "linear alloc: " << linear_alloc_percent << '\n';
   motion.velocity = (new_total_momentum_at_point / (mass * linear_alloc_percent)) * linear_alloc_percent;
+  std::cout << "new linear velocity: "
+            << motion.velocity.x << ", " 
+            << motion.velocity.y << ", " 
+            << motion.velocity.z << '\n';
 }
 
 
@@ -530,26 +536,6 @@ void updateRotationalMotionAfterCollision(
   const glm::dvec3 normalized_surface_point = surface_point - center_of_mass;
   const glm::dvec3 normalized_path_point = rotation_path_point - center_of_mass;
 
-  // std::cout << "center_of_mass: "
-  //           << center_of_mass.x << ", "
-  //           << center_of_mass.y << ", "
-  //           << center_of_mass.z << "\n";
-
-  // std::cout << "surface_point: "
-  //           << surface_point.x << ", "
-  //           << surface_point.y << ", "
-  //           << surface_point.z << "\n";
-
-  // std::cout << "rotation_path_point: "
-  //           << rotation_path_point.x << ", "
-  //           << rotation_path_point.y << ", "
-  //           << rotation_path_point.z << "\n";
-
-  // std::cout << "normalized_path_point: "
-  //           << normalized_path_point.x << ", "
-  //           << normalized_path_point.y << ", "
-  //           << normalized_path_point.z << "\n";
-
   const double angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
     normalized_surface_point,
     normalized_path_point
@@ -557,14 +543,17 @@ void updateRotationalMotionAfterCollision(
 
   const glm::dvec3 axis = glm::cross(
     normalized_surface_point,
-    // normalized_path_point
     rotation_path_point
   );
 
-  const double new_rotational_speed = sqrt(glm::dot(rotation_path_point, rotation_path_point)) * -pce::math::sign(angle) * pow(rotational_alloc_percent, 2.0);
+  const double new_rotational_speed = sqrt(glm::dot(rotation_path_point, rotation_path_point)) 
+                                    * -pce::math::sign(angle);
+  // const double new_rotational_speed = sqrt(glm::dot(new_total_momentum_at_point, new_total_momentum_at_point)) 
+                                      // * -pce::math::sign(angle) * rotational_alloc_percent;
   if (!isnan(new_rotational_speed))
   {
-    motion.rotational_speed = new_rotational_speed;
+    motion.rotational_speed += new_rotational_speed;
+    std::cout << "new rotational speed: " << motion.rotational_speed << '\n';
   }
   // std::cout << "rotational_speed: " << motion.rotational_speed  << '\n';
   if (!isnan(axis.x) && !isnan(axis.y) && !isnan(axis.z))
@@ -612,18 +601,18 @@ void updateEntityDataFromLiveBodCollision(
     a_b_hitpoint_wire = glm::dvec3(0, 0, 0);
   }
 
-  std::cout << "a_b_hitpoint_wire: "
-            << a_b_hitpoint_wire.x << ", " 
-            << a_b_hitpoint_wire.y << ", " 
-            << a_b_hitpoint_wire.z << '\n';
-  std::cout << "a_hitpoint: "
-            << a_hitpoint.x << ", " 
-            << a_hitpoint.y << ", " 
-            << a_hitpoint.z << '\n';
-  std::cout << "b_hitpoint: "
-            << b_hitpoint.x << ", " 
-            << b_hitpoint.y << ", " 
-            << b_hitpoint.z << '\n';
+  // std::cout << "a_b_hitpoint_wire: "
+  //           << a_b_hitpoint_wire.x << ", " 
+  //           << a_b_hitpoint_wire.y << ", " 
+  //           << a_b_hitpoint_wire.z << '\n';
+  // std::cout << "a_hitpoint: "
+  //           << a_hitpoint.x << ", " 
+  //           << a_hitpoint.y << ", " 
+  //           << a_hitpoint.z << '\n';
+  // std::cout << "b_hitpoint: "
+  //           << b_hitpoint.x << ", " 
+  //           << b_hitpoint.y << ", " 
+  //           << b_hitpoint.z << '\n';
   
   uint32_t a_face = 1;
   uint32_t b_face = 1;
@@ -715,9 +704,9 @@ void updateEntityDataFromLiveBodCollision(
       b_motion
     );
 
-  std::cout << "a_momentum_allocations: " << a_momentum_allocations.first << ", " << a_momentum_allocations.second << '\n';
-  std::cout << "b_momentum_allocations: " << b_momentum_allocations.first << ", " << b_momentum_allocations.second << '\n';
-  
+  // std::cout << "a_momentum_allocations: " << a_momentum_allocations.first << ", " << a_momentum_allocations.second << '\n';
+  // std::cout << "b_momentum_allocations: " << b_momentum_allocations.first << ", " << b_momentum_allocations.second << '\n';
+
   updateLinearMotionAfterCollision(
     a_momentum_allocations.first,
     a_momentum_allocations.second,
@@ -766,6 +755,101 @@ void updateEntityDataFromLiveBodCollision(
   
 
 }
+
+
+
+void updateComplexLivebodInfoAfterDeadfaceCollision(
+    const uint32_t entity_a
+  , const uint32_t entity_b
+  , pce::RigidObject& a_rigid_object
+  , pce::Position& a_position
+  , pce::Surface& a_surface
+  , pce::Motion& a_motion
+  , const std::vector<glm::dvec3>& deadbod_face_vertices
+  , double total_surface_elasticity
+)
+{
+  glm::dvec3 a_collision_point = a_position.actual_center_of_mass;
+  uint32_t face = 0;
+  if (a_rigid_object.entity_vertex_collision_map.find(entity_b) != a_rigid_object.entity_vertex_collision_map.end())
+  {
+    a_collision_point = a_rigid_object.vertices.at(a_rigid_object.entity_vertex_collision_map.at(entity_b));
+  }
+  // else if (a_rigid_object.entity_edge_collision_map.find(entity_b) != a_rigid_object.entity_edge_collision_map.end())
+  // {
+    // a_collision_point = a_rigid_object.entity_edge_collision_map.at(entity_b);
+  // }
+  else 
+  {
+    assert(a_rigid_object.entity_face_collision_map.find(entity_b) != a_rigid_object.entity_face_collision_map.end());
+    uint32_t a_face_id = a_rigid_object.entity_face_collision_map.at(entity_b);
+    face = a_face_id;
+    glm::dvec3 sum = glm::dvec3(0, 0, 0);
+    for (auto const& vertex_id : a_rigid_object.face_vertex_map.at(a_face_id))
+    {
+      sum += a_rigid_object.vertices.at(vertex_id);
+    }
+    a_collision_point = sum  * (1.0 / double(a_rigid_object.face_vertex_map.at(a_face_id).size())); 
+  }
+
+  std::cout << "a collision point: "
+            << a_collision_point.x << ", "
+            << a_collision_point.y << ", "
+            << a_collision_point.z << '\n';
+
+  std::pair<double, double> a_momentum_allocations 
+    = calculateLinearAndRotationalMomentumAllocationsAtPoint(
+        a_collision_point,
+        face,
+        a_rigid_object,
+        a_position,
+        a_motion
+  );
+
+  const glm::dvec3 a_momentum_vector = calculateMomentumVectorAtSurfacePoint(
+    a_collision_point,
+    face,
+    a_rigid_object,
+    a_position,
+    a_motion
+  );
+
+  const glm::dvec3 new_a_velocity = a_rigid_object.mass * calculateVelocityVectorAfterLiveParticleDeadFaceCollision( 
+      a_motion.direction * a_motion.speed, a_rigid_object.mass, deadbod_face_vertices, total_surface_elasticity);
+  
+
+  updateLinearMotionAfterCollision(
+    a_momentum_allocations.first,
+    a_momentum_allocations.second,
+    /*update the below eventually -- should be momentum, just looks better w/ velocity atm*/
+    new_a_velocity,
+    a_motion,
+    a_rigid_object.mass
+  );
+  if (a_rigid_object.radius == 0)
+  {
+    updateRotationalMotionAfterCollision(
+      a_momentum_allocations.second,
+      a_momentum_allocations.first,
+      a_collision_point,
+      a_position.actual_center_of_mass,
+    /*update the below eventually -- should be momentum, just looks better w/ velocity atm*/
+      new_a_velocity,
+      a_motion,
+      a_rigid_object.mass
+    );
+  }
+
+  a_motion.duration = 0.1;
+  a_motion.previous_resting_position = a_position.actual_center_of_mass;
+
+  std::cout << "new_a_velocity: "
+            << a_motion.velocity.x << ", " 
+            << a_motion.velocity.y << ", " 
+            << a_motion.velocity.z << '\n';
+  
+}
+
 
 
 

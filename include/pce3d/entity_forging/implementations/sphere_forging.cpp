@@ -30,8 +30,8 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
   control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=1.0});
   control.AddComponent(new_entity, pce::Force{ .of_gravity = gravitational_force });
   control.AddComponent(new_entity, pce::Motion{
-    .speed = 0.0,
-    .direction = glm::dvec3(0, 0, 0),
+    .speed = sqrt(glm::dot(velocity, velocity)),
+    .direction = glm::normalize(velocity),
     .velocity = velocity,
     .rotational_speed = 0.0,
     .rotational_axis = glm::dvec3(0, 0, 0),
