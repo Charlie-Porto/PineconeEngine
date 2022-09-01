@@ -71,7 +71,7 @@ void moveCameraPositionLaterally(glm::dvec3& position, const glm::dvec3& view_di
 
 
 void moveCameraPositionUpDown(glm::dvec3& position, const double direction, const double speed) {
-  position.y += direction * speed;
+  position.y += direction * speed * 10.0;
 }
 
 

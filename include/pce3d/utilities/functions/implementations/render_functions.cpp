@@ -69,8 +69,11 @@ void renderLineAsRendererIs(const glm::dvec2& point_a, const glm::dvec2& point_b
 
 inline void renderPreSdlConvertedLineAsRendererIs(const glm::dvec2& point_a, const glm::dvec2& point_b)
 {
-  SDL_RenderDrawLine(Simulation::renderer, int(point_a.x), int(point_a.y),
-                                           int(point_b.x), int(point_b.y));
+  if (point_a.x != point_b.x || point_a.y != point_b.y)
+  {
+    SDL_RenderDrawLine(Simulation::renderer, int(point_a.x), int(point_a.y),
+                                            int(point_b.x), int(point_b.y));
+  }
 }
 
 inline void setRendererColor(std::vector<int> color) {
@@ -95,20 +98,7 @@ void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<in
     glm::normalize(line_a_end_bottom_direction),
   };
   
-  points[0] = points[0] - glm::normalize(points[0] - points[2]);
-  points[2] = points[2] - glm::normalize(points[2] - points[0]);
-  points[1] = points[1] - glm::normalize(points[1] - points[3]);
-  points[3] = points[3] - glm::normalize(points[3] - points[1]);
- 
-  // for (auto& v : directions)
-  // {
-    // if (v != glm::dvec2(0, 0))
-    // {
-      // v = glm::normalize(v);
-    // }
-  // }
-
-  const double inc = 1.0;
+   const double inc = 1.0;
 
   lines = {
     std::make_pair(points[0] + inc * directions[0], points[2] + inc * directions[1]),
@@ -117,17 +107,20 @@ void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<in
     std::make_pair(points[0] + inc * 2.0 * directions[2], points[2] + inc * 2.0 * directions[3]),
     std::make_pair(points[0] + inc * 3.0 * directions[0], points[2] + inc * 3.0 * directions[1]),
     std::make_pair(points[0] + inc * 3.0 * directions[2], points[2] + inc * 3.0 * directions[3]),
-    std::make_pair(points[0] + inc * 4.0 * directions[0], points[2] + inc * 4.0 * directions[1]),
-    std::make_pair(points[0] + inc * 4.0 * directions[0], points[2] + inc * 4.0 * directions[1]),
-    std::make_pair(points[0] + inc * 5.0 * directions[2], points[2] + inc * 5.0 * directions[3]),
-    std::make_pair(points[0] + inc * 5.0 * directions[2], points[2] + inc * 5.0 * directions[3]),
-    std::make_pair(points[0] + inc * 6.0 * directions[0], points[2] + inc * 6.0 * directions[1]),
-    std::make_pair(points[0] + inc * 6.0 * directions[2], points[2] + inc * 6.0 * directions[3]),
+    // std::make_pair(points[0] + inc * 4.0 * directions[0], points[2] + inc * 4.0 * directions[1]),
+    // std::make_pair(points[0] + inc * 4.0 * directions[0], points[2] + inc * 4.0 * directions[1]),
+    // std::make_pair(points[0] + inc * 5.0 * directions[2], points[2] + inc * 5.0 * directions[3]),
+    // std::make_pair(points[0] + inc * 5.0 * directions[2], points[2] + inc * 5.0 * directions[3]),
+    // std::make_pair(points[0] + inc * 6.0 * directions[0], points[2] + inc * 6.0 * directions[1]),
+    // std::make_pair(points[0] + inc * 6.0 * directions[2], points[2] + inc * 6.0 * directions[3])
   };
 
   for (auto const& line : lines)
   {
-    renderPreSdlConvertedLineAsRendererIs(line.first, line.second);
+    if (!isnan(line.first.x) && !isnan(line.first.y) && !isnan(line.second.x) && !isnan(line.second.y))
+    {
+      renderPreSdlConvertedLineAsRendererIs(line.first, line.second);
+    }
   }
 
 } 

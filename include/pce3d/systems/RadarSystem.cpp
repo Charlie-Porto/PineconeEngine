@@ -55,6 +55,10 @@ public:
           radar.farthest_vertex_id = id;
           radar.farthest_vertex_distance = rigid_object.vertex_distance_map.at(id);
         }
+        if (vertex.z > 0.0 && position.center_of_mass_radar_pixel == glm::dvec2(0, 0))
+        {
+          position.center_of_mass_radar_pixel = rigid_object.vertex_pixels.at(id);
+        }
       }
       // auto const point = rigid_object.camera_transformed_vertices.at(radar.closest_vertex_id);
 

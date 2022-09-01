@@ -89,7 +89,6 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
   const glm::dvec2 d = pce::convert::convertCartesianCoordinatesToSDL(q.D * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
 
   /* draw diagonals */
-  // std::cout << "drawing quadrilateral diagonals" << '\n';
   std::vector<glm::dvec2> points = {a, b, c, d}; 
   pce::render::renderQuadrilateralDiagonals(points, color);
   
