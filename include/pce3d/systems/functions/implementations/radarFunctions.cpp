@@ -40,7 +40,7 @@ glm::dvec2 convertPointOnViewSphereToPixel(const glm::dvec3& point, bool is_cent
     }
     if (to_interpolate)
     {
-      mpoint = interpolateViewSphereIntersectionPoint(point, 1.0, glm::dvec3(0, 10.0, 10.0));
+      mpoint = interpolateViewSphereIntersectionPoint(point, -0.1, glm::dvec3(0, 10.0, 10.0));
     }
   }
   const double y_pixel = Y_PIXEL_STRETCH * atan(mpoint.y / mpoint.z);
@@ -61,7 +61,7 @@ glm::dvec3 convertPixelToPointOnViewSphere(const glm::dvec2& pixel) {
 
 glm::dvec3 interpolateViewSphereIntersectionPoint(const glm::dvec3& point, const double z_target,
                                                   const glm::dvec3& connected_on_screen_point) {
-  std::cout << "interpolating!!!!!!!!" << '\n';
+  // std::cout << "interpolating!!!!!!!!" << '\n';
   if (point.z == connected_on_screen_point.z && point.y == connected_on_screen_point.y) {
     return (glm::normalize(glm::dvec3(point.x, connected_on_screen_point.y, z_target)));
   }
@@ -70,30 +70,21 @@ glm::dvec3 interpolateViewSphereIntersectionPoint(const glm::dvec3& point, const
   }
   // const glm::dvec3 direction = glm::normalize(connected_on_screen_point - point);
   const glm::dvec3 direction = glm::normalize(point - connected_on_screen_point);
-  std::cout << "point: "<<point.x << ", "<< point.y << ", "<< point.z << '\n';
-  std::cout << "screenpoint: "
-            << connected_on_screen_point.x << ", "
-            << connected_on_screen_point.y << ", "
-            << connected_on_screen_point.z << '\n';
-  double t = (z_target - point.z) / direction.z;
+  // std::cout << "point: "<<point.x << ", "<< point.y << ", "<< point.z << '\n';
+  // std::cout << "screenpoint: "
+            // << connected_on_screen_point.x << ", "
+            // << connected_on_screen_point.y << ", "
+            // << connected_on_screen_point.z << '\n';
+  double t = (z_target - connected_on_screen_point.z) / direction.z;
   // glm::dvec3 psuedo_intersection_point = glm::dvec3(-(point.x + t * direction.x), -(point.y + t * direction.y), z_target);
-  glm::dvec3 psuedo_intersection_point = glm::dvec3((point.x + t * direction.x), -(point.y + t * direction.y), z_target);
-  // glm::dvec3 psuedo_intersection_point = glm::dvec3((point.x + t * direction.x), (point.y + t * direction.y), z_target);
+  // glm::dvec3 psuedo_intersection_point = glm::dvec3((point.x + t * direction.x), -(point.y + t * direction.y), z_target);
+  glm::dvec3 psuedo_intersection_point = glm::dvec3((point.x + t * direction.x), abs(point.y + t * direction.y) * pce::math::sign(point.y), z_target);
   glm::dvec3 unit_psuedo_int_point = glm::normalize(psuedo_intersection_point);
-  std::cout << "unit_psuedo_int_point: "
-            << unit_psuedo_int_point.x << ", "
-            << unit_psuedo_int_point.y << ", "
-            << unit_psuedo_int_point.z << '\n';
+  // std::cout << "unit_psuedo_int_point: "
+  //           << unit_psuedo_int_point.x << ", "
+  //           << unit_psuedo_int_point.y << ", "
+  //           << unit_psuedo_int_point.z << '\n';
 
-  // const double x = point.x + t * direction.x;
-  // double y = point.y + t * direction.y;
-  // const double z = z_target;
-  // if (x < 1.0) {
-    // y = sqrt(1.0 - pow(x, 2.0) * pow(z, 2.0));
-    // return glm::dvec3(x, y, z);
-  // } else {
-    // return unit_psuedo_int_point;
-  // }
   return unit_psuedo_int_point;
 }
 
