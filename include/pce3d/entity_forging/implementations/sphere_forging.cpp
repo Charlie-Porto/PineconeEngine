@@ -8,9 +8,15 @@ namespace pce3d {
 namespace forge {
 
 
-Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const std::vector<int> color,
-                         const glm::dvec3& velocity, const double gravitational_force) {
-  Entity new_entity = pce3d::forge::forgeBaseEntity(location);
+Entity forgeSphereEntity(
+    const double radius
+    , const glm::dvec3 location
+    , const std::vector<int> color
+    , const glm::dvec3& velocity
+    , const double gravitational_force
+    , const double collision_elasticity)
+{
+  Entity new_entity = pce3d::forge::forgeBaseEntity(location, color, collision_elasticity);
   control.AddComponent(new_entity, pce::RigidObject{
     .radius=radius, 
     .mass = 4.0 * PI * pow(radius, 2.0),
@@ -27,7 +33,6 @@ Entity forgeSphereEntity(const double radius, const glm::dvec3 location, const s
     .entity_index_collision_map = {},
     .entity_time_collision_map = {}
   });
-  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=1.0});
   control.AddComponent(new_entity, pce::Force{ .of_gravity = gravitational_force });
   control.AddComponent(new_entity, pce::Motion{
     .speed = sqrt(glm::dot(velocity, velocity)),

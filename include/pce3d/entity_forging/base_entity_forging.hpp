@@ -6,6 +6,10 @@
 base entity forging. 
 -----------------------------------------------------------------*/
 
+#include <vector>
+
+#include <glm/vec3.hpp>
+
 extern ControlPanel control;
 
 using VertexMap = std::unordered_map<uint32_t, glm::dvec3>;
@@ -33,6 +37,8 @@ namespace forge {
   
   uint32_t forgeBaseEntity(
       const glm::dvec3 center_location
+    , const std::vector<int>& color = {255, 255, 255, 255}
+    , const double collision_elasticity = 0.7
   );
 
 }

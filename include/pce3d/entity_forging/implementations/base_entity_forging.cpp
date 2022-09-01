@@ -9,6 +9,8 @@ namespace forge {
   
   uint32_t forgeBaseEntity(
       const glm::dvec3 center_location
+    , const std::vector<int>& color
+    , const double collision_elasticity
   )
   {
     uint32_t new_entity = control.CreateEntity();
@@ -22,6 +24,10 @@ namespace forge {
     control.AddComponent(new_entity, pce::FaceShade{});
     control.AddComponent(new_entity, pce::Render{ .is_registered = false });
     control.AddComponent(new_entity, pce::OrderOfRenderRegistration{});
+    control.AddComponent(new_entity, pce::Surface{ 
+      .color = color, 
+      .collision_elasticity_index = collision_elasticity
+    });
 
     return new_entity;
   }

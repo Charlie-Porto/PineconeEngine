@@ -112,10 +112,10 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
 {
   /* pick up here */ 
   glm::dvec3 new_velocity_vector = p_velocity_vect;
-  std::cout << "original velocity: "
-            << new_velocity_vector.x << ", " 
-            << new_velocity_vector.y << ", " 
-            << new_velocity_vector.z << '\n';
+  // std::cout << "original velocity: "
+  //           << new_velocity_vector.x << ", " 
+  //           << new_velocity_vector.y << ", " 
+  //           << new_velocity_vector.z << '\n';
 
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
@@ -126,10 +126,10 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
             // << normal_vec.z << '\n';
   const glm::dvec3 reverse_velocity_vect = -p_velocity_vect;
   new_velocity_vector = pce::rotateVector3byAngleAxis(reverse_velocity_vect, 180.0, normal_vec) * elasticity;
-  std::cout << "new velocity: "
-            << new_velocity_vector.x << ", " 
-            << new_velocity_vector.y << ", " 
-            << new_velocity_vector.z << '\n';
+  // std::cout << "new velocity: "
+  //           << new_velocity_vector.x << ", " 
+  //           << new_velocity_vector.y << ", " 
+  //           << new_velocity_vector.z << '\n';
   return new_velocity_vector;
 }
 

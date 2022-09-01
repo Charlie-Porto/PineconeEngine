@@ -68,7 +68,6 @@ Entity forgeRectPrismEntity(
     .entity_time_collision_map = {},
     .entity_index_collision_map = {}
   });
-  control.AddComponent(new_entity, pce::Surface{.color=color, .collision_elasticity_index=0.9});
   control.AddComponent(new_entity, pce::Motion{
     .speed = 0.0,
     .direction = glm::dvec3(0, 0, 0),
