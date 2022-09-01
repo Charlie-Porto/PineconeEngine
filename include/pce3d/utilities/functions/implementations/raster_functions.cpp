@@ -33,7 +33,8 @@ std::unordered_map<glm::dvec2, glm::dvec2> getCircleOctetPairs(int xc, int yc, i
 
 std::vector<glm::dvec2> getCircleRasterizationPoints(int xc, int yc, int r) {
   int x = 0;
-  int y = r;
+  int y = round(r)+1;
+  std::cout << "rounded circle radius: " << y << '\n';
   int d = 3 - 2 * r;
   std::vector<glm::dvec2> points_list = getCircleOctet(xc, yc, x, y);
   while (y >= x) {

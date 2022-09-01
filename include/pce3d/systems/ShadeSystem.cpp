@@ -110,6 +110,7 @@ public:
         PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
                                                                           ncenter_point.y,
                                                                           rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
+        // std::cout << "circle radius: " <<  rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1) << '\n';
         shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
                                                       position.center_of_mass_relative_to_camera,
                                                       rigid_object.radius,

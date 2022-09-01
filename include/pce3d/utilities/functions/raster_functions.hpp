@@ -9,6 +9,7 @@ functions to rasterize shapes of certain types
 #include <vector>
 #include <unordered_map>
 #include <glm/vec2.hpp>
+#include <cmath>
 
 
 namespace pce {
