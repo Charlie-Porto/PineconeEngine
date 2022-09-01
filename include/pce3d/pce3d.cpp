@@ -8,6 +8,8 @@ double pce3d::Core3D::LENSE_CURVE_ = 0.1;
 double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 15.0;
 double pce3d::Core3D::COLLISION_METER_INDEX_RATIO = 1.0;
 glm::ivec3 pce3d::Core3D::SPACE_MAP_DIMENSIONS = glm::ivec3(10000, 10000, 10000);
+glm::dvec3 pce3d::Core3D::HARD_BOUNDARIES = glm::dvec3(10000, 10000, 10000);
+glm::dvec3 pce3d::Core3D::MAP_CENTER = glm::dvec3(0, 0, 0);
 
 
 #include "modules.cpp"
@@ -17,7 +19,8 @@ namespace pce3d {
 
 
 
-Core3D::Core3D(const glm::dvec3 light_flow_direction,
+Core3D::Core3D(const glm::dvec3 hard_boundaries,
+               const glm::dvec3 light_flow_direction,
                const double lense_curve_index,
                const double ordinary_zoom_index) {
 
@@ -34,6 +37,7 @@ Core3D::Core3D(const glm::dvec3 light_flow_direction,
   RegisterCoreComponents();
   RegisterCoreSystems();
 
+  pce3d::Core3D::HARD_BOUNDARIES = hard_boundaries;
   pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = light_flow_direction;
   pce3d::Core3D::LENSE_CURVE_ = lense_curve_index;
   pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = ordinary_zoom_index;

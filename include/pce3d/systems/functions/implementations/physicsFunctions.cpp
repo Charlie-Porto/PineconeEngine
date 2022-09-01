@@ -851,6 +851,128 @@ void updateComplexLivebodInfoAfterDeadfaceCollision(
 }
 
 
+void checkForParticleCollisionWithHardBoundary(
+    pce::Position& position
+  , pce::RigidObject& rigid_object
+  , pce::Motion& motion
+  , pce::Surface& surface
+)
+{
+  const glm::dvec3 boundaries = pce3d::Core3D::HARD_BOUNDARIES - pce3d::Core3D::MAP_CENTER;
+
+  glm::dvec3 face_point = glm::dvec3(0, 0, 0);
+  bool collision_occured = false;
+  
+  std::vector<glm::dvec3> face_vertices{};
+  /* check left - right sides */
+  if ((position.actual_center_of_mass.x + rigid_object.radius) > boundaries.x)
+  {
+    position.actual_center_of_mass.x = boundaries.x - rigid_object.radius;
+
+    face_point = glm::dvec3(boundaries.x,
+                            position.actual_center_of_mass.y,
+                            position.actual_center_of_mass.z);
+    face_vertices.push_back(face_point);
+    face_point.y += 1.0;
+    face_vertices.push_back(face_point);
+    face_point.z += 1.0;
+    face_vertices.push_back(face_point);
+    collision_occured = true;
+  }
+  if ((position.actual_center_of_mass.x - rigid_object.radius) < -boundaries.x)
+  {
+    position.actual_center_of_mass.x = -boundaries.x + rigid_object.radius;
+
+    face_point = glm::dvec3(-boundaries.x,
+                            position.actual_center_of_mass.y,
+                            position.actual_center_of_mass.z);
+    face_vertices.push_back(face_point);
+    face_point.y += 1.0;
+    face_vertices.push_back(face_point);
+    face_point.z += 1.0;
+    face_vertices.push_back(face_point);
+    collision_occured = true;
+  }
+
+  /* check front - back sides */
+  if ((position.actual_center_of_mass.z + rigid_object.radius) > boundaries.z)
+  {
+    position.actual_center_of_mass.z = boundaries.z - rigid_object.radius;
+
+    face_point = glm::dvec3(position.actual_center_of_mass.x,
+                            position.actual_center_of_mass.y,
+                            boundaries.z);
+
+    face_vertices.push_back(face_point);
+    face_point.y += 1.0;
+    face_vertices.push_back(face_point);
+    face_point.x += 1.0;
+    face_vertices.push_back(face_point);
+    collision_occured = true;
+  }
+  if ((position.actual_center_of_mass.z - rigid_object.radius) < -boundaries.z)
+  {
+    position.actual_center_of_mass.z = -boundaries.z + rigid_object.radius;
+
+    face_point = glm::dvec3(position.actual_center_of_mass.x,
+                            position.actual_center_of_mass.y,
+                            -boundaries.z);
+
+    face_vertices.push_back(face_point);
+    face_point.y += 1.0;
+    face_vertices.push_back(face_point);
+    face_point.x += 1.0;
+    face_vertices.push_back(face_point);
+    collision_occured = true;
+  }
+
+  /* check top - bottom sides*/
+  if ((position.actual_center_of_mass.y - rigid_object.radius) < -boundaries.y)
+  {
+    position.actual_center_of_mass.y = -boundaries.y + rigid_object.radius;
+
+    face_point = glm::dvec3(position.actual_center_of_mass.x,
+                            -boundaries.y,
+                            position.actual_center_of_mass.z);
+
+    face_vertices.push_back(face_point);
+    face_point.z += 1.0;
+    face_vertices.push_back(face_point);
+    face_point.x += 1.0;
+    face_vertices.push_back(face_point);
+    collision_occured = true;
+  }
+  if ((position.actual_center_of_mass.y + rigid_object.radius) > boundaries.y)
+  {
+    position.actual_center_of_mass.y = boundaries.y - rigid_object.radius;
+
+    face_point = glm::dvec3(position.actual_center_of_mass.x,
+                            boundaries.y,
+                            position.actual_center_of_mass.z);
+
+    face_vertices.push_back(face_point);
+    face_point.z += 1.0;
+    face_vertices.push_back(face_point);
+    face_point.x += 1.0;
+    face_vertices.push_back(face_point);
+    collision_occured = true;
+  }
+
+  if (collision_occured)
+  {
+    rigid_object.vertices[1] = position.actual_center_of_mass;
+
+    physics::updateLiveParticleInfoAfterDeadFaceCollision( 
+      position.actual_center_of_mass, 
+      rigid_object.radius,
+      rigid_object.mass,
+      motion,
+      face_vertices,
+      surface.collision_elasticity_index
+    );
+  }
+}
+
 
 
 }

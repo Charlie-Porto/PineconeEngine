@@ -158,6 +158,13 @@ void updateComplexLivebodInfoAfterDeadfaceCollision(
   , double total_surface_elasticity
 );
 
+void checkForParticleCollisionWithHardBoundary(
+    pce::Position& position
+  , pce::RigidObject& rigid_object
+  , pce::Motion& motion
+  , pce::Surface& surface
+);
+
 
 }
 }

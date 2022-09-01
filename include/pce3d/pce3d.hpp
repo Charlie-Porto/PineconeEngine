@@ -39,9 +39,12 @@ namespace pce3d {
 
 class Core3D {
 public:
-  Core3D(const glm::dvec3 light_flow_direction = glm::dvec3(-0.1, -0.9, -0.2), 
-         const double lense_curve_index = 0.1,
-         const double ordinary_zoom_index = 15.0);
+  Core3D(
+      const glm::dvec3 hard_boundaries = glm::dvec3(10000, 10000, 10000)
+    , const glm::dvec3 light_flow_direction = glm::dvec3(-0.1, -0.9, -0.2)
+    , const double lense_curve_index = 0.1
+    , const double ordinary_zoom_index = 15.0
+  );
 
   void RegisterCoreComponents();
   void RegisterCoreSystems();
@@ -54,6 +57,8 @@ public:
   static double ORDINARY_ZOOM_INDEX_;
   static double COLLISION_METER_INDEX_RATIO;
   static glm::ivec3 SPACE_MAP_DIMENSIONS;
+  static glm::dvec3 HARD_BOUNDARIES;
+  static glm::dvec3 MAP_CENTER;
 
 
 private:

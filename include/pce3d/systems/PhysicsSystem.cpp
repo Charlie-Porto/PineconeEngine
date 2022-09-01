@@ -279,6 +279,7 @@ public:
       auto& motion = control.GetComponent<pce::Motion>(entity);
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
+      auto& surface = control.GetComponent<pce::Surface>(entity);
       // std::cout << "velocity: "
       //           << motion.velocity.x << ", "
       //           << motion.velocity.y << ", "
@@ -341,6 +342,15 @@ public:
       }
       
       if (!rigid_object.is_deadbod && !rigid_object.is_restingbod) {
+        if (std::find(entities_updated_.begin(), entities_updated_.end(), entity) == entities_updated_.end())
+        {
+          pce3d::physics::checkForParticleCollisionWithHardBoundary(
+            position,
+            rigid_object,
+            motion,
+            surface
+          );
+        }
         if (sqrt(glm::dot(position_change, position_change)) < 0.01) 
         {
           ++motion.stationary_counter;
