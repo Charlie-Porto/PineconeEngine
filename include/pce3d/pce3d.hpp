@@ -1,7 +1,8 @@
 #ifndef pce3d_hpp
 #define pce3d_hpp
 
-#include <pcecs/pcecs.hpp>
+// #include <pcecs/pcecs.hpp>
+#include "../pcecs/pcecs.hpp"
 
 #include "utilities/camera.cpp" 
 
