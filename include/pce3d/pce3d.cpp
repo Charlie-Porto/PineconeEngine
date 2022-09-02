@@ -6,7 +6,7 @@
 glm::dvec3 pce3d::Core3D::LIGHT_FLOW_DIRECTION_ = glm::dvec3(-0.1, -0.9, -0.2);
 double pce3d::Core3D::LENSE_CURVE_ = 0.1;
 double pce3d::Core3D::ORDINARY_ZOOM_INDEX_ = 15.0;
-double pce3d::Core3D::COLLISION_METER_INDEX_RATIO = 1.0;
+double pce3d::Core3D::COLLISION_METER_INDEX_RATIO = 2.0;
 glm::ivec3 pce3d::Core3D::SPACE_MAP_DIMENSIONS = glm::ivec3(10000, 10000, 10000);
 glm::dvec3 pce3d::Core3D::HARD_BOUNDARIES = glm::dvec3(10000, 10000, 10000);
 glm::dvec3 pce3d::Core3D::MAP_CENTER = glm::dvec3(0, 0, 0);
@@ -117,7 +117,7 @@ void Core3D::UpdateCore3D() {
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // std::cout << "render system updated" << '\n';
   // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
-  dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
+  // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 
 }

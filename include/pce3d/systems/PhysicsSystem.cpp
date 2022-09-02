@@ -106,7 +106,8 @@ public:
           );
         }
         ++a_force.sequential_collisions_by_entity[entity_b];
-        if (a_force.sequential_collisions_by_entity.at(entity_b) > 1)
+        if (a_force.sequential_collisions_by_entity.at(entity_b) > 1
+         && abs(a_motion.speed > 1.0))
         {
           a_force.sequential_collisions_by_entity[entity_b] = 0;
         }
@@ -307,9 +308,9 @@ public:
                 // << new_position.y << ", "
                 // << new_position.z << '\n';
 
-
         motion.direction = glm::normalize(position_change);
         motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
+
         for (auto& [id, vertex] : rigid_object.vertices)
         {
           // std::cout << "vertex before: " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
@@ -371,11 +372,14 @@ public:
                     // << position_change.x << ", "
                     // << position_change.y << ", "
                     // << position_change.z << '\n';
-          motion.direction = glm::normalize(position_change);
-          if (isnan(motion.direction.x)) { motion.direction.x = 0; }
-          if (isnan(motion.direction.y)) { motion.direction.y = 0; }
-          if (isnan(motion.direction.z)) { motion.direction.z = 0; }
-          motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
+          if (sqrt(glm::dot(position_change, position_change)) > 0.01)
+          {
+            motion.direction = glm::normalize(position_change);
+            motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
+          }
+          if (isnan(motion.direction.x)) { motion.direction.x = position.actual_center_of_mass.x - motion.previous_resting_position.x; }
+          if (isnan(motion.direction.y)) { motion.direction.y = position.actual_center_of_mass.x - motion.previous_resting_position.y; }
+          if (isnan(motion.direction.z)) { motion.direction.z = position.actual_center_of_mass.x - motion.previous_resting_position.z; }
           if (isnan(motion.speed)) { motion.speed = 0.0; }
           // std::cout << "entity: " << entity << '\n';
           // std::cout << "speed: " << motion.speed << '\n';

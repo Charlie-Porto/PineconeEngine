@@ -126,7 +126,7 @@ FaceVertexMap assignVerticesToFaces() {
     {3, {6, 8, 4, 2}},
     {4, {7, 8, 6, 5}},
     {5, {7, 3, 4, 8}},
-    {6, {1, 2, 6, 5}}
+    {6, {1, 5, 6, 2}}
   };
   return face_vertex_map;
 }

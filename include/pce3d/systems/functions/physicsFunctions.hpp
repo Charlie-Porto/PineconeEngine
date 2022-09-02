@@ -8,6 +8,7 @@ free functions to assist the physics system
 
 #include <cmath>
 #include <utility>
+#include <algorithm>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include "../../maths/functions/plane_functions.hpp"

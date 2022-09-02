@@ -120,6 +120,12 @@ glm::dvec3 calculateVelocityVectorAfterLiveParticleDeadFaceCollision(
   glm::dvec3 normal_vec = glm::normalize(glm::cross(face_vertices[0] - face_vertices[1], 
                                                     face_vertices[2] - face_vertices[1]));
 
+  const double collision_angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
+    p_velocity_vect, normal_vec
+  );
+
+  elasticity = std::min(1.0, elasticity * (90.0 / collision_angle));
+
   // std::cout << "normal_vec: "
             // << normal_vec.x << ", " 
             // << normal_vec.y << ", " 
@@ -308,17 +314,14 @@ const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point
   // std::cout << "point angle relative to center: " << angle << '\n';
 
   /* A: calculate linear component */
-  double linear_allocation_percentage = angle == 0 ? 1.0 : 90.0 / angle;
+  double linear_allocation_percentage = (90.0 - abs(angle)) / 90.0;
 
   const glm::dvec3 incrementally_rotated_point = pce::rotateVector3byAngleAxis(
     center_to_point_vector,
     -0.001, 
     motion.rotational_axis);
 
-  const glm::dvec3 rotation_velocity_vector 
-    = glm::normalize(center_to_point_vector + incrementally_rotated_point) * motion.rotational_speed;
-
-  double rotational_allocation_percentage = angle == 90.0 ? 90.0 / .001 : (90.0 / (90.0 - angle)) - 1.0;
+  double rotational_allocation_percentage = angle / 90.0;
 
   if (isnan(linear_allocation_percentage)) {linear_allocation_percentage = 0.5; }
   if (isnan(rotational_allocation_percentage)) {rotational_allocation_percentage = 0.5; }
@@ -365,13 +368,16 @@ glm::dvec3 calculateMomentumVectorAtSurfacePoint(
   std::cout << "linear allocation: " << linear_allocation_percentage << '\n';
 
 
-  const glm::dvec3 linear_momentum_component = motion.direction * motion.speed * linear_allocation_percentage * rigid_object.mass;
 
   std::cout << "speed: " << motion.speed << '\n';
+  if (isnan(motion.direction.x)) { motion.direction.x = 0; }
+  if (isnan(motion.direction.y)) { motion.direction.y = 0; }
+  if (isnan(motion.direction.z)) { motion.direction.z = 0; }
   std::cout << "motion.direction: "
             << motion.direction.x << ", " 
             << motion.direction.y << ", " 
             << motion.direction.z << '\n';
+  const glm::dvec3 linear_momentum_component = motion.direction * motion.speed * linear_allocation_percentage * rigid_object.mass;
   std::cout << "linear_momentum_component: "
             << linear_momentum_component.x << ", " 
             << linear_momentum_component.y << ", " 

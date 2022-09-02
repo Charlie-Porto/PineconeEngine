@@ -19,7 +19,7 @@ system for calculating amount of light reaching object faces
   
 extern ControlPanel control;
 extern pce3d::DevRenderSystem dev_render_system;
-const double ZONE_GRANULARITY = 0.6;
+const double ZONE_GRANULARITY = 1.0;
 
 namespace pce3d {
 class ShadeSystem : public ISystem {
@@ -53,7 +53,6 @@ public:
 
   
   void UpdateEntities(const glm::dquat& camera_versor, const glm::dvec3& camera_transformation) {
-
     ROTATED_LIGHT_FLOW_DIRECTION_ = pce::rotateVector3byQuaternion(LIGHT_FLOW_DIRECTION_, camera_versor);
 
     for (auto const& entity : entities) {
@@ -75,7 +74,7 @@ public:
       /* update spheres */
       else {
         /* if close to sphere, do shortcut alg to avoid exp complexity */
-        if (rigid_object.vertex_distance_map.at(1) < 25.0) { 
+        if (rigid_object.vertex_distance_map.at(1) < 100.0) { 
           
           std::unordered_map<glm::dvec2, glm::dvec2> center_pixel 
                                      = {{position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_,
@@ -87,51 +86,61 @@ public:
                                                         face_shade.pixel_shade_map);
           continue;
         } 
-        /* do pixel color calculation */
+        // /* do pixel color calculation */
         using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
         const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
         PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
                                                                           ncenter_point.y,
                                                                           rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
-        shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
+
+        if (rigid_object.vertex_distance_map.at(1) > 100.0)
+        { 
+          shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
                                                       position.center_of_mass_relative_to_camera,
                                                       rigid_object.radius,
                                                       outline_pixels,
                                                       face_shade.pixel_shade_map);
+          continue;
+        }
 
         // face_shade.pixel_shade_map.clear();
         // face_shade.camera_transformed_surface_zone_brightness_map.clear();
 
 
-        // for (auto const& [zone, brightness] : face_shade.surface_zone_brightness_map)
-        // {
-        //   const glm::dvec3 rzone = zone - camera_transformation;
-        //   glm::dvec3 tzone = pce::rotateVector3byQuaternion(rzone, camera_versor);
-        //   // std::cout << "tzone: "
-        //             // << tzone.x << ", "
-        //             // << tzone.y << ", "
-        //             // << tzone.z << '\n';
-        //   tzone = pce3d::round::roundVec3ComponentsToNearestInterval(
-        //     ZONE_GRANULARITY, tzone
-        //   );
+        // // for (auto const& [zone, brightness] : face_shade.surface_zone_brightness_map)
+        // // {
+        // //   const glm::dvec3 rzone = zone - camera_transformation;
+        // //   glm::dvec3 tzone = pce::rotateVector3byQuaternion(rzone, camera_versor);
+        // //   // std::cout << "tzone: "
+        // //             // << tzone.x << ", "
+        // //             // << tzone.y << ", "
+        // //             // << tzone.z << '\n';
+        // //   tzone = pce3d::round::roundVec3ComponentsToNearestInterval(
+        // //     ZONE_GRANULARITY, tzone
+        // //   );
+        // //   // tzone = glm::dvec3(
+        // //     // int(tzone.x),
+        // //     // int(tzone.y),
+        // //     // int(tzone.z)
+        // //   // );
 
 
-        //   // std::cout << "tzone ROUNDED: "
-        //             // << tzone.x << ", "
-        //             // << tzone.y << ", "
-        //             // << tzone.z << '\n';
+        // //   // std::cout << "tzone ROUNDED: "
+        // //             // << tzone.x << ", "
+        // //             // << tzone.y << ", "
+        // //             // << tzone.z << '\n';
 
-        //   face_shade.camera_transformed_surface_zone_brightness_map[tzone] = brightness;
+        // //   face_shade.camera_transformed_surface_zone_brightness_map[tzone] = brightness;
 
-        //   // dev_render_system.AddPointToPointColorMap(tzone, {255, 0, 200, 255}, 1.0);
-        // }
+        // //   // dev_render_system.AddPointToPointColorMap(tzone, {255, 0, 200, 255}, 1.0);
+        // // }
 
         // shade::mapSpherePixelsToBrightnessZones(
         //   face_shade.pixel_shade_map,
         //   outline_pixels,
-        //   face_shade.camera_transformed_surface_zone_brightness_map,
+        //   face_shade.surface_zone_brightness_map,
         //   ROTATED_LIGHT_FLOW_DIRECTION_,
-        //   rigid_object.camera_transformed_vertices.at(1),
+        //   rigid_object.vertices.at(1),
         //   rigid_object.radius,
         //   ZONE_GRANULARITY
         // );

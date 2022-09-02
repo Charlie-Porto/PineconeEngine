@@ -55,21 +55,46 @@ void mapSpherePixelsToBrightnessZones(
                                                   sphere_radius);
       } catch (double discriminant) {}
 
-      const glm::dvec3 rounded_entity_sphere_point = pce3d::round::roundVec3ComponentsToNearestInterval(
-        zone_granularity, entity_sphere_point
+      glm::dvec3 rounded_entity_sphere_point = pce3d::round::roundVec3ComponentsToNearestInterval(
+        zone_granularity, rounded_entity_sphere_point
       );
 
-      if (camera_transformed_surface_zone_brightness_map.find(rounded_entity_sphere_point)
-       != camera_transformed_surface_zone_brightness_map.end())
+      // glm::dvec3 rounded_entity_sphere_point = glm::dvec3(
+        // int(entity_sphere_point.x),
+        // int(entity_sphere_point.y),
+        // int(entity_sphere_point.z)
+      // );
+
+      int i = 0;
+      while (i < 10) 
       {
-        pixel_shade_map[pixel] = camera_transformed_surface_zone_brightness_map.at(rounded_entity_sphere_point);
+        if (camera_transformed_surface_zone_brightness_map.find(rounded_entity_sphere_point)
+        != camera_transformed_surface_zone_brightness_map.end())
+        {
+          pixel_shade_map[pixel] = camera_transformed_surface_zone_brightness_map.at(rounded_entity_sphere_point);
+          std::cout << "found_pixel: "
+                    << pixel.x << ", "
+                    << pixel.y << '\n';
+          std::cout << "found_sphere_point: "
+                    << rounded_entity_sphere_point.x << ", "
+                    << rounded_entity_sphere_point.y << ", "
+                    << rounded_entity_sphere_point.z << '\n';
+          // dev_render_system.AddPointToPointColorMap(rounded_entity_sphere_point, {0, 255, 20, 255});
+          i = 100;
+          break;
+          
+        }
+        else
+        {
+          ++i;
+          rounded_entity_sphere_point.z += zone_granularity;
+        }
+        if (i == 10) 
+        {
+          pixel_shade_map[pixel] = 1.0;
+        }
+        // std::cout << "pixel: " << p.x << ", " << p.y << ", " << "shading: " << pixel_shades.at(p) << '\n';
       }
-      else
-      {
-        // std::cout << "NOT FOUND IN MAP" << '\n';
-        pixel_shade_map[pixel] = 1.0;
-      }
-      // std::cout << "pixel: " << p.x << ", " << p.y << ", " << "shading: " << pixel_shades.at(p) << '\n';
     }
   }
 }
