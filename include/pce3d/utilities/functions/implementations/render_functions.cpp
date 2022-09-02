@@ -101,12 +101,18 @@ void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<in
    const double inc = 1.0;
 
   lines = {
+    // std::make_pair(points[0] + inc * directions[0], points[2] + inc * directions[1]),
+    // std::make_pair(points[0] + inc * directions[2], points[2] + inc * directions[3]),
+    // std::make_pair(points[0] + inc * 2.0 * directions[0], points[2] + inc * 2.0 * directions[1]),
+    // std::make_pair(points[0] + inc * 2.0 * directions[2], points[2] + inc * 2.0 * directions[3]),
+    // std::make_pair(points[0] + inc * 3.0 * directions[0], points[2] + inc * 3.0 * directions[1]),
+    // std::make_pair(points[0] + inc * 3.0 * directions[2], points[2] + inc * 3.0 * directions[3]),
     std::make_pair(points[0] + inc * directions[0], points[2] + inc * directions[1]),
     std::make_pair(points[0] + inc * directions[2], points[2] + inc * directions[3]),
-    std::make_pair(points[0] + inc * 2.0 * directions[0], points[2] + inc * 2.0 * directions[1]),
-    std::make_pair(points[0] + inc * 2.0 * directions[2], points[2] + inc * 2.0 * directions[3]),
-    std::make_pair(points[0] + inc * 3.0 * directions[0], points[2] + inc * 3.0 * directions[1]),
-    std::make_pair(points[0] + inc * 3.0 * directions[2], points[2] + inc * 3.0 * directions[3]),
+    std::make_pair(points[0] + inc * 2.0 * directions[0], points[2] + inc * 2.0 * directions[3]),
+    std::make_pair(points[0] + inc * 2.0 * directions[2], points[2] + inc * 2.0 * directions[1]),
+    std::make_pair(points[0] + inc * 3.0 * directions[0], points[2] + inc * 3.0 * directions[3]),
+    std::make_pair(points[0] + inc * 3.0 * directions[2], points[2] + inc * 3.0 * directions[1]),
     // std::make_pair(points[0] + inc * 4.0 * directions[0], points[2] + inc * 4.0 * directions[1]),
     // std::make_pair(points[0] + inc * 4.0 * directions[0], points[2] + inc * 4.0 * directions[1]),
     // std::make_pair(points[0] + inc * 5.0 * directions[2], points[2] + inc * 5.0 * directions[3]),

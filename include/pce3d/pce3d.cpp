@@ -91,6 +91,7 @@ void Core3D::RegisterCoreSystems() {
 
 
 void Core3D::PrepareForAllSystemsGo() {
+  shade_system_->DoPreLoopSetup();  
   space_map_system_->DoPreLoopSetup();  
   std::cout << "pre-loop setup is complete" << '\n';
 }
@@ -107,7 +108,7 @@ void Core3D::UpdateCore3D() {
   // std::cout << "physics system updated" << '\n';
   radar_system_->UpdateEntities();
   // std::cout << "radar system updated" << '\n';
-  shade_system_->UpdateEntities(camera_.rotation_versor); 
+  shade_system_->UpdateEntities(camera_.rotation_versor, -camera_.position); 
   // std::cout << "shade system updated" << '\n';
   register_for_render_order_system_->RegisterUnRegisteredEntities();
   // std::cout << "order register system updated" << '\n';
@@ -116,7 +117,7 @@ void Core3D::UpdateCore3D() {
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // std::cout << "render system updated" << '\n';
   // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
-  // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
+  dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 
 }

@@ -14,6 +14,7 @@ std::vector<uint32_t> forgeFloorPanelByDimensionsAndCenterPoint(
   , const double panel_l
   , const glm::dvec3& center_point
   , const std::vector<int>& color
+  , const bool is_transparent
 )
 {
   const glm::dvec3 sheet_creation_start_point = glm::dvec3(
@@ -39,7 +40,8 @@ std::vector<uint32_t> forgeFloorPanelByDimensionsAndCenterPoint(
           (current_z_coord + z_crawl) + tile_l/2.0),
         0.0,
         glm::dvec3(1.0, 0, 0),
-        color
+        color,
+        is_transparent
       );
       entities.push_back(new_sheet_entity);
     }

@@ -17,6 +17,7 @@ std::vector<uint32_t> forgeFloorPanelByDimensionsAndCenterPoint(
   , const double panel_l
   , const glm::dvec3& center_point
   , const std::vector<int>& color
+  , const bool is_transparent = false
 );
 
 

@@ -8,7 +8,7 @@ namespace radar {
 
 const double LENSE_INDEX = 0.1;
 const double PIXEL_ANGLE = 1.0;
-const double Y_PIXEL_STRETCH = 90.0;
+const double Y_PIXEL_STRETCH = 52.0;
 const double SCREEN_X = 1000.0;
 
 const double PI = 3.14159265;

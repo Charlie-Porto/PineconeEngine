@@ -42,7 +42,7 @@ public:
       radar.farthest_vertex_id = 1;
 
       for (auto const& [id, vertex] : rigid_object.camera_transformed_vertices) {
-        dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(id), {100, 20, 220, 255}, 3.0);
+        // dev_render_system.AddPointToPointColorMap(rigid_object.camera_transformed_vertices.at(id), {100, 20, 220, 255}, 3.0);
         const glm::dvec3 screen_plane_intersection_point = glm::normalize(vertex);
         rigid_object.vertex_pixels[id] = radar::convertPointOnViewSphereToPixel(screen_plane_intersection_point, false, false);
         rigid_object.vertex_distance_map[id] = sqrt(glm::dot(vertex, vertex));
