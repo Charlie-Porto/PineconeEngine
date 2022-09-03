@@ -99,7 +99,9 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_index_face_map
-  , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+  , std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>>& potential_collision_entity_map
+  , std::unordered_map<uint32_t, glm::ivec3>& potential_collision_index_map
+  , uint32_t& next_id
 );
 
 void checkForCollisionWithNonLiveBods(
@@ -110,9 +112,11 @@ void checkForCollisionWithNonLiveBods(
   , const double mir
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& deadbod_map
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& restingbod_map
-  , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+  , std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>>& potential_collision_entity_map
+  , std::unordered_map<uint32_t, glm::ivec3>& potential_collision_index_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
+  , uint32_t& next_id
 );
 
 

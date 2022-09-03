@@ -8,6 +8,7 @@ system for mapping the virtual 3space onto a relatively small set of data.
 -----------------------------------------------------------------*/
 
 #include <iostream>
+#include <utility>
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
@@ -44,6 +45,9 @@ public:
     , potential_colliding_entities_({})
     , meter_index_ratio_(0)
     , map_dimensions_(glm::ivec3(0, 0, 0))
+    , potential_collision_entity_map_({})
+    , potential_collision_index_map_({})
+    , next_id(1)
   {}
 
 
@@ -123,8 +127,9 @@ public:
     livebod_index_vertex_map_.clear();
     livebod_index_edge_map_.clear();
     livebod_index_face_map_.clear();
-    potential_colliding_entities_.clear();
     restingbod_map_.clear();
+    potential_collision_entity_map_.clear();
+    potential_collision_index_map_.clear();
 
     for (auto const& entity : entities) 
     {
@@ -170,7 +175,9 @@ public:
         livebod_index_vertex_map_,
         livebod_index_edge_map_,
         livebod_index_face_map_,
-        potential_colliding_entities_
+        potential_collision_entity_map_,
+        potential_collision_index_map_,
+        next_id
       );
 
       // std::cout << "live bod collision checked" << '\n';
@@ -182,9 +189,11 @@ public:
         meter_index_ratio_,
         deadbod_map_,
         restingbod_map_,
-        potential_colliding_entities_,
+        potential_collision_entity_map_,
+        potential_collision_index_map_,
         livebod_index_vertex_map_,
-        livebod_index_edge_map_
+        livebod_index_edge_map_,
+        next_id
       );
     }
 
@@ -209,6 +218,10 @@ public:
   std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>> livebod_index_edge_map_;
   std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>> livebod_index_face_map_;
   std::unordered_map<uint32_t, uint32_t> potential_colliding_entities_;
+  std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>> potential_collision_entity_map_;
+  std::unordered_map<uint32_t, glm::ivec3> potential_collision_index_map_;
+
+  uint32_t next_id;
 
   double meter_index_ratio_;
   glm::ivec3 map_dimensions_;

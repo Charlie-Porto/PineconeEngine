@@ -10,6 +10,7 @@ the effects of collisions.
 #include <pcecs/ecs/System.cpp>
 
 #include "functions/massMapFunctions.hpp"
+#include "functions/radarFunctions.hpp"
 
 extern ControlPanel control;
 
@@ -44,6 +45,23 @@ public:
         mass_dist.mass_zones,
         mass_dist.coordinates_to_zone_map,
         mass_dist.mass_zones_distance_from_center_of_mass);
+    }
+  }
+
+
+  void drawMapPointsInSpace(const glm::dquat& cam_versor, const glm::dvec3& cam_transform) {
+    for (auto const& entity : entities)
+    {
+      auto const& mass_dist = control.GetComponent<pce::MassDistribution>(entity);
+      for (auto const& [id, point] : mass_dist.mass_zones) {
+        glm::dvec3 rotated_point = point - cam_transform;
+        double distance = sqrt(glm::dot(rotated_point, rotated_point));
+        rotated_point = pce::rotateVector3byQuaternion(rotated_point, cam_versor);     
+        const glm::dvec3 vs_intersection = glm::normalize(rotated_point);
+        const glm::dvec2 pixel = radar::convertPointOnViewSphereToPixel(vs_intersection, true, false);
+        std::vector<int> color = {12, 20, 200, 255};
+        pce::quickdraw::drawCircle(pixel, 10.0 / distance, color);
+      }
     }
   }
 

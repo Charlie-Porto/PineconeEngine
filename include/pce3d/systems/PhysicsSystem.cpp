@@ -30,10 +30,15 @@ public:
     std::cout << "setting up Physics System" << '\n';
   }
 
-  void checkPotentialCollisions(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities_)
+  void checkPotentialCollisions(
+    std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>> potential_collision_entity_map,
+    std::unordered_map<uint32_t, glm::ivec3> potential_collision_index_map
+  )
   {
-    for (auto const& [entity_a, entity_b] : potential_colliding_entities_) 
+    for (auto const& [collision_id, entity_pair] : potential_collision_entity_map) 
     { 
+      const uint32_t entity_a = entity_pair.first;
+      const uint32_t entity_b = entity_pair.second;
       // std::cout << "checking potential collision between: " << entity_a << ", " << entity_b << '\n';
       if (std::find(entities_updated_.begin(), entities_updated_.end(), entity_a) != entities_updated_.end()) 
       {
@@ -258,7 +263,11 @@ public:
   }
 
 
-  void UpdateEntities(const std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities) {
+  void UpdateEntities(
+    const std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>>& potential_collision_entity_map,
+    const std::unordered_map<uint32_t, glm::ivec3>& potential_collision_index_map
+  )
+  {
     // std::cout << "---" << '\n';
     entities_updated_.clear();
     if (isnan(pce::CoreManager::time_)) {
@@ -268,9 +277,9 @@ public:
     time_change_ = std::min(time_change_, 5.0);
     previous_time_ = pce::CoreManager::time_;
 
-    if (!potential_colliding_entities.empty())
+    if (!potential_collision_entity_map.empty())
     {
-      checkPotentialCollisions(potential_colliding_entities);
+      checkPotentialCollisions(potential_collision_entity_map, potential_collision_index_map);
     }
 
     for (auto const& entity : entities) 

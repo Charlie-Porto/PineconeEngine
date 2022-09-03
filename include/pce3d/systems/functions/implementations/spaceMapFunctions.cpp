@@ -297,7 +297,9 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_index_face_map
-  , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+  , std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>>& potential_collision_entity_map
+  , std::unordered_map<uint32_t, glm::ivec3>& potential_collision_index_map
+  , uint32_t& next_id
 )
 {
   assert(!rigid_object.face_vertex_map.empty());
@@ -357,8 +359,9 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
         assert(livebod_map.at(index).size() >= 1);
         livebod_map.at(index).push_back(entity); 
         assert(livebod_map.at(index).size() >= 2);
-        potential_colliding_entities[entity] = other_entity;
-
+        potential_collision_entity_map[next_id] = std::make_pair(entity, other_entity);
+        potential_collision_index_map[next_id] = index;
+        ++next_id;
 
         bool original_entity_done = false;
         bool other_entity_done = false;
@@ -435,17 +438,21 @@ void checkForCollisionWithNonLiveBods(
   , const double mir
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& deadbod_map
   , std::unordered_map<glm::ivec3, std::vector<uint32_t>>& restingbod_map
-  , std::unordered_map<uint32_t, uint32_t>& potential_colliding_entities
+  , std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>>& potential_collision_entity_map
+  , std::unordered_map<uint32_t, glm::ivec3>& potential_collision_index_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_vertex_map
   , std::unordered_map<glm::ivec3, std::unordered_map<uint32_t, uint32_t>>& livebod_edge_map
+  , uint32_t& next_id
 )
 {
   for (auto const& [id, index] : vertex_indices)
   {
     if (restingbod_map.find(index) != restingbod_map.end()) 
     {
-      potential_colliding_entities[entity] = restingbod_map.at(index)[0];
       uint32_t other_entity = restingbod_map.at(index)[0];
+      potential_collision_entity_map[next_id] = std::make_pair(entity, other_entity);
+      potential_collision_index_map[next_id] = index;
+      ++next_id;
       auto& other_rigid_object = control.GetComponent<pce::RigidObject>(other_entity);
       other_rigid_object.is_restingbod = false;
       continue;
@@ -454,7 +461,9 @@ void checkForCollisionWithNonLiveBods(
     {
       // std::cout << "SPACEMAP: DETECTED DEADBOD MAP COLLISION" << '\n';
       uint32_t deadbod_entity = deadbod_map.at(index)[0];
-      potential_colliding_entities[entity] = deadbod_entity; 
+      potential_collision_entity_map[next_id] = std::make_pair(entity, deadbod_entity);
+      potential_collision_index_map[next_id] = index;
+      ++next_id;
       auto& deadbod_rigid_object = control.GetComponent<pce::RigidObject>(deadbod_entity);
       deadbod_rigid_object.entity_face_collision_map[entity] = deadbod_rigid_object.index_face_map.at(index);
 

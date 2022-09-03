@@ -113,7 +113,8 @@ void Core3D::UpdateCore3D() {
   // std::cout << "cam transform system updated" << '\n';
   space_map_system_->UpdateEntities();
   // std::cout << "space_map system updated" << '\n';
-  physics_system_->UpdateEntities(space_map_system_->potential_colliding_entities_);
+  physics_system_->UpdateEntities(space_map_system_->potential_collision_entity_map_,
+                                  space_map_system_->potential_collision_index_map_);
   // std::cout << "physics system updated" << '\n';
   radar_system_->UpdateEntities();
   // std::cout << "radar system updated" << '\n';
@@ -125,7 +126,8 @@ void Core3D::UpdateCore3D() {
   // std::cout << "render order system updated" << '\n';
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // std::cout << "render system updated" << '\n';
-  space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  // mass_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 
