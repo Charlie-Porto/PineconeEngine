@@ -72,13 +72,13 @@ void mapSpherePixelsToBrightnessZones(
         != camera_transformed_surface_zone_brightness_map.end())
         {
           pixel_shade_map[pixel] = camera_transformed_surface_zone_brightness_map.at(rounded_entity_sphere_point);
-          std::cout << "found_pixel: "
-                    << pixel.x << ", "
-                    << pixel.y << '\n';
-          std::cout << "found_sphere_point: "
-                    << rounded_entity_sphere_point.x << ", "
-                    << rounded_entity_sphere_point.y << ", "
-                    << rounded_entity_sphere_point.z << '\n';
+          // std::cout << "found_pixel: "
+          //           << pixel.x << ", "
+          //           << pixel.y << '\n';
+          // std::cout << "found_sphere_point: "
+          //           << rounded_entity_sphere_point.x << ", "
+          //           << rounded_entity_sphere_point.y << ", "
+          //           << rounded_entity_sphere_point.z << '\n';
           // dev_render_system.AddPointToPointColorMap(rounded_entity_sphere_point, {0, 255, 20, 255});
           i = 100;
           break;

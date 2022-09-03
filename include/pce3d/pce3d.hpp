@@ -17,6 +17,7 @@
 #include "components/radar_component.cpp"
 #include "components/render_component.cpp"
 #include "components/order_of_render_registration_component.cpp"
+#include "components/mass_distribution_component.cpp"
 
 /* systems */
 #include "systems/CameraTransformSystem.cpp"
@@ -28,6 +29,8 @@
 #include "systems/SpaceMapSystem.cpp"
 #include "systems/PhysicsSystem.cpp"
 #include "systems/prep_only_systems/RegisterForOrderOfRenderSystem.cpp"
+#include "systems/Physics2System.cpp"
+#include "systems/MassMapSystem.cpp"
 
 /* dev-only systems */
 #include "systems/DevRenderSystem.cpp"
@@ -60,6 +63,7 @@ public:
   static glm::ivec3 SPACE_MAP_DIMENSIONS;
   static glm::dvec3 HARD_BOUNDARIES;
   static glm::dvec3 MAP_CENTER;
+  static double MASS_ZONE_SIDE_LENGTH_METERS;
 
 
 private:
@@ -74,6 +78,8 @@ private:
   std::shared_ptr<pce3d::ShadeSystem> shade_system_;
   std::shared_ptr<pce3d::SpaceMapSystem> space_map_system_;
   std::shared_ptr<pce3d::PhysicsSystem> physics_system_;
+  std::shared_ptr<pce3d::Physics2System> physics_2_system_;
+  std::shared_ptr<pce3d::MassMapSystem> mass_map_system_;
 };
 
 

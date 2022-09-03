@@ -28,6 +28,7 @@ namespace forge {
       .color = color, 
       .collision_elasticity_index = collision_elasticity
     });
+    control.AddComponent(new_entity, pce::MassDistribution{});
 
     return new_entity;
   }

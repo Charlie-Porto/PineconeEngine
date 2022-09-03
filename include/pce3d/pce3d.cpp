@@ -10,6 +10,7 @@ double pce3d::Core3D::COLLISION_METER_INDEX_RATIO = 2.0;
 glm::ivec3 pce3d::Core3D::SPACE_MAP_DIMENSIONS = glm::ivec3(10000, 10000, 10000);
 glm::dvec3 pce3d::Core3D::HARD_BOUNDARIES = glm::dvec3(10000, 10000, 10000);
 glm::dvec3 pce3d::Core3D::MAP_CENTER = glm::dvec3(0, 0, 0);
+double pce3d::Core3D::MASS_ZONE_SIDE_LENGTH_METERS = 1.0;
 
 
 #include "modules.cpp"
@@ -55,6 +56,7 @@ void Core3D::RegisterCoreComponents() {
   control.RegisterComponent<pce::Radar>();
   control.RegisterComponent<pce::Render>();
   control.RegisterComponent<pce::OrderOfRenderRegistration>();
+  control.RegisterComponent<pce::MassDistribution>();
 }
 
 
@@ -87,12 +89,19 @@ void Core3D::RegisterCoreSystems() {
 
   physics_system_ = control.RegisterSystem<pce3d::PhysicsSystem>();
   control.AssignSystemComponents<pce3d::PhysicsSystem, pce::RigidObject, pce::Force, pce::Motion, pce::Position>();
+
+  physics_2_system_ = control.RegisterSystem<pce3d::Physics2System>();
+  control.AssignSystemComponents<pce3d::Physics2System, pce::RigidObject, pce::Force, pce::Motion, pce::Position, pce::MassDistribution>();
+
+  mass_map_system_ = control.RegisterSystem<pce3d::MassMapSystem>();
+  control.AssignSystemComponents<pce3d::MassMapSystem, pce::RigidObject, pce::MassDistribution, pce::Position>();
 }
 
 
 void Core3D::PrepareForAllSystemsGo() {
   shade_system_->DoPreLoopSetup();  
   space_map_system_->DoPreLoopSetup();  
+  mass_map_system_->DoPreLoopSetup();  
   std::cout << "pre-loop setup is complete" << '\n';
 }
 
@@ -116,7 +125,7 @@ void Core3D::UpdateCore3D() {
   // std::cout << "render order system updated" << '\n';
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // std::cout << "render system updated" << '\n';
-  // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }
 

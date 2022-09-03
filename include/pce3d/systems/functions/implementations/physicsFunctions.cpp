@@ -509,7 +509,8 @@ void updateLinearMotionAfterCollision(
   , const double mass
 )
 {
-  const double linear_alloc_percent = (linear_allocation_at_point / (linear_allocation_at_point + rotational_allocation_at_point));
+  // const double linear_alloc_percent = (linear_allocation_at_point / (linear_allocation_at_point + rotational_allocation_at_point));
+  const double linear_alloc_percent = linear_allocation_at_point;
   std::cout << "linear alloc: " << linear_alloc_percent << '\n';
   motion.velocity = (new_total_momentum_at_point / (mass * linear_alloc_percent)) * linear_alloc_percent;
   std::cout << "new linear velocity: "
@@ -531,8 +532,8 @@ void updateRotationalMotionAfterCollision(
 )
 {
   const double rotational_alloc_percent = (rotational_allocation_at_point / (linear_allocation_at_point + rotational_allocation_at_point));
-  // std::cout << "rotational_alloc_at_point: " << rotational_allocation_at_point << '\n';
-  // std::cout << "rotational_alloc_percent: " << rotational_alloc_percent << '\n';
+  std::cout << "rotational_alloc_at_point: " << rotational_allocation_at_point << '\n';
+  std::cout << "rotational_alloc_percent: " << rotational_alloc_percent << '\n';
   // const glm::dvec3 nv = glm::normalize(new_total_momentum_at_point);
   // std::cout << "nv: "
             // << nv.x << ", "
@@ -553,13 +554,18 @@ void updateRotationalMotionAfterCollision(
   );
 
   const double new_rotational_speed = sqrt(glm::dot(rotation_path_point, rotation_path_point)) 
-                                    * -pce::math::sign(angle);
+                                    * pce::math::sign(angle);
   // const double new_rotational_speed = sqrt(glm::dot(new_total_momentum_at_point, new_total_momentum_at_point)) 
                                       // * -pce::math::sign(angle) * rotational_alloc_percent;
   if (!isnan(new_rotational_speed))
   {
-    motion.rotational_speed += new_rotational_speed;
+    std::cout << "previous rotational speed: " << motion.rotational_speed << '\n';
+    motion.rotational_speed += new_rotational_speed * rotational_alloc_percent;
     std::cout << "new rotational speed: " << motion.rotational_speed << '\n';
+  }
+  else
+  {
+    motion.rotational_speed *= -1.0; 
   }
   // std::cout << "rotational_speed: " << motion.rotational_speed  << '\n';
   if (!isnan(axis.x) && !isnan(axis.y) && !isnan(axis.z))
