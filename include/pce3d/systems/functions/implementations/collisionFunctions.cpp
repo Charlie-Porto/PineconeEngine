@@ -132,9 +132,9 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
 
   glm::dvec3 potential_point_of_contact = glm::dvec3(b_rigid_object.vertices.at(closest_vertex_id));
   collision_report.point_of_contact = potential_point_of_contact;
+  collision_report.collision_occuring = true;
   collision_report.a_collision_type = collision::vertex;
   collision_report.a_collision_type_area_id = 1;
-  collision_report.collision_occuring = true;
   
   /* 1. check if particle is colliding with closest vertex */
   if (closest_vertex_distance <= a_rigid_object.radius)
@@ -164,26 +164,57 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
       }
     }
 
-    /* 3. get closest face's closest point to particle */
-    const glm::dvec3 closest_face_point_to_particle = pce3d::maths::calculateClosestPointInPlaneToPoint(
-      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[0]),
-      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[1]),
-      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[2]),
-      a_rigid_object.vertices.at(1));
-    
-    /* 4. determine if distance(closest face's closest point, particle_center) is <= radius */
-    const double distance = pce3d::maths::calculateDistanceBetweenVectors(
-      closest_face_point_to_particle, a_rigid_object.vertices.at(1));
-    
-    if (distance > a_rigid_object.radius)
+    /* 3. check edges of closest face to determine if intersection is an edge intersection*/
+    assert (b_rigid_object.face_edge_map.find(closest_face_id) != b_rigid_object.face_edge_map.end());
+    bool is_located_at_edge = false;
+    for (auto const& edge_id : b_rigid_object.face_edge_map.at(closest_face_id))
     {
-      // return std::make_pair(false, glm::dvec3(0, 0, 0));
-      collision_report.collision_occuring = false;
-      return collision_report;
+      const uint32_t& a_vertex_id = b_rigid_object.edges.at(edge_id).first;
+      const uint32_t& b_vertex_id = b_rigid_object.edges.at(edge_id).second;
+
+      const glm::dvec3& a_vertex = b_rigid_object.vertices.at(a_vertex_id);
+      const glm::dvec3& b_vertex = b_rigid_object.vertices.at(b_vertex_id);
+
+      const glm::dvec3& closest_edge_point_to_particle_center = pce3d::maths::findClosestPointOnVec3LineToVec3(
+        a_vertex, b_vertex, a_rigid_object.vertices.at(1));
+      
+      const double distance_closest_point_to_center = pce3d::maths::calculateDistanceBetweenVectors(
+        closest_edge_point_to_particle_center, a_rigid_object.vertices.at(1));
+      
+      const bool point_in_line = distance_closest_point_to_center <= a_rigid_object.radius ? true : false;
+      
+      if (point_in_line)
+      {
+        collision_report.b_collision_type = collision::edge;
+        collision_report.b_collision_type_area_id = edge_id;
+        is_located_at_edge = true;
+        break;
+      }
     }
-    else
+    if (!is_located_at_edge)
     {
-      potential_point_of_contact = closest_face_point_to_particle; 
+      /* 3. get closest face's closest point to particle */
+      const glm::dvec3 closest_face_point_to_particle = pce3d::maths::calculateClosestPointInPlaneToPoint(
+        b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[0]),
+        b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[1]),
+        b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[2]),
+        a_rigid_object.vertices.at(1));
+      
+      /* 4. determine if distance(closest face's closest point, particle_center) is <= radius */
+      const double distance = pce3d::maths::calculateDistanceBetweenVectors(
+        closest_face_point_to_particle, a_rigid_object.vertices.at(1));
+      
+      if (distance > a_rigid_object.radius)
+      {
+        collision_report.collision_occuring = false;
+        return collision_report;
+      }
+      else
+      {
+        potential_point_of_contact = closest_face_point_to_particle; 
+        collision_report.b_collision_type = collision::face;
+        collision_report.b_collision_type_area_id = closest_face_id;
+      }
     }
   }
 

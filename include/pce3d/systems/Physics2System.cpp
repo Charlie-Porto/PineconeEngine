@@ -9,6 +9,7 @@ updated physics system
 #include <algorithm>
 #include <unordered_map>
 #include <iostream>
+#include <string>
 #include <pcecs/ecs/System.cpp>
 
 #include <glm/vec3.hpp>
@@ -113,7 +114,35 @@ public:
   {
     for (auto const& [id, report] : collision_report_map_)
     {
-      std::cout << "entity " << report.entity_a << " -> " << "entity " << report.entity_b << '\n';
+      std::string a_collision_type_str = "vertex";
+      std::string b_collision_type_str = "vertex";
+      switch (report.a_collision_type)
+      {
+        case collision::edge:
+          a_collision_type_str = "edge";
+          break;
+        case collision::face:
+          a_collision_type_str = "face";
+          break;
+        default:
+          break;
+      }
+      switch (report.b_collision_type)
+      {
+        case collision::edge:
+          b_collision_type_str = "edge";
+          break;
+        case collision::face:
+          b_collision_type_str = "face";
+          break;
+        default:
+          break;
+      }
+
+      std::cout << "entity " << report.entity_a << ": " << a_collision_type_str
+                << " -> " 
+                << "entity " << report.entity_b << ": " << b_collision_type_str << '\n';
+      
     }
   }
   
