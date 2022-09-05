@@ -33,6 +33,7 @@ including not-yet-included implementation files
 #include "systems/functions/implementations/shadeFunctions.cpp"
 #include "systems/functions/implementations/spaceMapFunctions.cpp"
 #include "systems/functions/implementations/physicsFunctions.cpp"
+#include "systems/functions/implementations/physics2Functions.cpp"
 #include "systems/functions/implementations/massMapFunctions.cpp"
 #include "systems/functions/implementations/collisionFunctions.cpp"
 #include "systems/objects/implementations/OrderRenderListNode.cpp"

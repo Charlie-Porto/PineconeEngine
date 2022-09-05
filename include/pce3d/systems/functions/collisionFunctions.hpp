@@ -7,13 +7,24 @@ functions to assist the Physics System detect collisions
 -----------------------------------------------------------------*/
 
 #include <utility>
+#include <glm/vec3.hpp>
+#include "physics2Functions.hpp"
+#include "../../maths/functions/vector_functions.hpp"
+#include "../../maths/functions/plane_functions.hpp"
+#include "../../maths/functions/quaternion_functions.hpp"
 
 namespace pce3d {
 namespace collision {
 
+bool determineIfMovementVectorsIndicateCollision(
+    glm::dvec3 a_movement_vector
+  , glm::dvec3 b_movement_vector
+  , const pce::RigidObject& a_rigid_object
+  , const pce::RigidObject& b_rigid_object
+);
+
 std::pair<bool, glm::dvec3> determineIfParticlesAreCollidingAndWhere(
-    const glm::ivec3& collision_index
-  , const uint32_t entity_a
+    const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object
   , const pce::Motion& a_motion
   , const uint32_t entity_b
@@ -22,13 +33,13 @@ std::pair<bool, glm::dvec3> determineIfParticlesAreCollidingAndWhere(
 );
 
 std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere(
-    const glm::ivec3& collision_index
-  , const uint32_t entity_a
+    const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object
   , const pce::Motion& a_motion
   , const uint32_t entity_b
   , const pce::RigidObject& b_rigid_object
   , const pce::Motion& b_motion
+  , const pce::Position& b_position
 );
  
 std::pair<bool, glm::dvec3> determineIfComplexBodsAreCollidingAndWhere(
@@ -36,9 +47,11 @@ std::pair<bool, glm::dvec3> determineIfComplexBodsAreCollidingAndWhere(
   , const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object
   , const pce::Motion& a_motion
+  , const pce::Position& a_position
   , const uint32_t entity_b
   , const pce::RigidObject& b_rigid_object
   , const pce::Motion& b_motion
+  , const pce::Position& b_position
 );
 
 }

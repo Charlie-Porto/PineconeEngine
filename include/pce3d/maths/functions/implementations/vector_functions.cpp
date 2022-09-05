@@ -7,13 +7,19 @@
 namespace pce3d {
 namespace maths {
 
-template <typename T> double calculateDistanceBetweenVectors(const T& A, const T& B) {
+inline template <typename T> double calculateDistanceBetweenVectors(const T& A, const T& B) {
   return sqrt(glm::dot(A-B, A-B));
 }
 
-template <typename T> double calculateAngleDegreesBetweenVectors(const T& A, const T& B) {
+inline template <typename T> double calculateAngleDegreesBetweenVectors(const T& A, const T& B) {
   return acos( glm::dot(A, B) / (sqrt(glm::dot(A, A)) * sqrt(glm::dot(B, B)))) / 3.14159265 * 180.0;
 }
+
+inline double calcMagV3(const glm::dvec3& A)
+{
+  return sqrt(glm::dot(A, A));
+}
+
 
 }
 }

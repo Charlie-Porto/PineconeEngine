@@ -112,7 +112,7 @@ public:
         }
         ++a_force.sequential_collisions_by_entity[entity_b];
         if (a_force.sequential_collisions_by_entity.at(entity_b) > 1
-         && abs(a_motion.speed > 1.0))
+         && a_motion.speed > 1.0)
         {
           a_force.sequential_collisions_by_entity[entity_b] = 0;
         }
@@ -312,10 +312,10 @@ public:
       {
         position.actual_center_of_mass = new_position;
         
-      // std::cout << "new_position: "
-                // << new_position.x << ", "
-                // << new_position.y << ", "
-                // << new_position.z << '\n';
+      std::cout << "new_position: "
+                << new_position.x << ", "
+                << new_position.y << ", "
+                << new_position.z << '\n';
 
         motion.direction = glm::normalize(position_change);
         motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
@@ -377,10 +377,10 @@ public:
         } 
         else 
         {
-          // std::cout << "position_change: "
-                    // << position_change.x << ", "
-                    // << position_change.y << ", "
-                    // << position_change.z << '\n';
+          std::cout << "position_change: "
+                    << position_change.x << ", "
+                    << position_change.y << ", "
+                    << position_change.z << '\n';
           if (sqrt(glm::dot(position_change, position_change)) > 0.01)
           {
             motion.direction = glm::normalize(position_change);

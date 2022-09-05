@@ -14,9 +14,12 @@ functions for vectors
 namespace pce3d {
 namespace maths {
 
-template <typename T> double calculateDistanceBetweenVectors(const T& A, const T& B);
+inline template <typename T> double calculateDistanceBetweenVectors(const T& A, const T& B);
 
-template <typename T> double calculateAngleDegreesBetweenVectors(const T& A, const T& B);
+inline template <typename T> double calculateAngleDegreesBetweenVectors(const T& A, const T& B);
+
+inline double calcMagV3(const glm::dvec3& A);
+
 
 }
 }

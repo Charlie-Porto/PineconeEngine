@@ -113,8 +113,8 @@ void Core3D::UpdateCore3D() {
   // std::cout << "cam transform system updated" << '\n';
   space_map_system_->UpdateEntities();
   // std::cout << "space_map system updated" << '\n';
-  physics_system_->UpdateEntities(space_map_system_->potential_collision_entity_map_,
-                                  space_map_system_->potential_collision_index_map_);
+  // physics_system_->UpdateEntities(space_map_system_->potential_collision_entity_map_, space_map_system_->potential_collision_index_map_);
+  physics_2_system_->UpdateEntities(space_map_system_->potential_collision_entity_map_, space_map_system_->potential_collision_index_map_);
   // std::cout << "physics system updated" << '\n';
   radar_system_->UpdateEntities();
   // std::cout << "radar system updated" << '\n';
