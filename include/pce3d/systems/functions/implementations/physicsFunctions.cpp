@@ -316,11 +316,6 @@ const glm::dvec3 center_to_point_vector = position.actual_center_of_mass - point
   /* A: calculate linear component */
   double linear_allocation_percentage = (90.0 - abs(angle)) / 90.0;
 
-  const glm::dvec3 incrementally_rotated_point = pce::rotateVector3byAngleAxis(
-    center_to_point_vector,
-    -0.001, 
-    motion.rotational_axis);
-
   double rotational_allocation_percentage = angle / 90.0;
 
   if (isnan(linear_allocation_percentage)) {linear_allocation_percentage = 0.5; }
@@ -818,13 +813,13 @@ void updateComplexLivebodInfoAfterDeadfaceCollision(
         a_motion
   );
 
-  const glm::dvec3 a_momentum_vector = calculateMomentumVectorAtSurfacePoint(
-    a_collision_point,
-    face,
-    a_rigid_object,
-    a_position,
-    a_motion
-  );
+  // const glm::dvec3 a_momentum_vector = calculateMomentumVectorAtSurfacePoint(
+    // a_collision_point,
+    // face,
+    // a_rigid_object,
+    // a_position,
+    // a_motion
+  // );
 
   const glm::dvec3 new_a_velocity = a_rigid_object.mass * calculateVelocityVectorAfterLiveParticleDeadFaceCollision( 
       a_motion.direction * a_motion.speed, a_rigid_object.mass, deadbod_face_vertices, total_surface_elasticity);

@@ -43,11 +43,11 @@ public:
     , livebod_index_edge_map_({})
     , livebod_index_face_map_({})
     , potential_colliding_entities_({})
-    , meter_index_ratio_(0)
-    , map_dimensions_(glm::ivec3(0, 0, 0))
     , potential_collision_entity_map_({})
     , potential_collision_index_map_({})
     , next_id(1)
+    , meter_index_ratio_(0)
+    , map_dimensions_(glm::ivec3(0, 0, 0))
   {}
 
 

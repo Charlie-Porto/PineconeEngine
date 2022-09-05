@@ -28,11 +28,6 @@ if (a_movement_vector == glm::dvec3(0, 0, 0))
   /* if the direction angle is > 90.0, we know a collision is occuring */
   if (directions_angle > 90.0)
   {
-    const glm::dvec3 collision_point = a_rigid_object.vertices.at(1)
-                                     + (glm::normalize(b_rigid_object.vertices.at(1) 
-                                                     - a_rigid_object.vertices.at(1)))
-                                     * a_rigid_object.radius;
-    
     return true;
   }
   else
@@ -62,11 +57,6 @@ if (a_movement_vector == glm::dvec3(0, 0, 0))
     /* if the direction angle is > 90.0, we know a collision is occuring */
     if (directions_angle > 90.0)
     {
-      const glm::dvec3 collision_point = a_rigid_object.vertices.at(1)
-                                      + (glm::normalize(b_rigid_object.vertices.at(1) 
-                                                      - a_rigid_object.vertices.at(1)))
-                                      * a_rigid_object.radius;
-      
       return true;
     }
   }

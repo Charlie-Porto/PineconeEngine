@@ -129,8 +129,6 @@ public:
       auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
       auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
       auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
-      auto& a_force = control.GetComponent<pce::Force>(entity_a);
-      auto& b_force = control.GetComponent<pce::Force>(entity_a);
 
       if (a_rigid_object.radius != 0 && b_rigid_object.radius != 0)
       {

@@ -33,9 +33,6 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocitiesAfterParticleCollision(
   glm::dvec3 a_velocity = a_motion.direction * a_motion.speed;
   glm::dvec3 b_velocity = b_motion.direction * b_motion.speed;
 
-  const glm::dvec3 a_momentum = a_velocity * a_mass;
-  const glm::dvec3 b_momentum = b_velocity * b_mass;
-
   const glm::dvec3 collision_point = a_center + a_radius * glm::normalize(b_center - a_center);
 
   const glm::dvec3 a_center_to_collision_point_direction = glm::normalize(collision_point - a_center);
@@ -59,10 +56,7 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocitiesAfterParticleCollision(
 
   std::cout << "adjusted elasticity: " << adjusted_elasticity << '\n';
 
-  // const double total_adjusted_momentum_scalar = (pce3d::maths::calcMagV3(a_momentum)
-                                              // + pce3d::maths::calcMagV3(b_momentum)) * adjusted_elasticity;
   
-  const double total_mass = a_mass + b_mass;
   const glm::dvec3 a_velocity_adjustment = b_velocity * (a_mass / b_mass);
   const glm::dvec3 b_velocity_adjustment = a_velocity * (b_mass / a_mass);
   

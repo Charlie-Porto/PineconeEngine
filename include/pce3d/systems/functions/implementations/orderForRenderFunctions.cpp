@@ -101,16 +101,10 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     // big_rigid_object.camera_rotated_face_corner_map.at(
       // big_rigid_object.face_vertex_corner_map.at(
         // big_closest_face).at(big_radar.closest_vertex_id)), {0, 255, 29, 255}, 7.0);
-  
-  const glm::dvec3 face_corner = big_rigid_object.camera_rotated_face_corner_map.at( big_rigid_object.face_vertex_corner_map.at( big_closest_face).at(big_radar.closest_vertex_id));
-  const double face_corner_magnitude = sqrt(glm::dot(face_corner, face_corner));
 
   const double tolerance = .001;
   if (face_point_magnitude - small_tag.closest_vertex_distance > tolerance)
-  // if (face_point_magnitude - face_corner_magnitude > tolerance)
   {
-    // return face_point_magnitude <= face_corner_magnitude
-    // return face_point_magnitude < small_tag.closest_vertex_distance
     return face_point_magnitude < small_tag.farthest_vertex_distance
       ? big_entity : small_entity;
   }

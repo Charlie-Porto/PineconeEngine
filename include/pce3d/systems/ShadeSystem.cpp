@@ -37,7 +37,6 @@ public:
       auto const& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       if (rigid_object.radius != 0)
       {
-        auto const& position = control.GetComponent<pce::Position>(entity);
         auto& face_shade = control.GetComponent<pce::FaceShade>(entity); 
 
         pce3d::shade::doSphereLightScan(
