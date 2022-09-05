@@ -17,6 +17,8 @@ void rotateVertices(VertexMap& vertices, const double angle, const glm::dvec3& a
   }
 }
 
+
+
 void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& faces,
                                 FaceCornerMap& face_corner_map,
                                 FaceVertexCornerMap& face_vertex_corner_map,
@@ -47,6 +49,33 @@ void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& 
     }
   }
 }
+
+
+
+void createFaceEdgeMap(
+    const FaceVertexMap& face_vertex_map
+  , const EdgeMap& edge_map
+  , FaceEdgeMap& face_edge_map
+)
+{
+  for (auto const& [face_id, face_vertex_ids] : face_vertex_map)
+  {
+    size_t counter_face_vertices = face_vertex_ids.size();
+    size_t i = 0;
+    for (auto const& [edge_id, edge_vertex_ids] : edge_map)
+    {
+      if (std::find(face_vertex_ids.begin(), face_vertex_ids.end(), edge_vertex_ids.first) != face_vertex_ids.end()
+       && std::find(face_vertex_ids.begin(), face_vertex_ids.end(), edge_vertex_ids.second) != face_vertex_ids.end())
+      {
+        face_edge_map[face_id].push_back(edge_id);
+        ++i;
+        if (i == counter_face_vertices) { break; }
+      }
+    }
+  }
+}
+
+
 
 }
 }

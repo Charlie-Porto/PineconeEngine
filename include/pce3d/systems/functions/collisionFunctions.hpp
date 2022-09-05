@@ -12,6 +12,7 @@ functions to assist the Physics System detect collisions
 #include "../../maths/functions/vector_functions.hpp"
 #include "../../maths/functions/plane_functions.hpp"
 #include "../../maths/functions/quaternion_functions.hpp"
+#include "../objects/CollisionReport.hpp"
 
 namespace pce3d {
 namespace collision {
@@ -32,7 +33,7 @@ std::pair<bool, glm::dvec3> determineIfParticlesAreCollidingAndWhere(
   , const pce::Motion& b_motion
 );
 
-std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere(
+CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
     const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object
   , const pce::Motion& a_motion
@@ -42,7 +43,7 @@ std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere
   , const pce::Position& b_position
 );
  
-std::pair<bool, glm::dvec3> determineIfComplexBodsAreCollidingAndWhere(
+CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     const glm::ivec3& collision_index
   , const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object

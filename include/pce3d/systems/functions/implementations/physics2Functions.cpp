@@ -52,13 +52,24 @@ std::pair<glm::dvec3, glm::dvec3> calculateVelocitiesAfterParticleCollision(
                      % 90000)
                      / 1000.0;
   
+  const double a_directness_angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
+    a_velocity, a_center_to_collision_point_direction);
+  const double b_directness_angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
+    b_velocity, b_center_to_collision_point_direction);
+  
+  const double a_velocity_in_direction_of_collision_point = pce3d::maths::calcMagV3(a_velocity) 
+                                                          * cos(a_directness_angle / 180.0 * PI);
+  const double b_velocity_in_direction_of_collision_point = pce3d::maths::calcMagV3(b_velocity) 
+                                                          * cos(b_directness_angle / 180.0 * PI);
+  
   const double adjusted_elasticity = std::max(total_elasticity, total_elasticity / pow(std::max(0.01, 90.0 / angle), 2.0));
 
   std::cout << "adjusted elasticity: " << adjusted_elasticity << '\n';
-
   
-  const glm::dvec3 a_velocity_adjustment = b_velocity * (a_mass / b_mass);
-  const glm::dvec3 b_velocity_adjustment = a_velocity * (b_mass / a_mass);
+  const glm::dvec3 a_velocity_adjustment = (b_center_to_collision_point_direction * b_velocity_in_direction_of_collision_point) 
+                                         * (a_mass / b_mass);
+  const glm::dvec3 b_velocity_adjustment = (a_center_to_collision_point_direction * a_velocity_in_direction_of_collision_point) 
+                                         * (b_mass / a_mass);
   
   const glm::dvec3 new_a_velocity = (a_motion.direction * a_motion.speed 
                                   + a_velocity_adjustment - b_velocity_adjustment)
@@ -158,6 +169,24 @@ find radius of the circle being drawn by the point's motion
   
   return (orthogonal_direction * distance_traveled_per_second);
 }
+
+
+
+
+void updateBothEntityInfoAfterParticleComplexbodCollision(
+    const glm::dvec3& collision_point
+  , const uint32_t entity_a
+  , const pce::RigidObject& a_rigid_object
+  , pce::Motion& a_motion
+  , const uint32_t entity_b
+  , const pce::RigidObject& b_rigid_object
+  , pce::Motion& b_motion
+  , const double total_elasticity
+)
+{
+
+}
+
 
 
 }

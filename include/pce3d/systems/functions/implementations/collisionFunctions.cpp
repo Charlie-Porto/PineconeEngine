@@ -103,7 +103,7 @@ std::pair<bool, glm::dvec3> determineIfParticlesAreCollidingAndWhere(
 
 
 
-std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere(
+CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
     const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object
   , const pce::Motion& a_motion
@@ -113,13 +113,15 @@ std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere
   , const pce::Position& b_position
 )
 {
+
+  auto collision_report = CollisionReport{ .entity_a = entity_a, .entity_b = entity_b };
   /* 0. find complex bod's closest vertex to the particle center */
   uint32_t closest_vertex_id = 1;
   double closest_vertex_distance = 100000.0;
-  for (auto const& [id, vertex] : b_rigid_object.vertices)
+  for (auto const& [id, v] : b_rigid_object.vertices)
   {
     const double distance = pce3d::maths::calculateDistanceBetweenVectors(
-      a_rigid_object.vertices.at(1), vertex);
+      a_rigid_object.vertices.at(1), v);
     
     if (distance < closest_vertex_distance)
     {
@@ -129,9 +131,18 @@ std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere
   }
 
   glm::dvec3 potential_point_of_contact = glm::dvec3(b_rigid_object.vertices.at(closest_vertex_id));
-
+  collision_report.point_of_contact = potential_point_of_contact;
+  collision_report.a_collision_type = collision::vertex;
+  collision_report.a_collision_type_area_id = 1;
+  collision_report.collision_occuring = true;
+  
   /* 1. check if particle is colliding with closest vertex */
-  if (closest_vertex_distance >= a_rigid_object.radius)
+  if (closest_vertex_distance <= a_rigid_object.radius)
+  {
+    collision_report.b_collision_type = collision::vertex; 
+    collision_report.b_collision_type_area_id = closest_vertex_id;
+  }
+  else if (closest_vertex_distance > a_rigid_object.radius)
   {
     /* 2. if NOT COLLIDING WITH CLOSEST VERTEX, get closest face */
     uint32_t closest_face_id = 1;
@@ -166,7 +177,9 @@ std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere
     
     if (distance > a_rigid_object.radius)
     {
-      return std::make_pair(false, glm::dvec3(0, 0, 0));
+      // return std::make_pair(false, glm::dvec3(0, 0, 0));
+      collision_report.collision_occuring = false;
+      return collision_report;
     }
     else
     {
@@ -186,17 +199,20 @@ std::pair<bool, glm::dvec3> determineIfParticleIsCollidingWithComplexBodAndWhere
 
   if (determineIfMovementVectorsIndicateCollision(a_direction, b_direction, a_rigid_object, b_rigid_object))
   {
-    return std::make_pair(true, potential_point_of_contact);
+    collision_report.point_of_contact = potential_point_of_contact;
+    return collision_report;
+
   }
   else 
   {
-    return std::make_pair(false, glm::dvec3(0, 0, 0));
+    collision_report.collision_occuring = false;
+    return collision_report;
   }
 }
  
 
 
-std::pair<bool, glm::dvec3> determineIfComplexBodsAreCollidingAndWhere(
+CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     const glm::ivec3& collision_index
   , const uint32_t entity_a
   , const pce::RigidObject& a_rigid_object

@@ -62,6 +62,17 @@ glm::dvec3 calculateRotationalVelocityOfPointOnObject(
 );
 
 
+void updateBothEntityInfoAfterParticleComplexbodCollision(
+    const glm::dvec3& collision_point
+  , const uint32_t entity_a
+  , const pce::RigidObject& a_rigid_object
+  , pce::Motion& a_motion
+  , const uint32_t entity_b
+  , const pce::RigidObject& b_rigid_object
+  , pce::Motion& b_motion
+  , const double total_elasticity
+);
+
 
 
 }

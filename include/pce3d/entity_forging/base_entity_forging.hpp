@@ -18,6 +18,7 @@ using VertexPixelMap = std::unordered_map<uint32_t, glm::dvec2>;
 using VertexDistanceMap = std::unordered_map<uint32_t, double>;
 using FaceVertexMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using EdgeMap = std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>>;
+using FaceEdgeMap = std::unordered_map<uint32_t, std::vector<uint32_t>>;
 using IndexFaceMap = std::unordered_map<glm::ivec3, uint32_t>;
 using FaceIndexMap = std::unordered_map<uint32_t, glm::ivec3>;
 using IndexVertexMap = std::unordered_map<glm::ivec3, uint32_t>;

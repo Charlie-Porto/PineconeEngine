@@ -59,15 +59,21 @@ public:
 
         if (if_colliding_and_where.first)
         {
-          collision_entity_pair_map_[id] = entity_pair;
-          assert(potential_collision_index_map.find(id) != potential_collision_index_map.end());
-          collision_location_map_[id] = potential_collision_index_map.at(id);
+          collision::CollisionReport collision_report = collision::CollisionReport{ .entity_a = entity_a, .entity_b = entity_b };
+          collision_report.collision_occuring = true;
+          collision_report.point_of_contact = if_colliding_and_where.second;
+          collision_report.a_collision_type = collision::vertex;
+          collision_report.a_collision_type_area_id = 1;
+          collision_report.b_collision_type = collision::vertex;
+          collision_report.b_collision_type_area_id = 1;
+
+          collision_report_map_[id] = collision_report;
         }
       }
       /* do calc for particle-complexbod tip (b is complex bod) */
       else if (a_rigid_object.radius != 0)
       {
-        std::pair<bool, glm::dvec3> if_colliding_and_where = collision::determineIfParticleIsCollidingWithComplexBodAndWhere(
+        collision::CollisionReport collision_report = collision::determineIfParticleIsCollidingWithComplexBodAndWhere(
           entity_a,
           a_rigid_object,
           a_motion,
@@ -76,17 +82,15 @@ public:
           b_motion,
           b_position
         );
-        if (if_colliding_and_where.first)
+        if (collision_report.collision_occuring)
         {
-          collision_entity_pair_map_[id] = entity_pair;
-          assert(potential_collision_index_map.find(id) != potential_collision_index_map.end());
-          collision_location_map_[id] = potential_collision_index_map.at(id);
+          collision_report_map_[id] = collision_report;
         }
       }
       /* do calc for particle-complexbod tip (a is complex bod) */
       else if (b_rigid_object.radius != 0)
       {
-        std::pair<bool, glm::dvec3> if_colliding_and_where = collision::determineIfParticleIsCollidingWithComplexBodAndWhere(
+        collision::CollisionReport collision_report = collision::determineIfParticleIsCollidingWithComplexBodAndWhere(
           entity_b,
           b_rigid_object,
           b_motion,
@@ -96,30 +100,29 @@ public:
           a_position
         );
 
-        if (if_colliding_and_where.first)
+        if (collision_report.collision_occuring)
         {
-          collision_entity_pair_map_[id] = std::make_pair(entity_b, entity_a);
-          assert(potential_collision_index_map.find(id) != potential_collision_index_map.end());
-          collision_location_map_[id] = potential_collision_index_map.at(id);
+          collision_report_map_[id] = collision_report;
         }
+
       } 
     }
   }
 
   void PrintCollisions()
   {
-    for (auto const& [id, entities] : collision_entity_pair_map_)
+    for (auto const& [id, report] : collision_report_map_)
     {
-      std::cout << "entity " << entities.first << " -> " << "entity " << entities.second << '\n';
+      std::cout << "entity " << report.entity_a << " -> " << "entity " << report.entity_b << '\n';
     }
   }
   
   void CalculateCollisionResults()
   {
-    for (auto const& [id, epair] : collision_entity_pair_map_)
+    for (auto const& [id, collision_report] : collision_report_map_)
     {
-      const uint32_t entity_a = epair.first;
-      const uint32_t entity_b = epair.second;
+      const uint32_t entity_a = collision_report.entity_a;
+      const uint32_t entity_b = collision_report.entity_b;
 
       auto& a_rigid_object = control.GetComponent<pce::RigidObject>(entity_a);
       auto& b_rigid_object = control.GetComponent<pce::RigidObject>(entity_b);
@@ -145,6 +148,40 @@ public:
       }
       else if (a_rigid_object.radius != 0 || b_rigid_object.radius != 0)
       {
+        auto& particle_entity = entity_a;
+        auto& particle_rigid_object = a_rigid_object;
+        auto& particle_position = a_position;
+        auto& particle_motion = a_motion;
+        auto& particle_surface = a_surface;
+        auto& complex_entity = entity_b;
+        auto& complexbod_rigid_object = b_rigid_object;
+        auto& complexbod_position = b_position;
+        auto& complexbod_motion = b_motion;
+        auto& complexbod_surface = b_surface;
+        
+        if (b_rigid_object.radius != 0)
+        {
+          auto& particle_entity = entity_b;
+          auto& particle_rigid_object = b_rigid_object;
+          auto& particle_position = b_position;
+          auto& particle_motion = b_motion;
+          auto& particle_surface = b_surface;
+          auto& complex_entity = entity_a;
+          auto& complexbod_rigid_object = a_rigid_object;
+          auto& complexbod_position = a_position;
+          auto& complexbod_motion = a_motion;
+          auto& complexbod_surface = a_surface;
+        }
+        
+        physics2::updateBothEntityInfoAfterParticleComplexbodCollision(
+          collision_report.point_of_contact,
+          particle_entity,
+          particle_rigid_object,
+          particle_motion,
+          complex_entity,
+          complexbod_rigid_object,
+          complexbod_motion,
+          particle_surface.collision_elasticity_index * complexbod_surface.collision_elasticity_index);
 
       }
 
@@ -160,14 +197,13 @@ public:
     time_change_ = pce::CoreManager::time_ - previous_time_;
     previous_time_ = pce::CoreManager::time_;
 
-    collision_entity_pair_map_.clear();
-    collision_location_map_.clear();
+    collision_report_map_.clear();
     
     if (!potential_collision_entity_map.empty())
     {
       VetPotentialCollisions(potential_collision_entity_map, potential_collision_index_map);
       
-      if(!collision_entity_pair_map_.empty())
+      if(!collision_report_map_.empty())
       {
         PrintCollisions();
         CalculateCollisionResults();
@@ -191,17 +227,17 @@ public:
       motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
       position.actual_center_of_mass = new_position;
 
-      for (auto& [id, vertex] : rigid_object.vertices)
+      for (auto& [id, v] : rigid_object.vertices)
       {
-        vertex = glm::dvec3(vertex + position_change);
+        v = glm::dvec3(v + position_change);
 
         if (motion.rotational_speed > 0.01 && rigid_object.radius == 0)
         {
           const double rotation_amount = motion.rotational_speed * time_change_; 
-          const glm::dvec3 normalized_vertex = vertex - position.actual_center_of_mass;
+          const glm::dvec3 normalized_vertex = v - position.actual_center_of_mass;
           const glm::dvec3 rotated_point
               = pce::rotateVector3byAngleAxis(normalized_vertex, rotation_amount, motion.rotational_axis);
-          vertex = rotated_point + position.actual_center_of_mass;
+          v = rotated_point + position.actual_center_of_mass;
         }
       }
       for (auto& [id, corner] : rigid_object.face_corner_map)
@@ -221,8 +257,7 @@ public:
 
 
 private:
-  std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>> collision_entity_pair_map_;
-  std::unordered_map<uint32_t, glm::dvec3> collision_location_map_;
+  std::unordered_map<uint32_t, collision::CollisionReport> collision_report_map_;
 
   double previous_time_;
   double time_change_;

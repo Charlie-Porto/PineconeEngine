@@ -31,6 +31,7 @@ Entity forgeRectPrismEntity(
   EdgeMap e_edge_map = assignEdgesToVertices();
   VertexVertexMap vvmap = assignVerticestoVertices();
   FaceCornerMap face_corner_map{};
+  FaceEdgeMap face_edge_map{};
   FaceVertexCornerMap face_vertex_corner_map{};
   VertexFaceCornerMap vertex_face_corner_map{};
 
@@ -39,6 +40,9 @@ Entity forgeRectPrismEntity(
                                            face_corner_map, 
                                            face_vertex_corner_map, vertex_face_corner_map,
                                            center);
+  
+  pce3d::forge::createFaceEdgeMap(
+    e_face_vertex_map, e_edge_map, face_edge_map);
 
   /* adjust vertex points based on rotation and center point */
   for (auto& [id, vec3] : e_vertex_map) {
@@ -58,6 +62,7 @@ Entity forgeRectPrismEntity(
     .base_face_id = 1,
     .face_count = 6,
     .edges = e_edge_map,
+    .face_edge_map = face_edge_map,
     .face_vertex_map = e_face_vertex_map,
     .face_corner_map = face_corner_map,
     .face_vertex_corner_map = face_vertex_corner_map,
