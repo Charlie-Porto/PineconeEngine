@@ -22,6 +22,8 @@ bool determineIfMovementVectorsIndicateCollision(
   , glm::dvec3 b_movement_vector
   , const pce::RigidObject& a_rigid_object
   , const pce::RigidObject& b_rigid_object
+  , const glm::dvec3& a_center
+  , const glm::dvec3& b_center
 );
 
 std::pair<bool, glm::dvec3> determineIfParticlesAreCollidingAndWhere(

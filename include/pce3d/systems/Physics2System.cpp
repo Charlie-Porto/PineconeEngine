@@ -46,6 +46,12 @@ public:
       auto const& a_position = control.GetComponent<pce::Position>(entity_a);
       auto const& b_position = control.GetComponent<pce::Position>(entity_b);
       
+      const std::string a_type = a_rigid_object.radius == 0 ? "complex" : "particle";
+      const std::string b_type = b_rigid_object.radius == 0 ? "complex" : "particle";
+      std::cout << "atype: " << a_type << '\n';
+      std::cout << "btype: " << b_type << '\n';
+
+      
       /* do calc for particle-particle tip */
       if (a_rigid_object.radius != 0 && b_rigid_object.radius != 0)
       {
@@ -72,8 +78,9 @@ public:
         }
       }
       /* do calc for particle-complexbod tip (b is complex bod) */
-      else if (a_rigid_object.radius != 0)
+      else if (a_rigid_object.radius != 0 && b_rigid_object.radius == 0)
       {
+        std::cout << "entityA: particle, entityB: complex" << '\n';
         collision::CollisionReport collision_report = collision::determineIfParticleIsCollidingWithComplexBodAndWhere(
           entity_a,
           a_rigid_object,
@@ -89,8 +96,9 @@ public:
         }
       }
       /* do calc for particle-complexbod tip (a is complex bod) */
-      else if (b_rigid_object.radius != 0)
+      else if (b_rigid_object.radius != 0 && a_rigid_object.radius == 0)
       {
+        std::cout << "entityA: complex, entityB: particle" << '\n';
         collision::CollisionReport collision_report = collision::determineIfParticleIsCollidingWithComplexBodAndWhere(
           entity_b,
           b_rigid_object,
@@ -161,6 +169,8 @@ public:
       auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
       auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
       auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
+      auto const& a_mass_dist = control.GetComponent<pce::MassDistribution>(entity_a);
+      auto const& b_mass_dist = control.GetComponent<pce::MassDistribution>(entity_b);
 
       if (a_rigid_object.radius != 0 && b_rigid_object.radius != 0)
       {
@@ -203,15 +213,13 @@ public:
         }
         
         physics2::updateBothEntityInfoAfterParticleComplexbodCollision(
-          collision_report.point_of_contact,
-          particle_entity,
+          collision_report,
           particle_rigid_object,
           particle_motion,
-          complex_entity,
           complexbod_rigid_object,
+          complexbod_position,
           complexbod_motion,
           particle_surface.collision_elasticity_index * complexbod_surface.collision_elasticity_index);
-
       }
 
     }
