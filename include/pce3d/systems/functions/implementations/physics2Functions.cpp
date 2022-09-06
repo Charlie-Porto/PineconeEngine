@@ -186,7 +186,7 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
   const double b_leverage = physics::calculateLeverageAtPointInDirection(
     b_position, collision_report.point_of_contact, a_force_direction_on_b);
   const double mass_at_point = b_rigid_object.mass * b_leverage;
-  std::cout << "mass_at_point:" << mass_at_point << '\n';
+  std::cout << "mass_at_point: " << mass_at_point << '\n';
 
   const glm::dvec3 b_travel = b_motion.speed == 0 
     ? -a_force_direction_on_b : b_motion.speed * b_motion.direction;
@@ -198,10 +198,10 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
                                   b_motion.rotational_axis)) 
                               * (b_rigid_object.mass * b_leverage));
   
-  std::cout << "b_momentum: "
-            << b_momentum.x << ", "
-            << b_momentum.y << ", "
-            << b_momentum.z << '\n';
+  // std::cout << "b_momentum: "
+            // << b_momentum.x << ", "
+            // << b_momentum.y << ", "
+            // << b_momentum.z << '\n';
   /* calculate momentum vector component in direction of collision */
   const double a_directness_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(a_force_direction_on_b, a_momentum));
   const double b_directness_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(-a_force_direction_on_b, b_momentum));
@@ -215,7 +215,6 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
   
   const double momentums_angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
     a_momentum, b_momentum);
-  std::cout << "momentums_angle: " << momentums_angle << '\n';
   
   const double adjusted_elasticity = std::max(total_elasticity, total_elasticity / pow(std::max(0.01, 180. / momentums_angle), 2.0)); 
   std::cout << "adjusted elasticity: " << adjusted_elasticity << '\n';
@@ -227,13 +226,17 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
   std::cout << "a_velocity_in_direction_of_collision_point: " << a_velocity_in_direction_of_collision_point << '\n';
   std::cout << "b_velocity_in_direction_of_collision_point: " << b_velocity_in_direction_of_collision_point << '\n';
   const glm::dvec3 normed_a_force_direction = glm::normalize(a_force_direction_on_b);
+  std::cout << "normed_a_force_direction: "
+            << normed_a_force_direction.x << ", "
+            << normed_a_force_direction.y << ", "
+            << normed_a_force_direction.z << '\n';
   const glm::dvec3 a_momentum_adjustment = (-normed_a_force_direction * b_velocity_in_direction_of_collision_point)
                                          * (mass_at_point / a_rigid_object.mass);
                                         //  * (a_rigid_object.mass / mass_at_point);
   const glm::dvec3 b_momentum_adjustment = (normed_a_force_direction * a_velocity_in_direction_of_collision_point)
                                          * (a_rigid_object.mass / mass_at_point);
                                         //  * (mass_at_point / a_rigid_object.mass);
-  const glm::dvec3 new_a_velocity = (a_motion.direction * a_motion.speed 
+  glm::dvec3 new_a_velocity = (a_motion.direction * a_motion.speed 
                                   + (a_momentum_adjustment - b_momentum_adjustment)
                                   * (mass_at_point / (mass_at_point + a_rigid_object.mass)))
                                   * adjusted_elasticity;
@@ -251,7 +254,11 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
             << new_b_velocity.y << ", "
             << new_b_velocity.z << '\n';
 
-
+  
+  if (collision_report.b_collision_type == collision::face)
+  {
+    ensureParticleVelocityNotIntoObjectFace(-a_force_direction_on_b, new_a_velocity);
+  }
   /* update first entity */
   a_motion.velocity = new_a_velocity;
   a_motion.previous_resting_position = a_rigid_object.vertices.at(1);

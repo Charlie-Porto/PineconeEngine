@@ -36,13 +36,13 @@ bool determineIfMovementVectorsIndicateCollision(
     std::cout << "DIRECTIONS ANGLE IS > 90" << '\n';
 
     const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
-    std::cout << "distance a: " << distance_a << '\n';
 
     const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
     const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
+    std::cout << "distance a: " << distance_a << '\n';
     std::cout << "distance b: " << distance_b << '\n';
 
-    if (distance_a > distance_b)
+    if (distance_a - distance_b > -.006)
     {
       return true;
     }
@@ -67,11 +67,13 @@ bool determineIfMovementVectorsIndicateCollision(
       std::cout << "smaller is b_movement_vector" << '\n';
     }
 
-    const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
-    const glm::dvec3 point_b = a_center + glm::normalize(a_movement_vector) * 0.01;
-    const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
+    const double distance_a = pce3d::maths::calcMagV3(lcenter - scenter);
+    const glm::dvec3 point_b = lcenter + glm::normalize(larger) * 0.01;
+    const double distance_b = pce3d::maths::calcMagV3(point_b - scenter);
+    std::cout << "distance a: " << distance_a << '\n';
+    std::cout << "distance b: " << distance_b << '\n';
 
-    if (distance_a > distance_b)
+    if (distance_a - distance_b > -.006)
     {
       return true;
     }
@@ -273,6 +275,8 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
       
       if (point_in_line)
       {
+        potential_point_of_contact = closest_edge_point_to_particle_center;
+        collision_report.point_of_contact = potential_point_of_contact;
         collision_report.b_collision_type = collision::edge;
         collision_report.b_collision_type_area_id = edge_id;
         is_located_at_edge = true;
@@ -292,19 +296,25 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
       const double distance = pce3d::maths::calculateDistanceBetweenVectors(
         closest_face_point_to_particle, a_rigid_object.vertices.at(1));
       
-      if (distance > a_rigid_object.radius)
+      if (distance > (a_rigid_object.radius + 0.8))
       {
+        std::cout << "closest face point does not touch particle" << '\n';
+        std::cout << "distance: " << distance << '\n';
+        std::cout << "radius: " << a_rigid_object.radius << '\n';
         collision_report.collision_occuring = false;
         return collision_report;
       }
       else
       {
         potential_point_of_contact = closest_face_point_to_particle; 
+        collision_report.point_of_contact = potential_point_of_contact;
         collision_report.b_collision_type = collision::face;
         collision_report.b_collision_type_area_id = closest_face_id;
       }
     }
   }
+
+  std::cout << "confirmed objects are touching" << '\n';
 
   /* 5. evaluate direction vectors if objects are, in fact, touching */
   const glm::dvec3 a_direction = a_motion.direction * a_motion.speed;

@@ -14,9 +14,10 @@ double calculateLeverageAtPointInDirection(
 )
 {
   const glm::dvec3& point_to_center = position.actual_center_of_mass - point;
-  const double angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
-    direction_of_force, point_to_center);
-  const double leverage = pow((90.0 - angle) / 90.0, 2.0);
+  const double angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(
+    direction_of_force, point_to_center));
+  // const double leverage = pow((90.0 - angle) / 90.0, 2.0);
+  const double leverage = (90.0 - angle) / 90.0;
   return leverage;
 }
 

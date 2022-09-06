@@ -41,13 +41,13 @@ void SphereFactory::CreateSphereParticle() {
   // const double vz = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.z, velocity_component_variance_);
   const double v_magnitude = pce3d::random::getRandomDoubleBetweenDoubles(20.0, 40.0);
   std::cout << "velocity_x: " << velocity_.x << '\n';
-  std::cout << "velocity_component_variance: " << velocity_component_variance_ << '\n';
+  // std::cout << "velocity_component_variance: " << velocity_component_variance_ << '\n';
   // const glm::dvec3 e_velocity = glm::dvec3(vx, vz, vy);
-  // const glm::dvec3 e_velocity = velocity_;
-  glm::dvec3 e_velocity = pce3d::random::getRandomUnitVector3() * v_magnitude;
-  if ( isnan(e_velocity.x) || e_velocity.x == 0) { e_velocity.x = 1.0; }
-  if ( isnan(e_velocity.y) || e_velocity.y == 0) { e_velocity.y = 1.0; }
-  if ( isnan(e_velocity.z) || e_velocity.z == 0) { e_velocity.z = 1.0; }
+  const glm::dvec3 e_velocity = velocity_;
+  // glm::dvec3 e_velocity = pce3d::random::getRandomUnitVector3() * v_magnitude;
+  // if ( isnan(e_velocity.x) || e_velocity.x == 0) { e_velocity.x = 1.0; }
+  // if ( isnan(e_velocity.y) || e_velocity.y == 0) { e_velocity.y = 1.0; }
+  // if ( isnan(e_velocity.z) || e_velocity.z == 0) { e_velocity.z = 1.0; }
   const double e_gforce = gravitational_force_;
 
   pce3d::forge::forgeSphereEntity(
