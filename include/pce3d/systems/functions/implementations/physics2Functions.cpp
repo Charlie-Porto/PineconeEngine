@@ -160,6 +160,7 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
   , const pce::Position& b_position
   , pce::Motion& b_motion
   , const double total_elasticity
+  , const bool b_is_deadbod
 )
 {
   glm::dvec3 a_force_direction_on_b = (collision_report.point_of_contact - a_rigid_object.vertices.at(1));
@@ -282,15 +283,14 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
   // a_motion.direction = glm::normalize(new_a_velocity);
 
   a_motion.duration = 0.01;
-  b_motion.duration = 0.01;
-  
-  physics::distributeAccelerationAtPointBetweenLinearAndRotational(
-    b_position, b_rigid_object, b_motion, collision_report.point_of_contact, 
-    b_leverage, new_b_velocity, a_force_direction_on_b);
-      
-  /* calculate exiting a direction */
-  // glm::dvec3 a_exit_direction = pce::rotateVector3byAngleAxis(
-    // -diremtion_vector, 180.0, a_force_direction_on_b);
+  if (!b_is_deadbod)
+  {
+    b_motion.duration = 0.01;
+    physics::distributeAccelerationAtPointBetweenLinearAndRotational(
+      b_position, b_rigid_object, b_motion, collision_report.point_of_contact, 
+      b_leverage, new_b_velocity, a_force_direction_on_b);
+  }
+
   }
 
 }

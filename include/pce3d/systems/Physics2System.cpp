@@ -219,7 +219,8 @@ public:
           complexbod_rigid_object,
           complexbod_position,
           complexbod_motion,
-          particle_surface.collision_elasticity_index * complexbod_surface.collision_elasticity_index);
+          particle_surface.collision_elasticity_index * complexbod_surface.collision_elasticity_index,
+          complexbod_rigid_object.is_deadbod);
       }
 
     }

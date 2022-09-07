@@ -287,28 +287,57 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
     }
     if (!is_located_at_edge)
     {
-      /* 3. get closest face's closest point to particle */
-      const glm::dvec3 closest_face_point_to_particle = pce3d::maths::calculateClosestPointInPlaneToPoint(
-        b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[0]),
-        b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[1]),
-        b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[2]),
-        a_rigid_object.vertices.at(1));
-      
+      std::vector<uint32_t> closest_faces{};
+      assert(b_rigid_object.vertex_face_corner_map.find(closest_vertex_id) != b_rigid_object.vertex_face_corner_map.end());
+      for (auto const& [face, corner] : b_rigid_object.vertex_face_corner_map.at(closest_vertex_id))
+      {
+        closest_faces.push_back(face);
+      }
+
+      /* 3. get closest faces' closest point to particle */
+      std::vector<glm::dvec3> closest_face_points{};
+      for (size_t i = 0; i < closest_faces.size(); ++i)
+      {
+        assert(b_rigid_object.face_vertex_map.find(closest_faces[i]) != b_rigid_object.face_vertex_map.end());
+        const glm::dvec3 closest_face_point_to_particle = pce3d::maths::calculateClosestPointInPlaneToPoint(
+          b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_faces[i])[0]),
+          b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_faces[i])[1]),
+          b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_faces[i])[2]),
+          a_rigid_object.vertices.at(1));
+        
+        closest_face_points.push_back(closest_face_point_to_particle);
+      }
+
       /* 4. determine if distance(closest face's closest point, particle_center) is <= radius */
-      const double distance = pce3d::maths::calculateDistanceBetweenVectors(
-        closest_face_point_to_particle, a_rigid_object.vertices.at(1));
+      std::vector<double> distances{};
+      double min_distance = 100000.0;
+      glm::dvec3 closest_face_point = closest_face_points[0];
+      // uint32_t closest_face_id
+      for (size_t i = 0; i < closest_faces.size(); ++i)
+      {
+        const double distance = pce3d::maths::calculateDistanceBetweenVectors(
+          closest_face_points[i], a_rigid_object.vertices.at(1));
+        
+        distances.push_back(distance);
+        if (distance < min_distance)
+        {
+          min_distance = distance;
+          closest_face_id = closest_faces[i];
+          closest_face_point = closest_face_points[i];
+        }
+      }
       
-      if (distance > (a_rigid_object.radius + 0.8))
+      std::cout << "minimum distance: " << min_distance << '\n';
+      if (min_distance > (a_rigid_object.radius + 0.8))
       {
         std::cout << "closest face point does not touch particle" << '\n';
-        std::cout << "distance: " << distance << '\n';
         std::cout << "radius: " << a_rigid_object.radius << '\n';
         collision_report.collision_occuring = false;
         return collision_report;
       }
       else
       {
-        potential_point_of_contact = closest_face_point_to_particle; 
+        potential_point_of_contact = closest_face_point; 
         collision_report.point_of_contact = potential_point_of_contact;
         collision_report.b_collision_type = collision::face;
         collision_report.b_collision_type_area_id = closest_face_id;

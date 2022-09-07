@@ -75,6 +75,7 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
   , const pce::Position& b_position
   , pce::Motion& b_motion
   , const double total_elasticity
+  , const bool b_is_deadbod = false
 );
 
 
