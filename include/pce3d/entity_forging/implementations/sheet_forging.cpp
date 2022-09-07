@@ -24,6 +24,9 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     {4, std::make_pair(4, 1)}
   };
 
+  FaceEdgeMap face_edge_map{};
+  createFaceEdgeMap(face_map, edge_map, face_edge_map);
+
   FaceCornerMap face_corner_map{};
   FaceVertexCornerMap face_vertex_corner_map{};
   VertexFaceCornerMap vertex_face_corner_map{};
@@ -47,6 +50,7 @@ Entity forgeRectSheetEntity(const double w, const double l, const glm::dvec3& ce
     .edges = edge_map,
     .face_count = 1,
     .face_vertex_map = face_map,
+    .face_edge_map = face_edge_map,
     .face_corner_map = face_corner_map,
     .face_vertex_corner_map = face_vertex_corner_map,
     .vertex_face_corner_map = vertex_face_corner_map
@@ -73,6 +77,10 @@ Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
     {2, std::make_pair(2, 3)},
     {3, std::make_pair(3, 1)},
   };
+
+  FaceEdgeMap face_edge_map{};
+  createFaceEdgeMap(face_map, edge_map, face_edge_map);
+
   FaceCornerMap face_corner_map{};
   FaceVertexCornerMap face_vertex_corner_map{};
   VertexFaceCornerMap vertex_face_corner_map{};
@@ -93,6 +101,7 @@ Entity forgeTriangleSheetEntity(const std::vector<glm::dvec3>& triangle_points,
     .edges = edge_map,
     .face_count = 1,
     .face_vertex_map = face_map,
+    .face_edge_map = face_edge_map,
     .face_corner_map = face_corner_map,
     .face_vertex_corner_map = face_vertex_corner_map,
     .vertex_face_corner_map = vertex_face_corner_map

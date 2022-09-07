@@ -255,6 +255,8 @@ public:
       auto& rigid_object = control.GetComponent<pce::RigidObject>(entity);
       auto& position = control.GetComponent<pce::Position>(entity);
       auto const& force = control.GetComponent<pce::Force>(entity);
+      
+      if (rigid_object.is_deadbod) { continue; }
 
       const glm::dvec3 new_position = pce3d::physics::calculateParticlePositionGivenTime(
         motion.previous_resting_position, motion.velocity, time_change_,

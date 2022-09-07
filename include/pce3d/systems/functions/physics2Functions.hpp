@@ -79,6 +79,13 @@ void updateBothEntityInfoAfterParticleComplexbodCollision(
 );
 
 
+void updateParticleInfoAfterComplexDeadbodCollsion(
+    const collision::CollisionReport& collision_report
+  , const pce::RigidObject& a_rigid_object
+  , pce::Motion& a_motion
+  , const double total_elasticity
+);
+
 
 }
 }

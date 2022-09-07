@@ -31,7 +31,8 @@ Entity forgeRectPrismEntity(
   , const double g_force = 0.0
   , const glm::dvec3& velocity = glm::dvec3(0, 0, 0)
   , const glm::dvec3& axis_of_rotation = glm::dvec3(1, 0, 0)
-  , const double rotation_speed = 0.0);
+  , const double rotation_speed = 0.0
+);
 
 
 VertexMap calculateRectPrismOriginalVertexLocations(const double w, const double h, const double l, 
