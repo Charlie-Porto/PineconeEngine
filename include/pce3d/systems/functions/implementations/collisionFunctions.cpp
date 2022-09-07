@@ -35,21 +35,22 @@ bool determineIfMovementVectorsIndicateCollision(
     std::cout << "Directions angle: " << directions_angle << '\n';
     std::cout << "DIRECTIONS ANGLE IS > 90" << '\n';
 
-    const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
+    // const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
 
-    const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
-    const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
-    std::cout << "distance a: " << distance_a << '\n';
-    std::cout << "distance b: " << distance_b << '\n';
+    // const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
+    // const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
+    // std::cout << "distance a: " << distance_a << '\n';
+    // std::cout << "distance b: " << distance_b << '\n';
 
-    if (distance_a - distance_b > -.006)
-    {
-      return true;
-    }
-    else 
-    {
-      return false;
-    }
+    // if (distance_a - distance_b > -.006)
+    // {
+      // return true;
+    // }
+    // else 
+    // {
+      // return false;
+    // }
+    return true;
   }
   else
   {
@@ -68,12 +69,13 @@ bool determineIfMovementVectorsIndicateCollision(
     }
 
     const double distance_a = pce3d::maths::calcMagV3(lcenter - scenter);
-    const glm::dvec3 point_b = lcenter + glm::normalize(larger) * 0.01;
+    const glm::dvec3 point_b = lcenter + glm::normalize(larger) * 0.001;
     const double distance_b = pce3d::maths::calcMagV3(point_b - scenter);
     std::cout << "distance a: " << distance_a << '\n';
     std::cout << "distance b: " << distance_b << '\n';
 
-    if (distance_a - distance_b > -.006)
+    // if (distance_a - distance_b > -.006)
+    if (distance_a - distance_b > -.0001)
     {
       return true;
     }
@@ -328,22 +330,27 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
   std::cout << "b_motion.rotational_speed: "  << b_motion.rotational_speed << '\n';
   // b_direction = glm::normalize(b_direction + b_motion.direction);
   b_direction = b_direction + b_motion.direction;
+  std::cout << "a_direction: "
+            << a_direction.x << ", "
+            << a_direction.y << ", "
+            << a_direction.z << '\n';
   std::cout << "b_direction: "
             << b_direction.x << ", "
             << b_direction.y << ", "
             << b_direction.z << '\n';
-  if (determineIfMovementVectorsIndicateCollision(
-    a_direction, b_direction, a_rigid_object, b_rigid_object, 
-    a_rigid_object.vertices.at(1), b_position.actual_center_of_mass))
-  {
+  // if (determineIfMovementVectorsIndicateCollision(
+    // a_direction, b_direction, a_rigid_object, b_rigid_object, 
+    // a_rigid_object.vertices.at(1), b_position.actual_center_of_mass))
+  // {
     collision_report.point_of_contact = potential_point_of_contact;
     return collision_report;
-  }
-  else 
-  {
-    collision_report.collision_occuring = false;
-    return collision_report;
-  }
+  // }
+  // else 
+  // {
+    // collision_report.collision_occuring = false;
+    // collision_report.point_of_contact = potential_point_of_contact;
+    // return collision_report;
+  // }
 }
  
 

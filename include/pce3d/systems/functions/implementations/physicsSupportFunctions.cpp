@@ -13,7 +13,12 @@ void ensureParticleVelocityNotIntoObjectFace(
 {
   const double angle = maths::calculateAngleDegreesBetweenVectors(face_normal_vector, particle_velocity);
   std::cout << "new particle angle with face normal vector: " << angle << '\n';
-  if (angle > 90.0)
+  if (abs(180.0 - angle) < .001)
+  {
+    particle_velocity = -particle_velocity; 
+    std::cout << "flipping particle velocity" << '\n';
+  }
+  else if (angle > 90.0)
   {
     const glm::dvec3 axis = glm::cross(particle_velocity, face_normal_vector);
 
@@ -24,6 +29,12 @@ void ensureParticleVelocityNotIntoObjectFace(
       const double rotation_degrees = (angle - 90.0) * direction;
       glm::dvec3 rotated_velocity = pce::rotateVector3byAngleAxis(
         particle_velocity, rotation_degrees, axis);
+
+      std::cout << "rotation angle: " << rotation_degrees << '\n';
+  std::cout << "axis: "
+            << axis.x << ", "
+            << axis.y << ", "
+            << axis.z << '\n';
       
       const double new_angle = maths::calculateAngleDegreesBetweenVectors(face_normal_vector, rotated_velocity);
       std::cout << "new new angle: " << new_angle << '\n';
@@ -39,6 +50,10 @@ void ensureParticleVelocityNotIntoObjectFace(
       }
     }
   }
+  std::cout << "updated particle velocity: "
+            << particle_velocity.x << ", "
+            << particle_velocity.y << ", "
+            << particle_velocity.z << '\n';
 }
 
 
