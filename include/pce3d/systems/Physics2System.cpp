@@ -113,8 +113,26 @@ public:
         {
           collision_report_map_[id] = collision_report;
         }
-
       } 
+      else if (a_rigid_object.radius == 0 && b_rigid_object.radius == 0)
+      {
+        collision::CollisionReport collision_report = collision::determineIfComplexBodsAreCollidingAndWhere(
+          potential_collision_index_map.at(id),
+          entity_a,
+          a_rigid_object,
+          a_motion,
+          b_position,
+          entity_b,
+          b_rigid_object,
+          b_motion,
+          b_position
+        );
+        if (collision_report.collision_occuring)
+        {
+          std::cout << "adding complex-complex collision to map" << '\n';
+          collision_report_map_[id] = collision_report;
+        }
+      }
     }
   }
 

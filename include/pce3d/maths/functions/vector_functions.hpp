@@ -6,6 +6,7 @@
 functions for vectors
 -----------------------------------------------------------------*/
 
+#include <utility>
 #include <cmath>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -22,7 +23,21 @@ inline double calcMagV3(const glm::dvec3& A);
 
 inline bool determineIfVec3MakesLineWithTwoVec3s(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C);
 
-glm::dvec3 findClosestPointOnVec3LineToVec3(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C);
+inline glm::dvec3 findClosestPointOnVec3LineToVec3(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C);
+
+inline double calculateDistanceBetweenPointAndLine(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C);
+
+bool determineIfLineVectorsWithinDistanceAndAtWhichPoint(
+  const glm::dvec3& A, const glm::dvec3& B, 
+  const glm::dvec3& C, const glm::dvec3& D,
+  const double distance_threshold
+);
+
+std::pair<double, glm::dvec3> estimateDistanceAndMidPointOfClosestPointsOnLines(
+  const glm::dvec3& A, const glm::dvec3& B, 
+  const glm::dvec3& C, const glm::dvec3& D
+);
+
 
 }
 }

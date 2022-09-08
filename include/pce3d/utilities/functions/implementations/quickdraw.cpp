@@ -78,21 +78,26 @@ void drawFilledQuadrilateral(const pce3d::maths::Quadrilateral& q,
                              const std::vector<int>& color) {
   auto tri_a = pce3d::maths::Triangle{.A=q.A, .B=q.B, .C=q.C};
   auto tri_b = pce3d::maths::Triangle{.A=q.A, .B=q.D, .C=q.C};
+  auto tri_c = pce3d::maths::Triangle{.A=q.B, .B=q.A, .C=q.D};
+  auto tri_d = pce3d::maths::Triangle{.A=q.B, .B=q.C, .C=q.D};
 
   pce3d::raster::rasterizeAndRenderTriangle(tri_a, color);
   pce3d::raster::rasterizeAndRenderTriangle(tri_b, color);
+  pce3d::raster::rasterizeAndRenderTriangle(tri_c, color);
+  pce3d::raster::rasterizeAndRenderTriangle(tri_d, color);
 
-  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
-  const glm::dvec2 a = pce::convert::convertCartesianCoordinatesToSDL(q.A * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  const glm::dvec2 b = pce::convert::convertCartesianCoordinatesToSDL(q.B * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  const glm::dvec2 c = pce::convert::convertCartesianCoordinatesToSDL(q.C * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
-  const glm::dvec2 d = pce::convert::convertCartesianCoordinatesToSDL(q.D * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+
+  // SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  // const glm::dvec2 a = pce::convert::convertCartesianCoordinatesToSDL(q.A * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  // const glm::dvec2 b = pce::convert::convertCartesianCoordinatesToSDL(q.B * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  // const glm::dvec2 c = pce::convert::convertCartesianCoordinatesToSDL(q.C * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  // const glm::dvec2 d = pce::convert::convertCartesianCoordinatesToSDL(q.D * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
 
   /* draw diagonals */
-  std::vector<glm::dvec2> points = {a, b, c, d}; 
-  pce::render::renderQuadrilateralDiagonals(points, color);
+  // std::vector<glm::dvec2> points = {a, b, c, d}; 
+  // pce::render::renderQuadrilateralDiagonals(points, color);
   
-  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
+  // SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
 

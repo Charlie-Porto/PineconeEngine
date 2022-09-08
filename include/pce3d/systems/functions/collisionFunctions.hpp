@@ -10,9 +10,13 @@ functions to assist the Physics System detect collisions
 #include <glm/vec3.hpp>
 #include "physics2Functions.hpp"
 #include "../../maths/functions/vector_functions.hpp"
+#include "../../maths/functions/vertex_functions.hpp"
 #include "../../maths/functions/plane_functions.hpp"
 #include "../../maths/functions/quaternion_functions.hpp"
 #include "../objects/CollisionReport.hpp"
+#include "spaceMapFunctions.hpp"
+#include "../../pce3d.hpp"
+
 
 namespace pce3d {
 namespace collision {
@@ -56,6 +60,8 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
   , const pce::Motion& b_motion
   , const pce::Position& b_position
 );
+
+
 
 }
 }

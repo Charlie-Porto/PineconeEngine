@@ -38,7 +38,7 @@ using VertexFaceCornerMap = std::unordered_map<uint32_t, std::unordered_map<uint
 
 
 void rotateVertices(VertexMap& vertices, const double angle, const glm::dvec3& axis,
-                    const glm::dvec3& center_of_gravity);
+                    const glm::dvec3& center_of_gravity, bool vertices_normalized_to_object_center = false);
 
 
 void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& faces,
@@ -53,6 +53,14 @@ void createFaceEdgeMap(
   , const EdgeMap& edge_map
   , FaceEdgeMap& face_edge_map
 );
+
+
+void createVertexEdgeMap(
+    const VertexVertexMap& vertex_vertex_map
+  , const EdgeMap& edge_map
+  , FaceEdgeMap& vertex_edge_map
+);
+
 
 }
 }

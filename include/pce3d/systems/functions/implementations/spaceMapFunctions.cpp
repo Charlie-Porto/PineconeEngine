@@ -345,7 +345,10 @@ void updateLiveBodIndicesAndCheckForLiveBodCollision(
         }
       } 
       /* else if index is occupied, check if occupied by this entity or another */
-      else { assert(livebod_map.find(index) != livebod_map.end()); }
+      else 
+      {
+        assert(livebod_map.find(index) != livebod_map.end()); 
+      }
       if (!std::count(livebod_map.at(index).begin(), livebod_map.at(index).end(), entity))
       {
         const uint32_t& other_entity = livebod_map.at(index)[0];

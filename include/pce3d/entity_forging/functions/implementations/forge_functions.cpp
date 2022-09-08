@@ -9,11 +9,20 @@ namespace forge {
 
 
 void rotateVertices(VertexMap& vertices, const double angle, const glm::dvec3& axis,
-                    const glm::dvec3& center_of_gravity) {
-  for (auto& [id, vertex] : vertices) {
-    vertex = vertex - center_of_gravity;
-    vertex = pce::rotateVector3byAngleAxis(vertex, angle, axis);
-    vertex = vertex + center_of_gravity;
+                    const glm::dvec3& center_of_gravity, bool vertices_normalized_to_object_center) {
+  if (!vertices_normalized_to_object_center)
+  {
+    for (auto& [id, vertex] : vertices) {
+      vertex = vertex - center_of_gravity;
+      vertex = pce::rotateVector3byAngleAxis(vertex, angle, axis);
+      vertex = vertex + center_of_gravity;
+    }
+  }
+  else
+  {
+    for (auto& [id, vertex] : vertices) {
+      vertex = pce::rotateVector3byAngleAxis(vertex, angle, axis);
+    }
   }
 }
 
@@ -34,9 +43,7 @@ void createFaceVertexCornerMaps(const VertexMap& vertices, const FaceVertexMap& 
       const size_t index_neighbor_b = (i == vertex_list.size()-1) ? 0 : i + 1;
 
       const glm::dvec3 mvertex = vertices.at(vertex_list[i]);
-      const glm::dvec3 connected_vertex_a = vertices.at(vertex_list[index_neighbor_a]);
-      const glm::dvec3 connected_vertex_b = vertices.at(vertex_list[index_neighbor_b]);
-
+      const glm::dvec3 connected_vertex_a = vertices.at(vertex_list[index_neighbor_a]); const glm::dvec3 connected_vertex_b = vertices.at(vertex_list[index_neighbor_b]);
       const glm::dvec3 face_corner_direction = glm::normalize((connected_vertex_a-mvertex + connected_vertex_b-mvertex));
       const glm::dvec3 face_corner_point = vertices.at(vertex_list[i]) + face_corner_direction + psuedo_center_point;
       
@@ -70,6 +77,29 @@ void createFaceEdgeMap(
         face_edge_map[face_id].push_back(edge_id);
         ++i;
         if (i == counter_face_vertices) { break; }
+      }
+    }
+  }
+}
+
+
+void createVertexEdgeMap(
+    const VertexVertexMap& vertex_vertex_map
+  , const EdgeMap& edge_map
+  , FaceEdgeMap& vertex_edge_map
+)
+{
+  for (auto const& [vertex_id, vertex_list] : vertex_vertex_map)
+  {
+    for (auto const& v : vertex_list)
+    {
+      for (auto const& [edge_id, vpair] : edge_map)
+      {
+        if ((vpair.first == v && vpair.second == vertex_id)
+         || (vpair.first == vertex_id && vpair.second == v))
+        {
+          vertex_edge_map[vertex_id].push_back(edge_id);
+        }
       }
     }
   }

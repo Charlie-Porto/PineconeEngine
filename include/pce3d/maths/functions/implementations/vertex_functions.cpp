@@ -32,7 +32,7 @@ std::vector<uint32_t> calculateClosestPolyhedronFaceToPoint(
   double min_face_distance = 100000.0;
 
   /* pick up here */ 
-  for (auto const& edge : edges) {
+  for (auto const& [edge_id, edge] : edges) {
     if (edge.first == closest_vertex) { connected_vertices.push_back(edge.second); }
     if (edge.second == closest_vertex) { connected_vertices.push_back(edge.first); }
   }
@@ -95,6 +95,63 @@ uint32_t calculateClosestVertexOfFaceToOrigin(const std::vector<uint32_t>& face_
 
   return closest_vertex_id;
 }
+
+
+
+std::pair<bool, uint32_t> determineIfVertexTouchesObjectEdgesAndWhich(
+    const glm::dvec3& vertex
+  , const VertexMap& vertices
+  , const EdgeMap& edges
+  , const double distance_threshold
+)
+{
+  for (auto const& [edge_id, vpair] : edges)
+  {
+    const glm::dvec3& a_vect = vertices.at(vpair.first);
+    const glm::dvec3& b_vect = vertices.at(vpair.second);
+
+    const double distance = calculateDistanceBetweenPointAndLine(a_vect, b_vect, vertex);
+    if(distance < distance_threshold)
+    {
+      return std::make_pair(true, edge_id);
+    } 
+  }
+  return std::make_pair(false, 1);
+}
+
+
+
+std::pair<bool, uint32_t> determineIfVertexTouchesObjectFaces(
+    const glm::dvec3& vertex
+  , const uint32_t closest_object_vertex_id
+  , const VertexMap& vertices
+  , const FaceVertexMap& faces
+  , const VertexFaceCornerMap& vertex_face_corner_map
+  , const double distance_threshold
+)
+{
+  for (auto const& [face_id, face_corner_id] : vertex_face_corner_map.at(closest_object_vertex_id))
+  {
+    std::vector<uint32_t> vertex_ids = faces.at(face_id);
+    const glm::dvec3 closest_face_point = calculateClosestPointInPlaneToPoint( 
+      vertices.at(vertex_ids[0]),
+      vertices.at(vertex_ids[1]),
+      vertices.at(vertex_ids[2]),
+      vertex);
+    
+    const double distance = calculateDistanceBetweenVectors(closest_face_point, vertex);
+    if (distance < distance_threshold * 2.0)
+    {
+      std::cout << "distance below threshold; returning true" << '\n';
+      return std::make_pair(true, face_id);
+    }
+  }
+
+  return std::make_pair(false, 1);
+}
+
+
+
 
 
 }

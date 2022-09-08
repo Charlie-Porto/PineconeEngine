@@ -396,7 +396,129 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
   , const pce::Position& b_position
 )
 {
+  std::cout << "checking for complexbod-complexbod collision" << '\n';
+  auto collision_report = CollisionReport{
+    .collision_occuring = true,
+    .entity_a = entity_a,
+    .entity_b = entity_b
+  };
+  const double small_dist_threshold = 0.01;
+
+  /* get closest vertices to collision index point */
+  const glm::dvec3 collision_index_point = space_map::findPointOfIndex(
+    collision_index, pce3d::Core3D::SPACE_MAP_DIMENSIONS, pce3d::Core3D::COLLISION_METER_INDEX_RATIO);
+  const uint32_t a_closest_vertex = maths::calculateClosestVertexToPoint(
+    collision_index_point, a_rigid_object.vertices);
+  const uint32_t b_closest_vertex = maths::calculateClosestVertexToPoint(
+    collision_index_point, b_rigid_object.vertices);
   
+  /*============ check if vertex intersects vertex ============*/
+  const double vertex_distance = maths::calculateDistanceBetweenVectors(
+    a_rigid_object.vertices.at(a_closest_vertex), b_rigid_object.vertices.at(b_closest_vertex));
+  if (vertex_distance < small_dist_threshold)
+  {
+    collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
+    collision_report.a_collision_type = collision::vertex;
+    collision_report.a_collision_type_area_id = a_closest_vertex;
+    collision_report.b_collision_type = collision::vertex;
+    collision_report.b_collision_type_area_id = b_closest_vertex;
+    return collision_report;
+  }
+
+  /*============ check if edges intersect edges ============*/
+  const std::vector<uint32_t> a_closest_edges = a_rigid_object.vertex_edge_map.at(a_closest_vertex);
+  const std::vector<uint32_t> b_closest_edges = b_rigid_object.vertex_edge_map.at(b_closest_vertex);
+  for (size_t i = 0; i != a_closest_edges.size(); ++i)
+  {
+    for (size_t j = 0; j != b_closest_edges.size(); ++j)
+    {
+      std::pair<double, glm::dvec3> closest_points_distance_and_midpoint 
+        = maths::estimateDistanceAndMidPointOfClosestPointsOnLines(
+          a_rigid_object.vertices.at(a_rigid_object.edges.at(a_closest_edges[i]).first),
+          a_rigid_object.vertices.at(a_rigid_object.edges.at(a_closest_edges[i]).second),
+          b_rigid_object.vertices.at(b_rigid_object.edges.at(b_closest_edges[j]).first),
+          b_rigid_object.vertices.at(b_rigid_object.edges.at(b_closest_edges[j]).second));
+      
+      if (closest_points_distance_and_midpoint.first < small_dist_threshold * 10.0)
+      {
+        collision_report.point_of_contact = closest_points_distance_and_midpoint.second;
+        collision_report.a_collision_type = collision::edge;
+        collision_report.a_collision_type_area_id = a_closest_edges[i];
+        collision_report.b_collision_type = collision::edge;
+        collision_report.b_collision_type_area_id = b_closest_edges[j];
+        return collision_report;
+      }
+    }
+  }
+
+  /*============ check if closest vertices intersect a face ============*/
+  std::cout << "checking for vertex-face collision" << '\n';
+  const std::pair<bool, uint32_t> a_vertex_touches_b_face = maths::determineIfVertexTouchesObjectFaces(
+    a_rigid_object.vertices.at(a_closest_vertex),
+    b_closest_vertex,
+    b_rigid_object.vertices,
+    b_rigid_object.face_vertex_map,
+    b_rigid_object.vertex_face_corner_map,
+    small_dist_threshold);
+  if (a_vertex_touches_b_face.first)
+  {
+    std::cout << "a vertex touches b face" << '\n';
+    collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
+    collision_report.a_collision_type = collision::vertex;
+    collision_report.a_collision_type_area_id = a_closest_vertex;
+    collision_report.b_collision_type = collision::face;
+    collision_report.b_collision_type_area_id = a_vertex_touches_b_face.second;
+    return collision_report;
+  }
+  const std::pair<bool, uint32_t> b_vertex_touches_a_face = maths::determineIfVertexTouchesObjectFaces(
+    b_rigid_object.vertices.at(b_closest_vertex),
+    a_closest_vertex,
+    a_rigid_object.vertices,
+    a_rigid_object.face_vertex_map,
+    a_rigid_object.vertex_face_corner_map,
+    small_dist_threshold);
+  if (b_vertex_touches_a_face.first)
+  {
+    std::cout << "b vertex touches a face" << '\n';
+    collision_report.point_of_contact = b_rigid_object.vertices.at(b_closest_vertex);
+    collision_report.a_collision_type = collision::face;
+    collision_report.a_collision_type_area_id = a_vertex_touches_b_face.second;
+    collision_report.b_collision_type = collision::vertex;
+    collision_report.b_collision_type_area_id = b_closest_vertex;
+    return collision_report;
+  }
+
+
+  /*============ check if closest vertex intersects an edge ============*/
+  /* check if b vertex intersects a edge */
+  const std::pair<bool, uint32_t> b_vertex_touches = maths::determineIfVertexTouchesObjectEdgesAndWhich(
+    b_rigid_object.vertices.at(b_closest_vertex), a_rigid_object.vertices,
+    a_rigid_object.edges, small_dist_threshold);
+  if (b_vertex_touches.first)
+  {
+    collision_report.point_of_contact = b_rigid_object.vertices.at(b_closest_vertex);
+    collision_report.a_collision_type = collision::edge;
+    collision_report.a_collision_type_area_id = b_vertex_touches.second;
+    collision_report.b_collision_type = collision::vertex;
+    collision_report.b_collision_type_area_id = b_closest_vertex;
+    return collision_report;
+  }
+  /* check if a vertex intersects b edge */
+  const std::pair<bool, uint32_t> a_vertex_touches = maths::determineIfVertexTouchesObjectEdgesAndWhich(
+    a_rigid_object.vertices.at(a_closest_vertex), b_rigid_object.vertices,
+    b_rigid_object.edges, small_dist_threshold);
+  if (a_vertex_touches.first)
+  {
+    collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
+    collision_report.a_collision_type = collision::edge;
+    collision_report.a_collision_type_area_id = a_closest_vertex;
+    collision_report.b_collision_type = collision::vertex;
+    collision_report.b_collision_type_area_id = a_vertex_touches.second;
+    return collision_report;
+  }
+  
+  collision_report.collision_occuring = false;
+  return collision_report;
 }
 
 

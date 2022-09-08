@@ -42,6 +42,7 @@ struct RigidObject {
   VertexVertexMap vertex_vertex_map;
   EdgeMap edges;
   FaceVertexMap face_vertex_map;
+  FaceEdgeMap vertex_edge_map;
   FaceEdgeMap face_edge_map;
   uint32_t base_face_id;
   int face_count;

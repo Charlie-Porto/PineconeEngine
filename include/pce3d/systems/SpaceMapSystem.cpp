@@ -154,8 +154,6 @@ public:
         map_dimensions_,
         meter_index_ratio_ 
       );
-      // std::cout << "entity: " << entity << '\n';
-      // std::cout << "vertex indices updated" << '\n';
 
       std::unordered_map<uint32_t, std::vector<glm::ivec3>>  edge_indices = pce3d::space_map::updateBodEdgeMap(
         entity,
@@ -164,7 +162,6 @@ public:
         map_dimensions_,
         meter_index_ratio_ 
       );
-      // std::cout << "edge indices updated" << '\n';
       
       pce3d::space_map::updateLiveBodIndicesAndCheckForLiveBodCollision(
         entity,
