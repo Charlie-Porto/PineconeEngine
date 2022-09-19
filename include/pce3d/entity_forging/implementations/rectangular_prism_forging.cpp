@@ -53,7 +53,7 @@ Entity forgeRectPrismEntity(
   }
   
   /* create the new entity */
-  Entity new_entity = pce3d::forge::forgeBaseEntity(center);
+  Entity new_entity = pce3d::forge::forgeBaseEntity(center, color);
   control.AddComponent(new_entity, pce::RigidObject{
     .radius = 0,
     .mass = w * h * l,

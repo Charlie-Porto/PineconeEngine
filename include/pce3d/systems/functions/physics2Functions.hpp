@@ -87,6 +87,21 @@ void updateParticleInfoAfterComplexDeadbodCollsion(
 );
 
 
+void updateBothEntityInfoAfterComplexbodComplexbodCollision(
+    const collision::CollisionReport& collision_report
+  , const pce::RigidObject& a_rigid_object
+  , pce::Motion& a_motion
+  , const pce::Position& a_position
+  , const pce::RigidObject& b_rigid_object
+  , pce::Motion& b_motion
+  , const pce::Position& b_position
+  , const double total_elasticity
+  , const bool b_is_deadbod = false
+  , const bool a_is_deadbod = false
+);
+
+
+
 }
 }
 

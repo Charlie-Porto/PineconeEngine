@@ -6,6 +6,7 @@
 updated physics system
 -----------------------------------------------------------------*/
 
+#include <cmath>
 #include <algorithm>
 #include <unordered_map>
 #include <iostream>
@@ -46,10 +47,10 @@ public:
       auto const& a_position = control.GetComponent<pce::Position>(entity_a);
       auto const& b_position = control.GetComponent<pce::Position>(entity_b);
       
-      const std::string a_type = a_rigid_object.radius == 0 ? "complex" : "particle";
-      const std::string b_type = b_rigid_object.radius == 0 ? "complex" : "particle";
-      std::cout << "atype: " << a_type << '\n';
-      std::cout << "btype: " << b_type << '\n';
+      // const std::string a_type = a_rigid_object.radius == 0 ? "complex" : "particle";
+      // const std::string b_type = b_rigid_object.radius == 0 ? "complex" : "particle";
+      // std::cout << "atype: " << a_type << '\n';
+      // std::cout << "btype: " << b_type << '\n';
 
       
       /* do calc for particle-particle tip */
@@ -129,7 +130,7 @@ public:
         );
         if (collision_report.collision_occuring)
         {
-          std::cout << "adding complex-complex collision to map" << '\n';
+          // std::cout << "adding complex-complex collision to map" << '\n';
           collision_report_map_[id] = collision_report;
         }
       }
@@ -176,6 +177,18 @@ public:
   {
     for (auto const& [id, collision_report] : collision_report_map_)
     {
+      if (entity_collision_map_.find(collision_report.entity_a) != entity_collision_map_.end())
+      {
+        if (entity_collision_map_.at(collision_report.entity_a).find(collision_report.entity_b) 
+         != entity_collision_map_.at(collision_report.entity_a).end())
+        {
+          continue;
+        }
+      }
+      entity_collision_map_[collision_report.entity_a] = {{collision_report.entity_b, id}};
+      entity_collision_map_[collision_report.entity_b] = {{collision_report.entity_a, id}};
+
+
       const uint32_t entity_a = collision_report.entity_a;
       const uint32_t entity_b = collision_report.entity_b;
 
@@ -202,6 +215,20 @@ public:
           b_motion, 
           b_rigid_object.mass,
           a_surface.collision_elasticity_index * b_surface.collision_elasticity_index);
+      }
+      else if (a_rigid_object.radius == 0 && b_rigid_object.radius == 0)
+      {
+        physics2::updateBothEntityInfoAfterComplexbodComplexbodCollision(
+          collision_report,
+          a_rigid_object,
+          a_motion,
+          a_position,
+          b_rigid_object,
+          b_motion,
+          b_position,
+          a_surface.collision_elasticity_index * b_surface.collision_elasticity_index,
+          b_rigid_object.is_deadbod,
+          a_rigid_object.is_deadbod);
       }
       else if (a_rigid_object.radius != 0 || b_rigid_object.radius != 0)
       {
@@ -240,7 +267,6 @@ public:
           particle_surface.collision_elasticity_index * complexbod_surface.collision_elasticity_index,
           complexbod_rigid_object.is_deadbod);
       }
-
     }
   }
 
@@ -254,6 +280,7 @@ public:
     previous_time_ = pce::CoreManager::time_;
 
     collision_report_map_.clear();
+    entity_collision_map_.clear();
     
     if (!potential_collision_entity_map.empty())
     {
@@ -282,6 +309,7 @@ public:
       glm::dvec3 position_change = new_position - position.actual_center_of_mass;
 
       motion.direction = glm::normalize(position_change);
+      if (isnan(motion.direction.x)) { motion.direction = glm::dvec3(0, 0, 0); }
       motion.speed = sqrt(glm::dot(position_change, position_change)) / time_change_;
       position.actual_center_of_mass = new_position;
 
@@ -316,6 +344,7 @@ public:
 
 private:
   std::unordered_map<uint32_t, collision::CollisionReport> collision_report_map_;
+  std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>> entity_collision_map_;
 
   double previous_time_;
   double time_change_;

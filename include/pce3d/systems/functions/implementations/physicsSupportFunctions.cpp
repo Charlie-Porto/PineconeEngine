@@ -11,6 +11,14 @@ void ensureParticleVelocityNotIntoObjectFace(
   , glm::dvec3& particle_velocity
 )
 {
+  std::cout << "face_normal_vector: "
+            << face_normal_vector.x << ", "
+            << face_normal_vector.y << ", "
+            << face_normal_vector.z << '\n';
+  std::cout << "particle_velocity: "
+            << particle_velocity.x << ", "
+            << particle_velocity.y << ", "
+            << particle_velocity.z << '\n';
   const double angle = maths::calculateAngleDegreesBetweenVectors(face_normal_vector, particle_velocity);
   std::cout << "new particle angle with face normal vector: " << angle << '\n';
   if (abs(180.0 - angle) < .001)

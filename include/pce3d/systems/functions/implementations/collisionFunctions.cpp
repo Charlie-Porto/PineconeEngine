@@ -28,29 +28,29 @@ bool determineIfMovementVectorsIndicateCollision(
 
   const double directions_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(
     a_movement_vector, b_movement_vector));
-  std::cout << "original directions angle: " << directions_angle << '\n';
+  // std::cout << "original directions angle: " << directions_angle << '\n';
 
   if (directions_angle > 90.0)
   {
-    std::cout << "Directions angle: " << directions_angle << '\n';
-    std::cout << "DIRECTIONS ANGLE IS > 90" << '\n';
+    // std::cout << "Directions angle: " << directions_angle << '\n';
+    // std::cout << "DIRECTIONS ANGLE IS > 90" << '\n';
 
-    // const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
+    const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
 
-    // const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
-    // const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
+    const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
+    const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
     // std::cout << "distance a: " << distance_a << '\n';
     // std::cout << "distance b: " << distance_b << '\n';
 
-    // if (distance_a - distance_b > -.006)
-    // {
-      // return true;
-    // }
-    // else 
-    // {
-      // return false;
-    // }
-    return true;
+    if (distance_a - distance_b > -.006)
+    {
+      return true;
+    }
+    else 
+    {
+      return false;
+    }
+    // return true;
   }
   else
   {
@@ -65,14 +65,14 @@ bool determineIfMovementVectorsIndicateCollision(
       larger = a_movement_vector;
       lcenter = a_center;
       scenter = b_center;
-      std::cout << "smaller is b_movement_vector" << '\n';
+      // std::cout << "smaller is b_movement_vector" << '\n';
     }
 
     const double distance_a = pce3d::maths::calcMagV3(lcenter - scenter);
     const glm::dvec3 point_b = lcenter + glm::normalize(larger) * 0.001;
     const double distance_b = pce3d::maths::calcMagV3(point_b - scenter);
-    std::cout << "distance a: " << distance_a << '\n';
-    std::cout << "distance b: " << distance_b << '\n';
+    // std::cout << "distance a: " << distance_a << '\n';
+    // std::cout << "distance b: " << distance_b << '\n';
 
     // if (distance_a - distance_b > -.006)
     if (distance_a - distance_b > -.0001)
@@ -181,9 +181,10 @@ std::pair<bool, glm::dvec3> determineIfParticlesAreCollidingAndWhere(
   glm::dvec3 a_direction = a_motion.direction * a_motion.speed;
   glm::dvec3 b_direction = b_motion.direction * b_motion.speed;
   
-  if (determineIfMovementVectorsIndicateCollision(
-    a_direction, b_direction, a_rigid_object, b_rigid_object, 
-    a_rigid_object.vertices.at(1), b_rigid_object.vertices.at(1)))
+  // if (determineIfMovementVectorsIndicateCollision(
+    // a_direction, b_direction, a_rigid_object, b_rigid_object, 
+    // a_rigid_object.vertices.at(1), b_rigid_object.vertices.at(1)))
+  if (a_motion.speed > 0 || b_motion.speed > 0)
   {
     return std::make_pair(true, a_rigid_object.vertices.at(1) 
                        + (glm::normalize(b_rigid_object.vertices.at(1) - a_rigid_object.vertices.at(1))
@@ -345,20 +346,32 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
     }
   }
 
-  std::cout << "confirmed objects are touching" << '\n';
+  // std::cout << "confirmed objects are touching" << '\n';
 
-  /* 5. evaluate direction vectors if objects are, in fact, touching */
+  // /* 5. evaluate direction vectors if objects are, in fact, touching */
   const glm::dvec3 a_direction = a_motion.direction * a_motion.speed;
   glm::dvec3 b_direction = pce3d::physics2::calculateRotationalVelocityOfPointOnObject(
     potential_point_of_contact, 
     b_position.actual_center_of_mass,
     b_motion.rotational_speed,
     b_motion.rotational_axis);
+  if (isnan(b_direction.x))
+  {
+    b_direction = glm::dvec3(0, 0, 0);
+  }
 
   std::cout << "b_motion.speed: "  << b_motion.speed << '\n';
   std::cout << "b_motion.rotational_speed: "  << b_motion.rotational_speed << '\n';
   // b_direction = glm::normalize(b_direction + b_motion.direction);
-  b_direction = b_direction + b_motion.direction;
+  // b_direction = b_direction + b_motion.direction;
+  std::cout << "a_motion.direction: "
+            << a_motion.direction.x << ", "
+            << a_motion.direction.y << ", "
+            << a_motion.direction.z << '\n';
+  std::cout << "b_motion.direction: "
+            << b_motion.direction.x << ", "
+            << b_motion.direction.y << ", "
+            << b_motion.direction.z << '\n';
   std::cout << "a_direction: "
             << a_direction.x << ", "
             << a_direction.y << ", "
@@ -367,19 +380,19 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
             << b_direction.x << ", "
             << b_direction.y << ", "
             << b_direction.z << '\n';
-  // if (determineIfMovementVectorsIndicateCollision(
-    // a_direction, b_direction, a_rigid_object, b_rigid_object, 
-    // a_rigid_object.vertices.at(1), b_position.actual_center_of_mass))
-  // {
+  if (determineIfMovementVectorsIndicateCollision(
+    a_direction, b_direction, a_rigid_object, b_rigid_object, 
+    a_rigid_object.vertices.at(1), b_position.actual_center_of_mass))
+  {
     collision_report.point_of_contact = potential_point_of_contact;
     return collision_report;
-  // }
-  // else 
-  // {
-    // collision_report.collision_occuring = false;
-    // collision_report.point_of_contact = potential_point_of_contact;
-    // return collision_report;
-  // }
+  }
+  else 
+  {
+    collision_report.collision_occuring = false;
+    collision_report.point_of_contact = potential_point_of_contact;
+    return collision_report;
+  }
 }
  
 
@@ -396,13 +409,13 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
   , const pce::Position& b_position
 )
 {
-  std::cout << "checking for complexbod-complexbod collision" << '\n';
+  // std::cout << "checking for complexbod-complexbod collision" << '\n';
   auto collision_report = CollisionReport{
     .collision_occuring = true,
     .entity_a = entity_a,
     .entity_b = entity_b
   };
-  const double small_dist_threshold = 0.01;
+  const double small_dist_threshold = 0.05;
 
   /* get closest vertices to collision index point */
   const glm::dvec3 collision_index_point = space_map::findPointOfIndex(
@@ -452,7 +465,7 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
   }
 
   /*============ check if closest vertices intersect a face ============*/
-  std::cout << "checking for vertex-face collision" << '\n';
+  // std::cout << "checking for vertex-face collision" << '\n';
   const std::pair<bool, uint32_t> a_vertex_touches_b_face = maths::determineIfVertexTouchesObjectFaces(
     a_rigid_object.vertices.at(a_closest_vertex),
     b_closest_vertex,
@@ -462,7 +475,7 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     small_dist_threshold);
   if (a_vertex_touches_b_face.first)
   {
-    std::cout << "a vertex touches b face" << '\n';
+    // std::cout << "a vertex touches b face" << '\n';
     collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
     collision_report.a_collision_type = collision::vertex;
     collision_report.a_collision_type_area_id = a_closest_vertex;
@@ -479,7 +492,7 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     small_dist_threshold);
   if (b_vertex_touches_a_face.first)
   {
-    std::cout << "b vertex touches a face" << '\n';
+    // std::cout << "b vertex touches a face" << '\n';
     collision_report.point_of_contact = b_rigid_object.vertices.at(b_closest_vertex);
     collision_report.a_collision_type = collision::face;
     collision_report.a_collision_type_area_id = a_vertex_touches_b_face.second;

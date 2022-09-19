@@ -9,8 +9,11 @@ functions for rigid objects that assist the Physics System
 #include <glm/vec3.hpp>
 #include "../../maths/functions/vector_functions.hpp"
 
+
 namespace pce3d {
 namespace physics {
+
+extern const double PI;
 
 double calculateLeverageAtPointInDirection(
     const pce::Position& position
@@ -27,6 +30,8 @@ void distributeAccelerationAtPointBetweenLinearAndRotational(
   , const double leverage
   , const glm::dvec3& new_point_velocity
   , const glm::dvec3& normal_vect
+  , const double allocated_momentum
+  , const double mass_at_point
 );
 
 }
