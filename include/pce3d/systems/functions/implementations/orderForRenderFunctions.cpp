@@ -24,7 +24,7 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   if (a_rigid_object.radius > 0 && b_rigid_object.radius > 0)
   {
     return a_entity_tag.closest_vertex_distance <= b_entity_tag.closest_vertex_distance
-      ? b_entity_tag.entity : a_entity_tag.entity;
+      ? a_entity_tag.entity : b_entity_tag.entity;
   }
 
   /* NOTE: this swap capability is critical */
@@ -37,21 +37,22 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     // < abs(a_entity_tag.closest_vertex_distance - a_entity_tag.farthest_vertex_distance))
 
   if (big_tag.closest_vertex_distance < small_tag.closest_vertex_distance)
+  // if (small_tag.farthest_vertex_distance > )
   {
     swap = true;
-    // std::cout << "1swap" << '\n';
+    std::cout << "1swap" << '\n';
   }
-  if (big_tag.farthest_vertex_distance < small_tag.farthest_vertex_distance)
-  {
-    swap = true;
+  // if (big_tag.farthest_vertex_distance < small_tag.farthest_vertex_distance)
+  // {
+    // swap = true;
     // std::cout << "2swap" << '\n';
-  }
-  if (pce3d::maths::calculateDistanceBetweenVectors(a_rigid_object.vertices.at(a_radar.closest_vertex_id), a_rigid_object.vertices.at(a_radar.farthest_vertex_id))
-   >  pce3d::maths::calculateDistanceBetweenVectors(b_rigid_object.vertices.at(b_radar.closest_vertex_id), b_rigid_object.vertices.at(b_radar.farthest_vertex_id)))
-  {
-    swap = true;
+  // }
+  // if (pce3d::maths::calculateDistanceBetweenVectors(a_rigid_object.vertices.at(a_radar.closest_vertex_id), a_rigid_object.vertices.at(a_radar.farthest_vertex_id))
+  //  >  pce3d::maths::calculateDistanceBetweenVectors(b_rigid_object.vertices.at(b_radar.closest_vertex_id), b_rigid_object.vertices.at(b_radar.farthest_vertex_id)))
+  // {
+    // swap = true;
     // std::cout << "3swap" << '\n';
-  }
+  // }
 
   if (swap) 
   {
@@ -72,7 +73,7 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
   for (auto const& [face, corner] : big_rigid_object.vertex_face_corner_map.at(big_radar.closest_vertex_id)) 
   {
     const double distance = pce3d::maths::calculateDistanceBetweenVectors(
-      big_rigid_object.camera_rotated_face_corner_map.at(corner), small_tag.closest_vertex_location);
+      big_rigid_object.face_corner_map.at(corner), small_tag.closest_vertex_location);
 
     if (distance < big_closest_face_corner_distance) 
     {
@@ -81,38 +82,77 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
     }
   }
 
+
   const glm::dvec3 big_entity_face_plane_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[0]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[1]),
     big_rigid_object.camera_transformed_vertices.at(big_rigid_object.face_vertex_map.at(big_closest_face)[2]),
     // small_tag.closest_vertex_location
     sm_rigid_object.camera_transformed_vertices.at(sm_radar.farthest_vertex_id)
+    // sm_rigid_object.camera_transformed_vertices.at(sm_radar.closest_vertex_id)
   );
+
+
+  // uint32_t sm_closest_face = 1;
+  // double sm_closest_face_corner_distance = 10000;
+  // for (auto const& [face, corner] : sm_rigid_object.vertex_face_corner_map.at(sm_radar.closest_vertex_id)) 
+  // {
+  //   const double distance = pce3d::maths::calculateDistanceBetweenVectors(
+  //     sm_rigid_object.camera_rotated_face_corner_map.at(corner), big_tag.closest_vertex_location);
+
+  //   if (distance < sm_closest_face_corner_distance) 
+  //   {
+  //     sm_closest_face_corner_distance = distance;
+  //     sm_closest_face = face;
+  //   }
+  // }
+
+
+  // const glm::dvec3 sm_entity_face_plane_point = pce3d::maths::calculateClosestPointInPlaneToPoint(
+  //   sm_rigid_object.camera_transformed_vertices.at(sm_rigid_object.face_vertex_map.at(sm_closest_face)[0]),
+  //   sm_rigid_object.camera_transformed_vertices.at(sm_rigid_object.face_vertex_map.at(sm_closest_face)[1]),
+  //   sm_rigid_object.camera_transformed_vertices.at(sm_rigid_object.face_vertex_map.at(sm_closest_face)[2]),
+  //   // big_rigid_object.camera_transformed_vertices.at(big_radar.farthest_vertex_id)
+  //   big_rigid_object.camera_transformed_vertices.at(big_radar.closest_vertex_id)
+  // );
+
   
-  const double face_point_magnitude = sqrt(glm::dot(big_entity_face_plane_point, big_entity_face_plane_point));
+  const double big_face_point_magnitude = sqrt(glm::dot(big_entity_face_plane_point, big_entity_face_plane_point));
+  // const double sm_face_point_magnitude = sqrt(glm::dot(sm_entity_face_plane_point, sm_entity_face_plane_point));
+  // std::cout << "difference: " << sm_face_point_magnitude - big_face_point_magnitude << '\n';
   // dev_render_system.AddPointToPointColorMap(a_rigid_object.camera_transformed_vertices.at(a_radar.farthest_vertex_id), {129, 160, 200, 255}, 7.0);
   // dev_render_system.AddPointToPointColorMap(b_rigid_object.camera_transformed_vertices.at(b_radar.farthest_vertex_id), {129, 160, 200, 255}, 7.0);
 
-  dev_render_system.AddPointToPointColorMap(big_tag.closest_vertex_location, {200, 100, 200, 255}, 7.0);
-  dev_render_system.AddPointToPointColorMap(small_tag.closest_vertex_location, {20, 100, 200, 255}, 7.0);
-  dev_render_system.AddPointToPointColorMap(big_entity_face_plane_point, {200, 50, 100, 255}, 7.0);
+  dev_render_system.AddPointToPointColorMap(big_tag.closest_vertex_location, {200, 100, 200, 255}, 17.0);
+  dev_render_system.AddPointToPointColorMap(small_tag.closest_vertex_location, {20, 100, 200, 255}, 17.0);
+  dev_render_system.AddPointToPointColorMap(big_entity_face_plane_point, {200, 50, 100, 255}, 17.0);
+  // dev_render_system.AddPointToPointColorMap(sm_entity_face_plane_point, {20, 250, 100, 255}, 7.0);
   // dev_render_system.AddPointToPointColorMap(small_tag.closest_vertex_location, {100, 200, 10, 255}, 4.0);
   // dev_render_system.AddPointToPointColorMap(
     // big_rigid_object.camera_rotated_face_corner_map.at(
       // big_rigid_object.face_vertex_corner_map.at(
         // big_closest_face).at(big_radar.closest_vertex_id)), {0, 255, 29, 255}, 7.0);
 
-  const double tolerance = .001;
-  if (face_point_magnitude - small_tag.closest_vertex_distance > tolerance)
-  {
-    return face_point_magnitude < small_tag.farthest_vertex_distance
-      ? big_entity : small_entity;
-  }
-  else
-  {
-    return big_tag.closest_vertex_distance <= small_tag.closest_vertex_distance
-      ? big_entity : small_entity;
-  }
+  // const double tolerance = .001;
+  // if (big_face_point_magnitude - small_tag.closest_vertex_distance > tolerance)
+  // {
+    // return face_point_magnitude < small_tag.closest_vertex_distance
+      // ? big_entity : small_entity;
+  // }
+  // else
+  // {
+    // return big_tag.closest_vertex_distance <= small_tag.closest_vertex_distance
+      // ? big_entity : small_entity;
+  // }
+
+  
+
+  // return sm_face_point_magnitude < big_face_point_magnitude ? 
+    // big_entity : small_entity;
+  return big_face_point_magnitude > small_tag.closest_vertex_distance
+    ? small_entity : big_entity;
+  
+    
 }
 
 uint32_t getCloserOfTwoEntitiesToOrigin(const orderTag& a_entity_tag, const orderTag& b_entity_tag)
@@ -131,7 +171,7 @@ uint32_t getCloserOfTwoEntitiesToOrigin(const orderTag& a_entity_tag, const orde
    && b_entity_tag.closest_vertex_distance == b_entity_tag.farthest_vertex_distance)
   {
     return a_entity_tag.closest_vertex_distance <= b_entity_tag.closest_vertex_distance
-      ? b_entity_tag.entity : a_entity_tag.entity;
+      ? a_entity_tag.entity : b_entity_tag.entity;
   }
   else
   {

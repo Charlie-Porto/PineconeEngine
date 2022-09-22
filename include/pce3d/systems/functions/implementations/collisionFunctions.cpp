@@ -15,74 +15,141 @@ bool determineIfMovementVectorsIndicateCollision(
   , const glm::dvec3& b_center
 )
 {
-  if (a_movement_vector == glm::dvec3(0, 0, 0))
+
+  /* ====================== attempt 3 =====================*/
+  std::cout << "checking movement vectors for indication of collision" << '\n';
+  if (a_movement_vector == glm::dvec3(0, 0, 0)
+   || isnan(a_movement_vector.x) || isnan(a_movement_vector.y) || isnan(a_movement_vector.z))
   {
-    // a_movement_vector = b_rigid_object.vertices.at(1) - a_rigid_object.vertices.at(1);
+    std::cout << "updating a movement vector" << '\n';
     a_movement_vector = b_center - a_center;
   }
-  else if (b_movement_vector == glm::dvec3(0, 0, 0))
+  else if (b_movement_vector == glm::dvec3(0, 0, 0)
+   || isnan(b_movement_vector.x) || isnan(b_movement_vector.y) || isnan(b_movement_vector.z))
   {
-    // b_movement_vector = a_rigid_object.vertices.at(1) - b_rigid_object.vertices.at(1);
+    std::cout << "updating b movement vector" << '\n';
     b_movement_vector = a_center - b_center;
   }
+  // std::cout << "a_movement_vector: "
+            // << a_movement_vector.x << ", " 
+            // << a_movement_vector.y << ", " 
+            // << a_movement_vector.z << '\n';
+  // std::cout << "b_movement_vector: "
+            // << b_movement_vector.x << ", " 
+            // << b_movement_vector.y << ", " 
+            // << b_movement_vector.z << '\n';
 
-  const double directions_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(
-    a_movement_vector, b_movement_vector));
-  // std::cout << "original directions angle: " << directions_angle << '\n';
+  const double a_movement_magnitude = maths::calcMagV3(a_movement_vector);
+  const double b_movement_magnitude = maths::calcMagV3(b_movement_vector);
+  std::cout << "a_movement_magnitude: " << a_movement_magnitude << '\n';
+  std::cout << "b_movement_magnitude: " << b_movement_magnitude << '\n';
 
-  if (directions_angle > 90.0)
+  const double distance = abs(maths::calcMagV3(a_center - b_center));
+  // const double distance_a = 
+
+  glm::dvec3 big_movement_vector = a_movement_vector;
+  glm::dvec3 big_center = a_center;
+  glm::dvec3 sm_center = b_center;
+  if (b_movement_magnitude > a_movement_magnitude)
   {
-    // std::cout << "Directions angle: " << directions_angle << '\n';
-    // std::cout << "DIRECTIONS ANGLE IS > 90" << '\n';
-
-    const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
-
-    const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
-    const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
-    // std::cout << "distance a: " << distance_a << '\n';
-    // std::cout << "distance b: " << distance_b << '\n';
-
-    if (distance_a - distance_b > -.006)
-    {
-      return true;
-    }
-    else 
-    {
-      return false;
-    }
-    // return true;
+    // std::cout << "swapping items" << '\n';
+    big_movement_vector = b_movement_vector;
+    big_center = b_center;
+    sm_center = a_center;
   }
-  else
-  {
-    /* if NOT POINTING TOWARD EACH OTHER, check if longer vector is behind shorter; if so, collision. */
-    glm::dvec3 smaller = a_movement_vector;
-    glm::dvec3 larger = b_movement_vector;
-    glm::dvec3 scenter = a_center;
-    glm::dvec3 lcenter = b_center;
-    if (pce3d::maths::calcMagV3(a_movement_vector) > pce3d::maths::calcMagV3(b_movement_vector))
-    {
-      smaller = b_movement_vector;
-      larger = a_movement_vector;
-      lcenter = a_center;
-      scenter = b_center;
-      // std::cout << "smaller is b_movement_vector" << '\n';
-    }
+  big_movement_vector = glm::normalize(big_movement_vector);
+  const glm::dvec3 crawl_point = big_center + big_movement_vector * distance;
+  // std::cout << "big_center: "
+  //           << big_center.x << ", " 
+  //           << big_center.y << ", " 
+  //           << big_center.z << '\n';
+  // std::cout << "big_movement_vector: "
+  //           << big_movement_vector.x << ", " 
+  //           << big_movement_vector.y << ", " 
+  //           << big_movement_vector.z << '\n';
+  // std::cout << "crawl_point: "
+  //           << crawl_point.x << ", " 
+  //           << crawl_point.y << ", " 
+  //           << crawl_point.z << '\n';
+            
+  const double crawl_point_distance = maths::calcMagV3(crawl_point - sm_center);
+  std::cout << "point distance: " << distance << '\n';
+  std::cout << "crawl point distance: " << crawl_point_distance << '\n';
+  return crawl_point_distance < distance ? true : false;
+  /* ====================== end attempt 3 =====================*/
 
-    const double distance_a = pce3d::maths::calcMagV3(lcenter - scenter);
-    const glm::dvec3 point_b = lcenter + glm::normalize(larger) * 0.001;
-    const double distance_b = pce3d::maths::calcMagV3(point_b - scenter);
-    // std::cout << "distance a: " << distance_a << '\n';
-    // std::cout << "distance b: " << distance_b << '\n';
 
-    // if (distance_a - distance_b > -.006)
-    if (distance_a - distance_b > -.0001)
-    {
-      return true;
-    }
-    else 
-    {
-      return false;
-    }
+
+
+  // if (a_movement_vector == glm::dvec3(0, 0, 0))
+  // {
+  //   // a_movement_vector = b_rigid_object.vertices.at(1) - a_rigid_object.vertices.at(1);
+  //   a_movement_vector = b_center - a_center;
+  // }
+  // else if (b_movement_vector == glm::dvec3(0, 0, 0))
+  // {
+  //   // b_movement_vector = a_rigid_object.vertices.at(1) - b_rigid_object.vertices.at(1);
+  //   b_movement_vector = a_center - b_center;
+  // }
+
+  // const double directions_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(
+  //   a_movement_vector, b_movement_vector));
+  // // std::cout << "original directions angle: " << directions_angle << '\n';
+
+  // if (directions_angle > 90.0)
+  // {
+  //   // std::cout << "Directions angle: " << directions_angle << '\n';
+  //   // std::cout << "DIRECTIONS ANGLE IS > 90" << '\n';
+
+  //   const double distance_a = pce3d::maths::calcMagV3(a_center - b_center);
+
+  //   const glm::dvec3 point_b = (a_center + glm::normalize(a_movement_vector) * 0.01);
+  //   const double distance_b = pce3d::maths::calcMagV3(point_b - b_center);
+  //   // std::cout << "distance a: " << distance_a << '\n';
+  //   // std::cout << "distance b: " << distance_b << '\n';
+
+  //   if (distance_a - distance_b > -.006)
+  //   {
+  //     return true;
+  //   }
+  //   else 
+  //   {
+  //     return false;
+  //   }
+  //   // return true;
+  // }
+  // else
+  // {
+  //   /* if NOT POINTING TOWARD EACH OTHER, check if longer vector is behind shorter; if so, collision. */
+  //   glm::dvec3 smaller = a_movement_vector;
+  //   glm::dvec3 larger = b_movement_vector;
+  //   glm::dvec3 scenter = a_center;
+  //   glm::dvec3 lcenter = b_center;
+  //   if (pce3d::maths::calcMagV3(a_movement_vector) > pce3d::maths::calcMagV3(b_movement_vector))
+  //   {
+  //     smaller = b_movement_vector;
+  //     larger = a_movement_vector;
+  //     lcenter = a_center;
+  //     scenter = b_center;
+  //     // std::cout << "smaller is b_movement_vector" << '\n';
+  //   }
+
+  //   const double distance_a = pce3d::maths::calcMagV3(lcenter - scenter);
+  //   const glm::dvec3 point_b = lcenter + glm::normalize(larger) * 0.001;
+  //   const double distance_b = pce3d::maths::calcMagV3(point_b - scenter);
+  //   // std::cout << "distance a: " << distance_a << '\n';
+  //   // std::cout << "distance b: " << distance_b << '\n';
+
+  //   // if (distance_a - distance_b > -.006)
+  //   if (distance_a - distance_b > -.0001)
+  //   {
+  //     return true;
+  //   }
+  //   else 
+  //   {
+  //     return false;
+  //   }
+  /* ------------------ */
 
 
     // std::cout << "before: a_movement_vector: "
@@ -148,7 +215,9 @@ bool determineIfMovementVectorsIndicateCollision(
     //     return false;
     //   }
     // }
-  }
+  // }
+
+
   return false;
 }
 
@@ -411,11 +480,14 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
 {
   // std::cout << "checking for complexbod-complexbod collision" << '\n';
   auto collision_report = CollisionReport{
-    .collision_occuring = true,
+    .collision_occuring = false,
     .entity_a = entity_a,
     .entity_b = entity_b
   };
   const double small_dist_threshold = 0.05;
+
+  glm::dvec3 a_point = a_position.actual_center_of_mass;
+  glm::dvec3 b_point = b_position.actual_center_of_mass;
 
   /* get closest vertices to collision index point */
   const glm::dvec3 collision_index_point = space_map::findPointOfIndex(
@@ -430,12 +502,16 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     a_rigid_object.vertices.at(a_closest_vertex), b_rigid_object.vertices.at(b_closest_vertex));
   if (vertex_distance < small_dist_threshold)
   {
+    a_point = a_rigid_object.vertices.at(a_closest_vertex);
+    b_point = b_rigid_object.vertices.at(b_closest_vertex);
+
+    collision_report.collision_occuring = true;
     collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
     collision_report.a_collision_type = collision::vertex;
     collision_report.a_collision_type_area_id = a_closest_vertex;
     collision_report.b_collision_type = collision::vertex;
     collision_report.b_collision_type_area_id = b_closest_vertex;
-    return collision_report;
+    // return collision_report;
   }
 
   /*============ check if edges intersect edges ============*/
@@ -452,14 +528,26 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
           b_rigid_object.vertices.at(b_rigid_object.edges.at(b_closest_edges[j]).first),
           b_rigid_object.vertices.at(b_rigid_object.edges.at(b_closest_edges[j]).second));
       
-      if (closest_points_distance_and_midpoint.first < small_dist_threshold * 10.0)
+      // std::cout << "edge distance: " << closest_points_distance_and_midpoint.first << '\n';
+      
+      if (closest_points_distance_and_midpoint.first < small_dist_threshold * 20.0)
       {
+        a_point = maths::findClosestPointOnVec3LineToVec3(
+          a_rigid_object.vertices.at(a_rigid_object.edges.at(a_closest_edges[i]).first),
+          a_rigid_object.vertices.at(a_rigid_object.edges.at(a_closest_edges[i]).second),
+          collision_report.point_of_contact);
+        b_point = maths::findClosestPointOnVec3LineToVec3(
+          b_rigid_object.vertices.at(b_rigid_object.edges.at(b_closest_edges[i]).first),
+          b_rigid_object.vertices.at(b_rigid_object.edges.at(b_closest_edges[i]).second),
+          collision_report.point_of_contact);
+
+        collision_report.collision_occuring = true;
         collision_report.point_of_contact = closest_points_distance_and_midpoint.second;
         collision_report.a_collision_type = collision::edge;
         collision_report.a_collision_type_area_id = a_closest_edges[i];
         collision_report.b_collision_type = collision::edge;
         collision_report.b_collision_type_area_id = b_closest_edges[j];
-        return collision_report;
+        // return collision_report;
       }
     }
   }
@@ -475,13 +563,21 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     small_dist_threshold);
   if (a_vertex_touches_b_face.first)
   {
+    a_point = a_rigid_object.vertices.at(a_closest_vertex);
+    b_point = maths::calculateClosestPointInPlaneToPoint(
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(a_vertex_touches_b_face.second)[0]),
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(a_vertex_touches_b_face.second)[1]),
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(a_vertex_touches_b_face.second)[2]),
+      a_point);
+
     // std::cout << "a vertex touches b face" << '\n';
+    collision_report.collision_occuring = true;
     collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
     collision_report.a_collision_type = collision::vertex;
     collision_report.a_collision_type_area_id = a_closest_vertex;
     collision_report.b_collision_type = collision::face;
     collision_report.b_collision_type_area_id = a_vertex_touches_b_face.second;
-    return collision_report;
+    // return collision_report;
   }
   const std::pair<bool, uint32_t> b_vertex_touches_a_face = maths::determineIfVertexTouchesObjectFaces(
     b_rigid_object.vertices.at(b_closest_vertex),
@@ -492,13 +588,20 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     small_dist_threshold);
   if (b_vertex_touches_a_face.first)
   {
+    b_point = b_rigid_object.vertices.at(b_closest_vertex);
+    a_point = maths::calculateClosestPointInPlaneToPoint(
+      a_rigid_object.vertices.at(a_rigid_object.face_vertex_map.at(b_vertex_touches_a_face.second)[0]),
+      a_rigid_object.vertices.at(a_rigid_object.face_vertex_map.at(b_vertex_touches_a_face.second)[1]),
+      a_rigid_object.vertices.at(a_rigid_object.face_vertex_map.at(b_vertex_touches_a_face.second)[2]),
+      b_point);
     // std::cout << "b vertex touches a face" << '\n';
+    collision_report.collision_occuring = true;
     collision_report.point_of_contact = b_rigid_object.vertices.at(b_closest_vertex);
     collision_report.a_collision_type = collision::face;
     collision_report.a_collision_type_area_id = a_vertex_touches_b_face.second;
     collision_report.b_collision_type = collision::vertex;
     collision_report.b_collision_type_area_id = b_closest_vertex;
-    return collision_report;
+    // return collision_report;
   }
 
 
@@ -509,12 +612,20 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     a_rigid_object.edges, small_dist_threshold);
   if (b_vertex_touches.first)
   {
+    
+    b_point = b_rigid_object.vertices.at(b_closest_vertex);
+    a_point = maths::findClosestPointOnVec3LineToVec3(
+      a_rigid_object.vertices.at(a_rigid_object.edges.at(b_vertex_touches.second).first),
+      a_rigid_object.vertices.at(a_rigid_object.edges.at(b_vertex_touches.second).second),
+      b_point);
+
+    collision_report.collision_occuring = true;
     collision_report.point_of_contact = b_rigid_object.vertices.at(b_closest_vertex);
     collision_report.a_collision_type = collision::edge;
     collision_report.a_collision_type_area_id = b_vertex_touches.second;
     collision_report.b_collision_type = collision::vertex;
     collision_report.b_collision_type_area_id = b_closest_vertex;
-    return collision_report;
+    // return collision_report;
   }
   /* check if a vertex intersects b edge */
   const std::pair<bool, uint32_t> a_vertex_touches = maths::determineIfVertexTouchesObjectEdgesAndWhich(
@@ -522,15 +633,63 @@ CollisionReport determineIfComplexBodsAreCollidingAndWhere(
     b_rigid_object.edges, small_dist_threshold);
   if (a_vertex_touches.first)
   {
+    a_point = a_rigid_object.vertices.at(a_closest_vertex);
+    b_point = maths::findClosestPointOnVec3LineToVec3(
+      b_rigid_object.vertices.at(b_rigid_object.edges.at(a_vertex_touches.second).first),
+      b_rigid_object.vertices.at(b_rigid_object.edges.at(a_vertex_touches.second).second),
+      a_point);
+
+    collision_report.collision_occuring = true;
     collision_report.point_of_contact = a_rigid_object.vertices.at(a_closest_vertex);
     collision_report.a_collision_type = collision::edge;
     collision_report.a_collision_type_area_id = a_closest_vertex;
     collision_report.b_collision_type = collision::vertex;
     collision_report.b_collision_type_area_id = a_vertex_touches.second;
+    // return collision_report;
+  }
+
+  if (collision_report.collision_occuring == false)
+  {
     return collision_report;
   }
+
+  /*============================= now check direction vectors =======================*/
+  // collision_report.collision_occuring = false;
+
+  // /* get linear movement */
+  const glm::dvec3 a_linear_movement = a_motion.direction * a_motion.speed;
+  const glm::dvec3 b_linear_movement = b_motion.direction * b_motion.speed;
+
+  /* get rotational motions of collision point with respect to each object's rotation */
+  const glm::dvec3 a_circle_center_point = maths::findClosestPointOnVec3LineToVec3(
+    a_position.actual_center_of_mass, 
+    a_position.actual_center_of_mass + a_motion.rotational_axis,
+    collision_report.point_of_contact);
+  const double a_circle_radius = maths::calcMagV3(a_circle_center_point - collision_report.point_of_contact);
+  const glm::dvec3 a_circle_center_to_point = collision_report.point_of_contact - a_circle_center_point;
+  const glm::dvec3 a_rotational_movement = glm::cross(a_circle_center_to_point, a_motion.rotational_axis);
+
+  const glm::dvec3 b_circle_center_point = maths::findClosestPointOnVec3LineToVec3(
+    b_position.actual_center_of_mass, 
+    b_position.actual_center_of_mass + b_motion.rotational_axis,
+    collision_report.point_of_contact);
+  const double b_circle_radius = maths::calcMagV3(b_circle_center_point - collision_report.point_of_contact);
+  const glm::dvec3 b_circle_center_to_point = collision_report.point_of_contact - b_circle_center_point;
+  const glm::dvec3 b_rotational_movement = glm::cross(b_circle_center_to_point, b_motion.rotational_axis);
   
-  collision_report.collision_occuring = false;
+  const glm::dvec3 a_point_movement = a_linear_movement + a_rotational_movement;
+  const glm::dvec3 b_point_movement = b_linear_movement + b_rotational_movement;
+
+  const bool are_colliding = determineIfMovementVectorsIndicateCollision(
+    a_point_movement, b_point_movement,
+    a_rigid_object, b_rigid_object,
+    a_point, b_point);
+  
+  if (are_colliding)
+  {
+    collision_report.collision_occuring = true;
+  }
+  // collision_report.collision_occuring = true;
   return collision_report;
 }
 

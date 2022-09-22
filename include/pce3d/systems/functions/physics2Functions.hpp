@@ -12,6 +12,7 @@ new physics functions
 
 #include "rigidObjectFunctions.hpp"
 #include "physicsSupportFunctions.hpp"
+#include "collisionFunctions.hpp"
 #include "../objects/CollisionReport.hpp"
 
 #include "../../maths/functions/quaternion_functions.hpp"

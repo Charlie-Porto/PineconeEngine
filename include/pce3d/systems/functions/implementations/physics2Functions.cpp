@@ -554,6 +554,8 @@ void updateBothEntityInfoAfterComplexbodComplexbodCollision(
 
   const double a_allocated_conserved_momentum = std::min(magnitude_starting_momentum * a_allocation, a_momentum_scalar);
   const double b_allocated_conserved_momentum = std::min(magnitude_starting_momentum * b_allocation, b_momentum_scalar);
+  std::cout << "a_allocated_conserved_momentum: " << a_allocated_conserved_momentum << '\n';
+  std::cout << "b_allocated_conserved_momentum: " << b_allocated_conserved_momentum << '\n';
 
   b_motion.duration = 0.01;
   physics::distributeAccelerationAtPointBetweenLinearAndRotational(

@@ -69,19 +69,19 @@ void distributeAccelerationAtPointBetweenLinearAndRotational(
     (normal_vect)) * new_rotational_velocity_scalar;
 
   const glm::dvec3 new_axis_a = glm::normalize(magnified_rot_axis + magnified_new_axis);
-  const glm::dvec3 new_axis_b = glm::normalize(magnified_rot_axis - magnified_new_axis);
+  // const glm::dvec3 new_axis_b = glm::normalize(magnified_rot_axis - magnified_new_axis);
 
-  const glm::dvec3 estimated_next_point = point + glm::normalize(new_point_velocity);
-  const glm::dvec3 normalized_point = point - position.actual_center_of_mass;
-  const glm::dvec3 theoretical_rotated_point_a = pce::rotateVector3byAngleAxis(
-    normalized_point, 20.0, new_axis_a);
-  const glm::dvec3 theoretical_rotated_point_b = pce::rotateVector3byAngleAxis(
-    normalized_point, 20.0, new_axis_b);
+  // const glm::dvec3 estimated_next_point = point + glm::normalize(new_point_velocity);
+  // const glm::dvec3 normalized_point = point - position.actual_center_of_mass;
+  // const glm::dvec3 theoretical_rotated_point_a = pce::rotateVector3byAngleAxis(
+    // normalized_point, 20.0, new_axis_a);
+  // const glm::dvec3 theoretical_rotated_point_b = pce::rotateVector3byAngleAxis(
+    // normalized_point, 20.0, new_axis_b);
   
-  const double distance_a = pce3d::maths::calculateDistanceBetweenVectors(
-    estimated_next_point, theoretical_rotated_point_a);
-  const double distance_b = pce3d::maths::calculateDistanceBetweenVectors(
-    estimated_next_point, theoretical_rotated_point_b);
+  // const double distance_a = pce3d::maths::calculateDistanceBetweenVectors(
+    // estimated_next_point, theoretical_rotated_point_a);
+  // const double distance_b = pce3d::maths::calculateDistanceBetweenVectors(
+    // estimated_next_point, theoretical_rotated_point_b);
 
   glm::dvec3 new_axis = new_axis_a; 
   // if (distance_b < distance_a)
@@ -113,9 +113,18 @@ void distributeAccelerationAtPointBetweenLinearAndRotational(
   const double remaining = std::max(0.0, abs(allocated_momentum - momentum_scalar_at_point));
   std::cout << "remaining: " << remaining << '\n';
   
-  const glm::dvec3 new_motion = glm::normalize(new_point_velocity) * sqrt((remaining / (rigid_object.mass / leverage)));
+  const glm::dvec3 new_motion = glm::normalize(new_point_velocity) * (remaining / (rigid_object.mass * leverage));
+  std::cout << "mass at point: " << rigid_object.mass * leverage << '\n';
   const double new_motion_mag = maths::calcMagV3(new_motion);
   std::cout << "new linear velocity scalar: " << new_motion_mag << '\n';
+  std::cout << "previous linear velocity: "
+            << motion.direction.x * motion.speed << ", "
+            << motion.direction.y * motion.speed << ", "
+            << motion.direction.z * motion.speed << '\n';
+  std::cout << "new_linear_velocity: "
+            << new_motion.x << ", "
+            << new_motion.y << ", "
+            << new_motion.z << '\n';
 
   if (!isnan(new_motion_mag))
   {
