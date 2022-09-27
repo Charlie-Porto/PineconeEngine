@@ -337,7 +337,7 @@ void updateParticleInfoAfterComplexDeadbodCollsion(
     -a_motion.direction, 180.0, complexbod_point_normal_vect));
   
   const glm::dvec3 new_velocity = new_direction * new_speed;
-  const glm::dvec3 prev_velocity = a_motion.direction * a_motion.speed;
+  // const glm::dvec3 prev_velocity = a_motion.direction * a_motion.speed;
   a_motion.previous_resting_position = a_rigid_object.vertices.at(1);
   a_motion.duration = 0.01;
   
@@ -490,8 +490,8 @@ void updateBothEntityInfoAfterComplexbodComplexbodCollision(
   /* calculate directness angles and directness */
   const double a_directness_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(a_force_direction_on_b, a_momentum));
   const double b_directness_angle = abs(pce3d::maths::calculateAngleDegreesBetweenVectors(-a_force_direction_on_b, b_momentum));
-  const double a_directness = (90.0 - a_directness_angle) / 90.0;
-  const double b_directness = (90.0 - b_directness_angle) / 90.0;
+  // const double a_directness = (90.0 - a_directness_angle) / 90.0;
+  // const double b_directness = (90.0 - b_directness_angle) / 90.0;
 
   /* calculate momentums angle and adjusted elasticity */
   const double momentums_angle = pce3d::maths::calculateAngleDegreesBetweenVectors(
@@ -526,7 +526,7 @@ void updateBothEntityInfoAfterComplexbodComplexbodCollision(
 
   const double a_momentum_scalar = maths::calcMagV3(new_a_momentum);
   const double b_momentum_scalar = maths::calcMagV3(new_b_momentum);
-  const double total_momentum_scalar = a_momentum_scalar + b_momentum_scalar;
+  const double total_momentum_scalar = (a_momentum_scalar + b_momentum_scalar);
   
   const double a_allocation = a_momentum_scalar / total_momentum_scalar;
   const double b_allocation = b_momentum_scalar / total_momentum_scalar;
@@ -554,6 +554,7 @@ void updateBothEntityInfoAfterComplexbodComplexbodCollision(
 
   const double a_allocated_conserved_momentum = std::min(magnitude_starting_momentum * a_allocation, a_momentum_scalar);
   const double b_allocated_conserved_momentum = std::min(magnitude_starting_momentum * b_allocation, b_momentum_scalar);
+
   std::cout << "a_allocated_conserved_momentum: " << a_allocated_conserved_momentum << '\n';
   std::cout << "b_allocated_conserved_momentum: " << b_allocated_conserved_momentum << '\n';
 

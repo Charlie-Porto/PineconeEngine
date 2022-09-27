@@ -37,14 +37,6 @@ void distributeAccelerationAtPointBetweenLinearAndRotational(
   , const double mass_at_point
 )
 {
-  // const double new_linear_momentum_scalar = maths::calcMagV3(new_point_velocity * leverage) * mass_at_point;
-  // const double alt_linear_momentum_scalar = allocated_momentum * leverage;
-  // // const double new_linear_momentum_scalar = std::min(new_velocity_scalar, allocated_momentum
-  // std::cout << "new_linear_momentum_scalar: " <<new_linear_momentum_scalar << '\n';
-  // std::cout << "alt_linear_momentum_scalar: " <<alt_linear_momentum_scalar << '\n';
-  // const glm::dvec3 new_linear_velocity = abs(new_linear_momentum_scalar) < abs(alt_linear_momentum_scalar) 
-  //   ?  new_point_velocity * leverage : glm::normalize(new_point_velocity) * alt_linear_momentum_scalar / mass_at_point;
-  // // const glm::dvec3 new_linear_velocity = new_point_velocity * leverage glm::normalize(new_point_velocity) * ;
   std::cout << "allocated momentum: " << allocated_momentum << '\n';
   // const double momentum_remaining = abs(allocated_momentum) - maths::calcMagV3(new_linear_velocity * mass_at_point);
   double new_rotational_velocity_scalar = pce3d::maths::calcMagV3(new_point_velocity) * ((1.0 - leverage));
@@ -83,7 +75,7 @@ void distributeAccelerationAtPointBetweenLinearAndRotational(
   // const double distance_b = pce3d::maths::calculateDistanceBetweenVectors(
     // estimated_next_point, theoretical_rotated_point_b);
 
-  glm::dvec3 new_axis = new_axis_a; 
+  glm::dvec3 new_axis = -new_axis_a; 
   // if (distance_b < distance_a)
   // {
     // new_axis = new_axis_b;
@@ -109,11 +101,13 @@ void distributeAccelerationAtPointBetweenLinearAndRotational(
   // motion.rotational_speed = new_rotational_velocity;
   motion.rotational_speed = theta_speed;
   std::cout << "new_rotational_velocity: " << theta_speed << '\n';
+  std::cout << "momentum_scalar_at_point: " << momentum_scalar_at_point << '\n';
 
-  const double remaining = std::max(0.0, abs(allocated_momentum - momentum_scalar_at_point));
+  const double remaining = std::max(0.0, allocated_momentum - momentum_scalar_at_point);
   std::cout << "remaining: " << remaining << '\n';
   
-  const glm::dvec3 new_motion = glm::normalize(new_point_velocity) * (remaining / (rigid_object.mass * leverage));
+  std::cout << "mass: " << rigid_object.mass <<'\n';
+  const glm::dvec3 new_motion = glm::normalize(new_point_velocity) * (remaining / (rigid_object.mass));
   std::cout << "mass at point: " << rigid_object.mass * leverage << '\n';
   const double new_motion_mag = maths::calcMagV3(new_motion);
   std::cout << "new linear velocity scalar: " << new_motion_mag << '\n';

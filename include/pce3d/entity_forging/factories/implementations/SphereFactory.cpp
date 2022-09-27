@@ -12,7 +12,7 @@ SphereFactory::SphereFactory(
   , glm::dvec3 factory_location
   , std::vector<int> color
   , glm::dvec3 velocity
-  , double velocity_component_variance
+  // , double velocity_component_variance
   , double gravitational_force
   , double bounciness
 )
@@ -20,7 +20,7 @@ SphereFactory::SphereFactory(
     , factory_location_{factory_location}
     , color_{color}
     , velocity_{velocity}
-    , velocity_component_variance_{velocity_component_variance}
+    // , velocity_component_variance_{velocity_component_variance}
     , gravitational_force_{gravitational_force}
     , bounciness_{bounciness}
 {
@@ -39,7 +39,7 @@ void SphereFactory::CreateSphereParticle() {
   // const double vx = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.x, velocity_component_variance_);
   // const double vy = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.y, velocity_component_variance_);
   // const double vz = pce3d::random::getRandomDoubleByTargetWithVariance(velocity_.z, velocity_component_variance_);
-  const double v_magnitude = pce3d::random::getRandomDoubleBetweenDoubles(20.0, 40.0);
+  // const double v_magnitude = pce3d::random::getRandomDoubleBetweenDoubles(20.0, 40.0);
   std::cout << "velocity_x: " << velocity_.x << '\n';
   // std::cout << "velocity_component_variance: " << velocity_component_variance_ << '\n';
   // const glm::dvec3 e_velocity = glm::dvec3(vx, vz, vy);

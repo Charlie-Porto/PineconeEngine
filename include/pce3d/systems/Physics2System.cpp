@@ -200,8 +200,8 @@ public:
       auto& b_motion = control.GetComponent<pce::Motion>(entity_b);
       auto& a_surface = control.GetComponent<pce::Surface>(entity_a);
       auto& b_surface = control.GetComponent<pce::Surface>(entity_b);
-      auto const& a_mass_dist = control.GetComponent<pce::MassDistribution>(entity_a);
-      auto const& b_mass_dist = control.GetComponent<pce::MassDistribution>(entity_b);
+      // auto const& a_mass_dist = control.GetComponent<pce::MassDistribution>(entity_a);
+      // auto const& b_mass_dist = control.GetComponent<pce::MassDistribution>(entity_b);
 
       if (a_rigid_object.radius != 0 && b_rigid_object.radius != 0)
       {
@@ -232,12 +232,12 @@ public:
       }
       else if (a_rigid_object.radius != 0 || b_rigid_object.radius != 0)
       {
-        auto& particle_entity = entity_a;
+        // auto& particle_entity = entity_a;
         auto& particle_rigid_object = a_rigid_object;
-        auto& particle_position = a_position;
+        // auto& particle_position = a_position;
         auto& particle_motion = a_motion;
         auto& particle_surface = a_surface;
-        auto& complex_entity = entity_b;
+        // auto& complex_entity = entity_b;
         auto& complexbod_rigid_object = b_rigid_object;
         auto& complexbod_position = b_position;
         auto& complexbod_motion = b_motion;
@@ -245,16 +245,16 @@ public:
         
         if (b_rigid_object.radius != 0)
         {
-          auto& particle_entity = entity_b;
-          auto& particle_rigid_object = b_rigid_object;
-          auto& particle_position = b_position;
-          auto& particle_motion = b_motion;
-          auto& particle_surface = b_surface;
-          auto& complex_entity = entity_a;
-          auto& complexbod_rigid_object = a_rigid_object;
-          auto& complexbod_position = a_position;
-          auto& complexbod_motion = a_motion;
-          auto& complexbod_surface = a_surface;
+          // & particle_entity = entity_b;
+          // & particle_rigid_object = b_rigid_object;
+          // & particle_position = b_position;
+          // & particle_motion = b_motion;
+          // & particle_surface = b_surface;
+          // & complex_entity = entity_a;
+          // & complexbod_rigid_object = a_rigid_object;
+          // & complexbod_position = a_position;
+          // & complexbod_motion = a_motion;
+          // & complexbod_surface = a_surface;
         }
         
         physics2::updateBothEntityInfoAfterParticleComplexbodCollision(

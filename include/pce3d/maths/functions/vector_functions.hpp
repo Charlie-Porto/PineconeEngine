@@ -11,6 +11,7 @@ functions for vectors
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
+#include "pce_psuedo_randomness.hpp"
 
 namespace pce3d {
 namespace maths {
