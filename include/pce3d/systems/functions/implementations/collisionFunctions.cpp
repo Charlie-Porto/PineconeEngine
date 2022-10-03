@@ -30,51 +30,54 @@ bool determineIfMovementVectorsIndicateCollision(
     // std::cout << "updating b movement vector" << '\n';
     b_movement_vector = a_center - b_center;
   }
-  // std::cout << "a_movement_vector: "
-            // << a_movement_vector.x << ", " 
-            // << a_movement_vector.y << ", " 
-            // << a_movement_vector.z << '\n';
-  // std::cout << "b_movement_vector: "
-            // << b_movement_vector.x << ", " 
-            // << b_movement_vector.y << ", " 
-            // << b_movement_vector.z << '\n';
+  std::cout << "a_movement_vector: "
+            << a_movement_vector.x << ", " 
+            << a_movement_vector.y << ", " 
+            << a_movement_vector.z << '\n';
+  std::cout << "b_movement_vector: "
+            << b_movement_vector.x << ", " 
+            << b_movement_vector.y << ", " 
+            << b_movement_vector.z << '\n';
 
   const double a_movement_magnitude = maths::calcMagV3(a_movement_vector);
   const double b_movement_magnitude = maths::calcMagV3(b_movement_vector);
-  // std::cout << "a_movement_magnitude: " << a_movement_magnitude << '\n';
-  // std::cout << "b_movement_magnitude: " << b_movement_magnitude << '\n';
+  std::cout << "a_movement_magnitude: " << a_movement_magnitude << '\n';
+  std::cout << "b_movement_magnitude: " << b_movement_magnitude << '\n';
 
   const double distance = abs(maths::calcMagV3(a_center - b_center));
-  // const double distance_a = 
 
   glm::dvec3 big_movement_vector = a_movement_vector;
   glm::dvec3 big_center = a_center;
   glm::dvec3 sm_center = b_center;
   if (b_movement_magnitude > a_movement_magnitude)
   {
-    // std::cout << "swapping items" << '\n';
+    std::cout << "swapping items" << '\n';
     big_movement_vector = b_movement_vector;
     big_center = b_center;
     sm_center = a_center;
   }
   big_movement_vector = glm::normalize(big_movement_vector);
-  const glm::dvec3 crawl_point = big_center + big_movement_vector * distance;
-  // std::cout << "big_center: "
-  //           << big_center.x << ", " 
-  //           << big_center.y << ", " 
-  //           << big_center.z << '\n';
-  // std::cout << "big_movement_vector: "
-  //           << big_movement_vector.x << ", " 
-  //           << big_movement_vector.y << ", " 
-  //           << big_movement_vector.z << '\n';
-  // std::cout << "crawl_point: "
-  //           << crawl_point.x << ", " 
-  //           << crawl_point.y << ", " 
-  //           << crawl_point.z << '\n';
+  const glm::dvec3 crawl_point = big_center + (big_movement_vector * distance);
+  std::cout << "big_center: "
+            << big_center.x << ", " 
+            << big_center.y << ", " 
+            << big_center.z << '\n';
+  std::cout << "sm_center: "
+            << sm_center.x << ", " 
+            << sm_center.y << ", " 
+            << sm_center.z << '\n';
+  std::cout << "big_movement_vector: "
+            << big_movement_vector.x << ", " 
+            << big_movement_vector.y << ", " 
+            << big_movement_vector.z << '\n';
+  std::cout << "crawl_point: "
+            << crawl_point.x << ", " 
+            << crawl_point.y << ", " 
+            << crawl_point.z << '\n';
             
   const double crawl_point_distance = maths::calcMagV3(crawl_point - sm_center);
-  // std::cout << "point distance: " << distance << '\n';
-  // std::cout << "crawl point distance: " << crawl_point_distance << '\n';
+  std::cout << "point distance: " << distance << '\n';
+  std::cout << "crawl point distance: " << crawl_point_distance << '\n';
   return crawl_point_distance < distance ? true : false;
   /* ====================== end attempt 3 =====================*/
 
@@ -291,6 +294,7 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
     }
   }
 
+  glm::dvec3 b_point_of_contact = glm::dvec3(b_rigid_object.vertices.at(closest_vertex_id));
   glm::dvec3 potential_point_of_contact = glm::dvec3(b_rigid_object.vertices.at(closest_vertex_id));
   collision_report.point_of_contact = potential_point_of_contact;
   collision_report.collision_occuring = true;
@@ -325,6 +329,12 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
       }
     }
 
+    b_point_of_contact = maths::calculateClosestPointInPlaneToPoint(
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[0]),
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[1]),
+      b_rigid_object.vertices.at(b_rigid_object.face_vertex_map.at(closest_face_id)[2]),
+      a_rigid_object.vertices.at(1));
+     
     /* 3. check edges of closest face to determine if intersection is an edge intersection*/
     assert (b_rigid_object.face_edge_map.find(closest_face_id) != b_rigid_object.face_edge_map.end());
     bool is_located_at_edge = false;
@@ -423,7 +433,8 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
     potential_point_of_contact, 
     b_position.actual_center_of_mass,
     b_motion.rotational_speed,
-    b_motion.rotational_axis);
+    b_motion.rotational_axis) + b_motion.direction * b_motion.speed;
+
   if (isnan(b_direction.x))
   {
     b_direction = glm::dvec3(0, 0, 0);
@@ -451,7 +462,7 @@ CollisionReport determineIfParticleIsCollidingWithComplexBodAndWhere(
             << b_direction.z << '\n';
   if (determineIfMovementVectorsIndicateCollision(
     a_direction, b_direction, a_rigid_object, b_rigid_object, 
-    a_rigid_object.vertices.at(1), b_position.actual_center_of_mass))
+    a_rigid_object.vertices.at(1), b_point_of_contact))
   {
     collision_report.point_of_contact = potential_point_of_contact;
     return collision_report;

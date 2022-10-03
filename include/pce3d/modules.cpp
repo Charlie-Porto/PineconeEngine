@@ -15,6 +15,7 @@ including not-yet-included implementation files
 #include "maths/functions/implementations/vertex_functions.cpp"
 #include "maths/functions/implementations/pce_psuedo_randomness.cpp"
 #include "maths/functions/implementations/rounding_functions.cpp"
+#include "maths/functions/implementations/complex_functions.cpp"
 #include "maths/functions/sign.hpp"
 
 /* utilities */

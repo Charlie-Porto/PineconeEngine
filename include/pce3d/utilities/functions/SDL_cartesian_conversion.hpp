@@ -16,6 +16,11 @@ glm::vec2 convertCartesianCoordinatesToSDL(glm::vec2 point);
 
 glm::vec2 convertSDLCoordinatesToCartesian(glm::vec2 point);
 
+// glm::ivec2 convertSDLIntCoordinatesToCartesianInt(glm::ivec2 point);
+
+glm::ivec2 convertIntCartesianCoordinatesToIntSDL(glm::ivec2 point);
+
+
 }
 }
 

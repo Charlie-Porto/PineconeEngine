@@ -20,6 +20,14 @@ glm::vec2 convertSDLCoordinatesToCartesian(glm::vec2 point) {
   return glm::vec2(cart_x, cart_y);
 }
 
+glm::ivec2 convertIntCartesianCoordinatesToIntSDL(glm::ivec2 point)
+{
+  const int cart_x = point.x + int(1000/2);
+  const int cart_y = -point.y + int(672/2);
+  return glm::ivec2(cart_x, cart_y);
+}
+
+
 }
 }
 

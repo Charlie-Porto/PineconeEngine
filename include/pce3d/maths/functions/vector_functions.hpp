@@ -22,6 +22,8 @@ template <typename T> double calculateAngleDegreesBetweenVectors(const T& A, con
 
 inline double calcMagV3(const glm::dvec3& A);
 
+inline double calcMagV2(const glm::dvec2& A);
+
 inline bool determineIfVec3MakesLineWithTwoVec3s(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C);
 
 inline glm::dvec3 findClosestPointOnVec3LineToVec3(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C);

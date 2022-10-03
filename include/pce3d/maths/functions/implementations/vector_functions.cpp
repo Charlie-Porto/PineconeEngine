@@ -28,6 +28,11 @@ inline double calcMagV3(const glm::dvec3& A)
   return sqrt(glm::dot(A, A));
 }
 
+inline double calcMagV2(const glm::dvec2& A)
+{
+  return sqrt(glm::dot(A, A));
+}
+
 
 
 inline bool determineIfVec3MakesLineWithTwoVec3s(const glm::dvec3& A, const glm::dvec3& B, const glm::dvec3& C)

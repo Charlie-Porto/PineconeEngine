@@ -9,7 +9,6 @@ namespace render_order {
 uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag, 
                                                    const orderTag& b_entity_tag)
 {
-  std::cout << "ordering overlapping entities" << '\n';
   uint32_t big_entity = b_entity_tag.entity;
   uint32_t small_entity = a_entity_tag.entity;
   orderTag small_tag = a_entity_tag;
@@ -54,7 +53,6 @@ uint32_t getCloserOfTwoOverlappingEntitiesToOrigin(const orderTag& a_entity_tag,
    >  pce3d::maths::calculateDistanceBetweenVectors(b_rigid_object.vertices.at(b_radar.closest_vertex_id), b_rigid_object.vertices.at(b_radar.farthest_vertex_id)))
   {
     swap = true;
-    std::cout << "3swap" << '\n';
   }
 
   if (swap) 
