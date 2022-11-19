@@ -154,6 +154,48 @@ void renderTransparentObject(const pce::RigidObject& rigid_object, const std::ve
 }
 
 
+
+void renderEllipse(
+    const glm::dvec2& a_focus
+  , const glm::dvec2& b_focus
+  , const double semi_major_axis
+  , const int num_sides
+  , const std::vector<int> color
+)
+{
+  const glm::dvec2 center = (a_focus + b_focus) / 2.0;
+  const std::vector<glm::ivec2> pixels = pce::raster::getEllipseRasterPoints(
+    center,
+    a_focus,
+    b_focus,
+    semi_major_axis,
+    num_sides);
+  
+  setRendererColor(color);
+  for (size_t i = 1; i < pixels.size(); ++i)
+  {
+    if (i == pixels.size()/2) { continue; }
+    pce::render::renderLineAsRendererIs(glm::dvec2(pixels[i-1].x, pixels[i-1].y),
+                                        glm::dvec2(pixels[i].x, pixels[i].y));
+  }
+  setRendererColor({0, 0, 0, 255});
+
+
+}
+ 
+
+
+void renderUnOrdinaryZoomedLine(const glm::dvec3& a, const glm::dvec3& b, std::vector<int> color)
+{
+  const glm::dvec2 sdl_pixel_a = pce::convert::convertCartesianCoordinatesToSDL(a * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  const glm::dvec2 sdl_pixel_b = pce::convert::convertCartesianCoordinatesToSDL(b * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
+  SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
+  SDL_RenderDrawLine(Simulation::renderer, sdl_pixel_a.x, sdl_pixel_a.y,
+                               sdl_pixel_b.x, sdl_pixel_b.y);
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255); 
+}
+
+
 } 
 }
 

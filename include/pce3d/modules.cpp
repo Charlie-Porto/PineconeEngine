@@ -22,6 +22,7 @@ including not-yet-included implementation files
 #include "utilities/functions/implementations/quickdraw.cpp"
 #include "utilities/functions/implementations/raster_functions.cpp"
 #include "utilities/functions/implementations/render_functions.cpp"
+#include "utilities/functions/implementations/polyhedron_render_functions.cpp"
 #include "utilities/functions/implementations/triangle_raster_functions.cpp"
 #include "utilities/functions/implementations/SDL_cartesian_conversion.cpp"
 #include "utilities/objects/implementations/virtual_keyboard.cpp"
@@ -54,6 +55,7 @@ including not-yet-included implementation files
 #include "entity_forging/functions/implementations/forge_functions.cpp"
 #include "entity_forging/factories/implementations/SphereFactory.cpp"
 #include "entity_forging/special_entities/implementations/transparent_sheetbox_forging.cpp"
+#include "entity_forging/special_entities/implementations/cylinder_forging.cpp"
 
 
 

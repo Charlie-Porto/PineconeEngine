@@ -47,7 +47,7 @@ public:
       }
 
       /* handle rendering of sphere entities */ 
-      if (rigid_object.radius != 0) {
+      if (rigid_object.radius != 0 && rigid_object.vertices.size() == 1) {
         if (rigid_object.vertex_distance_map.at(1) < 20.0) {
           const std::vector<int> ncolor 
             = {int(surface.color[0] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel 
@@ -63,6 +63,21 @@ public:
         }
 
         // std::cout << "rendering sphere" << '\n';
+      }
+
+      if (rigid_object.radius != 0 && rigid_object.vertices.size() > 1) {
+        std::cout << "rendering CYLINDER" << '\n';
+        for (auto const& [id, vpair] : rigid_object.edges)
+        {
+          const glm::dvec3 a = rigid_object.camera_transformed_vertices.at(vpair.first);
+          const glm::dvec3 b = rigid_object.camera_transformed_vertices.at(vpair.second);
+          std::cout << "a: " << a.x << ", " << a.y << ", " << a.z << '\n';
+          // std::cout << "a length: " << a.y - b.y << '\n';
+          std::cout << "b: " << b.x << ", " << b.y << ", " << b.z << '\n';
+          dev_render_system.AddPointToPointColorMap(a, {55, 250, 25, 255}, 4.0);
+          dev_render_system.AddPointToPointColorMap(b, {55, 25, 250, 255}, 4.0);
+          pce::render::renderUnOrdinaryZoomedLine(a, b, surface.color);
+        }
       }
 
       /* handle rendering of non-sphere entities */ 

@@ -93,23 +93,27 @@ std::vector<glm::ivec2> getEllipseRasterPoints(
 )
 {
   std::vector<glm::ivec2> pixels = {};
+  std::vector<glm::ivec2> pixels_other_side = {};
 
   glm::dvec2 ellipse_point = glm::normalize(b_focus - a_focus) * semi_major_axis;
   const double b_focus_distance = pce3d::maths::calcMagV2((b_focus - center) - ellipse_point);
-  std::cout << "b_focus_distance: " << b_focus_distance << '\n';
-  const double l = b_focus_distance + pce3d::maths::calcMagV2(b_focus - a_focus) + b_focus_distance;
+  // std::cout << "b_focus_distance: " << b_focus_distance << '\n';
+  // const double l = b_focus_distance + pce3d::maths::calcMagV2(b_focus - a_focus) + b_focus_distance;
   // std::cout << "l: "  << l << '\n';
 
   // rotate ellipse point  
-  const glm::dvec2 a_point = ellipse_point;
-  const glm::dvec2 b_point = glm::dvec2(l, 0.0);
-  const std::complex<double> rotator_complex_num = pce3d::maths::calculateRotationComplexNumGivenVec2s(
-    b_point, a_point);
+  // const glm::dvec2 a_point = ellipse_point;
+  // const glm::dvec2 b_point = glm::dvec2(calcMagV2(b_focus - center), 0.0);
+  // const std::complex<double> rotator_complex_num = pce3d::maths::calculateRotationComplexNumGivenVec2s(
+    // b_point, a_point);
   const glm::dvec2 unit_b_focus = glm::dvec2(1, 0);
+  const glm::dvec2 rotated_b_focus = unit_b_focus * pce3d::maths::calcMagV2(b_focus - center);
+  const std::complex<double> rotator_complex_num = pce3d::maths::calculateRotationComplexNumGivenVec2s(
+    rotated_b_focus, (b_focus - center));
   
-  std::cout << "rotator_complex_num" << rotator_complex_num << '\n';
+  // std::cout << "rotator_complex_num" << rotator_complex_num << '\n';
   
-  const double a = pce3d::maths::calculateDistanceBetweenVectors(center, ellipse_point);
+  const double a = pce3d::maths::calculateDistanceBetweenVectors(center, center + ellipse_point);
   const double c = pce3d::maths::calculateDistanceBetweenVectors(center, b_focus);
   const double b = sqrt(a*a - c*c);
   
@@ -117,18 +121,20 @@ std::vector<glm::ivec2> getEllipseRasterPoints(
   double current_angle = 0.0;
   
   // get points
-  for (double i = 0.0; int(i) != num_sides/2.0 + 1.0; ++i)
+  for (double i = 0.0; int(i) <= num_sides/2.0 + 1.0; ++i)
   {
     current_angle = incrememtal_angle * i;
     // const double aim_circle_point_x = (unit_b_focus.x - center.x) * cos(current_angle / 180.0 * PI) + center.x;
-    std::cout << "current angle: " << current_angle << '\n';
+    // std::cout << "current angle: " << current_angle << '\n';
     const double aim_circle_point_x = unit_b_focus.x * cos(current_angle / 180.0 * PI);
-    const double x = aim_circle_point_x * semi_major_axis;
+    double x = aim_circle_point_x * semi_major_axis;
     const double x_sq_over_a_sq = (x*x) / (a*a);
     const double eq_right_side = (1.0 - x_sq_over_a_sq) * (b*b);
-    const double y = sqrt(eq_right_side);
-    std::cout << "x: " << x << '\n';
-    std::cout << "y: " << y << '\n';
+    double y = sqrt(eq_right_side);
+    if (isnan(x)) { x = 0.0; }
+    if (isnan(y)) { y = 0.0; }
+    // std::cout << "x: " << x << '\n';
+    // std::cout << "y: " << y << '\n';
     // const double aim_circle_point_y = sqrt(1.0 - pow(aim_circle_point_x, 2.0)) + center.y;
     // const glm::dvec2 aim_circle_point = 50.0 * glm::dvec2(aim_circle_point_x, aim_circle_point_y);
     // glm::ivec2 aim_circle_point_int = pce::convert::convertIntCartesianCoordinatesToIntSDL(
@@ -149,19 +155,22 @@ std::vector<glm::ivec2> getEllipseRasterPoints(
                             * neg_dist
                             + center;
 
-    glm::ivec2 ellipse_pixel_pos = pce::convert::convertIntCartesianCoordinatesToIntSDL(
-      glm::ivec2(int(ellipse_pixel_pos_unrot.x), int(ellipse_pixel_pos_unrot.y)));
-    glm::ivec2 ellipse_pixel_neg = pce::convert::convertIntCartesianCoordinatesToIntSDL(
-      glm::ivec2(int(ellipse_pixel_neg_unrot.x), int(ellipse_pixel_neg_unrot.y)));
+    // glm::ivec2 ellipse_pixel_pos = pce::convert::convertIntCartesianCoordinatesToIntSDL(
+      // glm::ivec2(int(ellipse_pixel_pos_unrot.x), int(ellipse_pixel_pos_unrot.y)));
+    // glm::ivec2 ellipse_pixel_neg = pce::convert::convertIntCartesianCoordinatesToIntSDL(
+      // glm::ivec2(int(ellipse_pixel_neg_unrot.x), int(ellipse_pixel_neg_unrot.y)));
+    glm::ivec2 ellipse_pixel_pos = glm::ivec2(int(ellipse_pixel_pos_unrot.x), int(ellipse_pixel_pos_unrot.y));
+    glm::ivec2 ellipse_pixel_neg = glm::ivec2(int(ellipse_pixel_neg_unrot.x), int(ellipse_pixel_neg_unrot.y));
 
     // std::cout << "ellipse_pixel_pos: " << ellipse_pixel_pos.x << ", " << ellipse_pixel_pos.y << '\n';
     // std::cout << "ellipse_pixel_neg: " << ellipse_pixel_neg.x << ", " << ellipse_pixel_neg.y << '\n';
 
     pixels.push_back(ellipse_pixel_pos);
-    pixels.push_back(ellipse_pixel_neg);
+    pixels_other_side.push_back(ellipse_pixel_neg);
   }
-  
-  return pixels;
+  std::vector<glm::ivec2> rpixels = pixels; 
+  rpixels.insert(rpixels.end(), pixels_other_side.begin(), pixels_other_side.end());
+  return rpixels;
 }
 
 

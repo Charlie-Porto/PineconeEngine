@@ -59,17 +59,17 @@ public:
         
         ++i;
       }
-
       pce3d::render_order::OrderRenderListNode* head_node = new pce3d::render_order::OrderRenderListNode(head_node_tag);
 
       // for (size_t i = 1; i != order_of_ordering.size(); ++i)
-      while (i < order_of_ordering.size())
+      while (!order_of_ordering.empty() && i < order_of_ordering.size())
       {
+        std::cout << "i: " << i << '\n';
         const uint32_t entity = order_of_ordering[i].first;
         auto& render = control.GetComponent<pce::Render>(entity);
         if (!control.CheckIfEntityStillExists(entity))
         {
-          order_of_ordering.erase(order_of_ordering.begin() + i);
+          // order_of_ordering.erase(order_of_ordering.begin() + i);
           if (render.just_registered)
           {
             control.RemoveComponent<pce::OrderOfRenderRegistration>(entity); 
@@ -96,7 +96,8 @@ public:
 
         pce3d::render_order::OrderRenderListNode* node = new pce3d::render_order::OrderRenderListNode(order_tag_);
         
-        // std::cout << "inserting node into tree" << '\n';
+        std::cout << "inserting node into tree" << '\n';
+        // fix this function so it can handle cylinders
         head_node->InsertNodeInTree(node);
         ++i;
       }

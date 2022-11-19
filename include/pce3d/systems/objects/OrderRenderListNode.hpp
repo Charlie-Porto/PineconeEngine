@@ -14,7 +14,6 @@ class OrderRenderListNode
 {
 public:
   OrderRenderListNode(const orderTag& tag);
-  // OrderRenderListNode(const orderTag& tag) : close_child_(NULL), far_child_(NULL), order_tag_(tag);
   void InsertNodeInTree(OrderRenderListNode* node);
   std::vector<uint32_t> GetListAtNode();
 

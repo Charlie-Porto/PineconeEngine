@@ -49,6 +49,17 @@ void renderQuadrilateralDiagonals(std::vector<glm::dvec2> points, std::vector<in
 
 void renderTransparentObject(const pce::RigidObject& rigid_object, const std::vector<int>& color);
 
+void renderEllipse(
+    const glm::dvec2& a_focus
+  , const glm::dvec2& b_focus
+  , const double semi_major_axis
+  , const int num_sides
+  , const std::vector<int> color
+);
+
+void renderUnOrdinaryZoomedLine(const glm::dvec3& a, const glm::dvec3& b, std::vector<int> color);
+
+
 }
 }
 

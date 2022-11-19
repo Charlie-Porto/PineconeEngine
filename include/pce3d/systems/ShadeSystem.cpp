@@ -60,7 +60,7 @@ public:
       auto& face_shade = control.GetComponent<pce::FaceShade>(entity); 
       
       /* update non-spheres */
-      if (rigid_object.radius == 0) {
+      if (rigid_object.vertices.size() > 1 && rigid_object.radius == 0) {
         for (auto& [face, vertices] : rigid_object.face_vertex_map) {
 
           glm::dvec3 vertex_a = rigid_object.vertices.at(vertices[1]) - rigid_object.vertices.at(vertices[0]);
@@ -71,7 +71,8 @@ public:
       }
 
       /* update spheres */
-      else {
+      else if (rigid_object.vertices.size() == 1)
+      {
         /* if close to sphere, do shortcut alg to avoid exp complexity */
         if (rigid_object.vertex_distance_map.at(1) < 20.0) { 
           
