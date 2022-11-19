@@ -185,13 +185,13 @@ void renderEllipse(
  
 
 
-void renderUnOrdinaryZoomedLine(const glm::dvec3& a, const glm::dvec3& b, std::vector<int> color)
+void renderUnOrdinaryZoomedLine(const glm::dvec2& a, const glm::dvec2& b, std::vector<int> color)
 {
   const glm::dvec2 sdl_pixel_a = pce::convert::convertCartesianCoordinatesToSDL(a * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   const glm::dvec2 sdl_pixel_b = pce::convert::convertCartesianCoordinatesToSDL(b * pce3d::Core3D::ORDINARY_ZOOM_INDEX_);
   SDL_SetRenderDrawColor(Simulation::renderer, color[0], color[1], color[2], color[3]);
   SDL_RenderDrawLine(Simulation::renderer, sdl_pixel_a.x, sdl_pixel_a.y,
-                               sdl_pixel_b.x, sdl_pixel_b.y);
+                                           sdl_pixel_b.x, sdl_pixel_b.y);
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255); 
 }
 

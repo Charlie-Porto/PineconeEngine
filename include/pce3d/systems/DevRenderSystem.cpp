@@ -13,6 +13,7 @@ system to render specific points to assist the dev process
 #include "functions/spaceMapFunctions.hpp"
 #include "functions/radarFunctions.hpp"
 #include "../utilities/functions/quickdraw.hpp"
+#include "../utilities/functions/render_functions.hpp"
 
 namespace pce3d {
 class DevRenderSystem {

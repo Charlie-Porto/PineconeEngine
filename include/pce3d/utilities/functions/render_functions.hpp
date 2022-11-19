@@ -57,7 +57,7 @@ void renderEllipse(
   , const std::vector<int> color
 );
 
-void renderUnOrdinaryZoomedLine(const glm::dvec3& a, const glm::dvec3& b, std::vector<int> color);
+void renderUnOrdinaryZoomedLine(const glm::dvec2& a, const glm::dvec2& b, std::vector<int> color);
 
 
 }

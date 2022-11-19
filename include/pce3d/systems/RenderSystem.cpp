@@ -64,7 +64,8 @@ public:
 
         // std::cout << "rendering sphere" << '\n';
       }
-
+      
+      // Render Cylinder
       if (rigid_object.radius != 0 && rigid_object.vertices.size() > 1) {
         std::cout << "rendering CYLINDER" << '\n';
         for (auto const& [id, vpair] : rigid_object.edges)
@@ -76,7 +77,7 @@ public:
           std::cout << "b: " << b.x << ", " << b.y << ", " << b.z << '\n';
           dev_render_system.AddPointToPointColorMap(a, {55, 250, 25, 255}, 4.0);
           dev_render_system.AddPointToPointColorMap(b, {55, 25, 250, 255}, 4.0);
-          pce::render::renderUnOrdinaryZoomedLine(a, b, surface.color);
+          pce::render::renderUnOrdinaryZoomedLine(rigid_object.vertex_pixels.at(vpair.first), rigid_object.vertex_pixels.at(vpair.second), surface.color);
         }
       }
 
