@@ -40,6 +40,7 @@ including not-yet-included implementation files
 #include "systems/functions/implementations/massMapFunctions.cpp"
 #include "systems/functions/implementations/collisionFunctions.cpp"
 #include "systems/functions/implementations/rigidObjectFunctions.cpp"
+#include "systems/functions/implementations/objectRenderFunctions.cpp"
 #include "systems/objects/implementations/OrderRenderListNode.cpp"
 #include "systems/objects/implementations/FaceOrderRenderNode.cpp"
 #include "systems/objects/implementations/FaceOrderRenderHeadNode.cpp"

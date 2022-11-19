@@ -16,6 +16,8 @@ system that handles the rendering of on-screen entities
 #include "functions/renderFunctions.hpp"
 #include "objects/orderTag.hpp"
 
+#include "functions/objectRenderFunctions.hpp"
+
 extern ControlPanel control;
 extern pce3d::DevRenderSystem dev_render_system;
 
@@ -48,6 +50,7 @@ public:
 
       /* handle rendering of sphere entities */ 
       if (rigid_object.radius != 0 && rigid_object.vertices.size() == 1) {
+        // render::renderSphereObject(surface, shade, rigid_object, position);
         if (rigid_object.vertex_distance_map.at(1) < 20.0) {
           const std::vector<int> ncolor 
             = {int(surface.color[0] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel 
@@ -58,15 +61,14 @@ public:
                                                                * ORDINARY_ZOOM_INDEX_)),
                255};
           pce::quickdraw::drawFilledCircleClean(position.center_of_mass_radar_pixel, rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1), ncolor);
+          // pce::quickdraw::drawFilledCircle(position.center_of_mass_radar_pixel, rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1), ncolor);
         } else {
           pce::render::renderFilledCircleShaded(shade.pixel_shade_map, surface.color);
         }
-
-        // std::cout << "rendering sphere" << '\n';
       }
       
       // Render Cylinder
-      if (rigid_object.radius != 0 && rigid_object.vertices.size() > 1) {
+      else if (rigid_object.radius != 0 && rigid_object.vertices.size() > 1) {
         std::cout << "rendering CYLINDER" << '\n';
         for (auto const& [id, vpair] : rigid_object.edges)
         {

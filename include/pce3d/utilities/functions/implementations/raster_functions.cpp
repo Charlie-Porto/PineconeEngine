@@ -76,8 +76,13 @@ std::unordered_map<glm::dvec2, glm::dvec2> getCircleOutlinePixelPairs(int xc, in
       d = d + 4 * x + 6;
     }
     points_list[glm::dvec2(xc-x, yc+y)] = glm::dvec2(xc+x, yc+y);
-    
     points_list[glm::dvec2(xc-y, yc+x)] = glm::dvec2(xc+y, yc+x);
+    points_list[glm::dvec2(xc-x, yc-y)] = glm::dvec2(xc+x, yc-y);
+    points_list[glm::dvec2(xc-y, yc-x)] = glm::dvec2(xc+y, yc-x);
+  }
+  std::cout << "center point: " << xc << ", " << yc << '\n';
+  for (auto const& [pointa, pointb] : points_list) {
+    std::cout << "A: " << pointa.x << ", " << pointa.y << " B: " << pointb.x << ", " << pointb.y << '\n';
   }
   return points_list;
 }

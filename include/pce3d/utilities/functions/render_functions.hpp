@@ -25,8 +25,6 @@ namespace render {
 
 void renderPixelList(const std::vector<glm::dvec2>& pixels, const std::vector<int>& color);
 
-void renderPixelList(const std::vector<glm::ivec2>& pixels, const std::vector<int>& color);
-
 void renderPixel(const glm::dvec2& pixel, const std::vector<int>& color);
 
 void renderCircle(int xc, int yc, int r, const std::vector<int>& color);
