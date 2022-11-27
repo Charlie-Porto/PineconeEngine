@@ -12,9 +12,9 @@ Entity forgeSphereEntity(
     const double radius
     , const glm::dvec3 location
     , const std::vector<int> color
-    , const glm::dvec3& velocity
-    , const double gravitational_force
-    , const double collision_elasticity)
+    , const glm::dvec3& velocity = glm::dvec3(0.0, 0.0, 0.0)
+    , const double gravitational_force = 0.0
+    , const double collision_elasticity = 1.0)
 {
   Entity new_entity = pce3d::forge::forgeBaseEntity(location, color, collision_elasticity);
   control.AddComponent(new_entity, pce::RigidObject{

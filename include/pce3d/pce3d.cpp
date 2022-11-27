@@ -101,7 +101,7 @@ void Core3D::RegisterCoreSystems() {
 void Core3D::PrepareForAllSystemsGo() {
   shade_system_->DoPreLoopSetup();  
   space_map_system_->DoPreLoopSetup();  
-  mass_map_system_->DoPreLoopSetup();  
+  // mass_map_system_->DoPreLoopSetup();  
   std::cout << "pre-loop setup is complete" << '\n';
 }
 
@@ -126,7 +126,7 @@ void Core3D::UpdateCore3D() {
   // std::cout << "render order system updated" << '\n';
   render_system_->UpdateEntities(render_order_system_->order_list_);
   // std::cout << "render system updated" << '\n';
-  // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
+  space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // mass_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);
 }

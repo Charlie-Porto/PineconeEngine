@@ -29,18 +29,18 @@ glm::dvec2 convertPointOnViewSphereToPixel(const glm::dvec3& point, bool is_cent
       {
         return glm::dvec2(0, 0); 
       }
-      // to_interpolate = true;
+      to_interpolate = true;
     }
     if (abs(atan(point.y/point.z) / PI * 180.0) > 50.0) {
       if (is_center_of_gravity) 
       {
         return glm::dvec2(0, 0); 
       }
-      // to_interpolate = true;
+      to_interpolate = true;
     }
     if (to_interpolate)
     {
-      mpoint = interpolateViewSphereIntersectionPoint(point, -0.1, glm::dvec3(0, 10.0, 10.0));
+      mpoint = interpolateViewSphereIntersectionPoint(point, 1, glm::dvec3(0, 10.0, 10.0));
     }
   }
   const double y_pixel = Y_PIXEL_STRETCH * atan(mpoint.y / mpoint.z);
@@ -61,31 +61,43 @@ glm::dvec3 convertPixelToPointOnViewSphere(const glm::dvec2& pixel) {
 
 glm::dvec3 interpolateViewSphereIntersectionPoint(const glm::dvec3& point, const double z_target,
                                                   const glm::dvec3& connected_on_screen_point) {
-  // std::cout << "interpolating!!!!!!!!" << '\n';
-  if (point.z == connected_on_screen_point.z && point.y == connected_on_screen_point.y) {
-    return (glm::normalize(glm::dvec3(point.x, connected_on_screen_point.y, z_target)));
-  }
-  if (point.z == connected_on_screen_point.z && point.x == connected_on_screen_point.x) {
-    return (glm::normalize(glm::dvec3(connected_on_screen_point.x, point.y, z_target)));
-  }
-  // const glm::dvec3 direction = glm::normalize(connected_on_screen_point - point);
+  std::cout << "interpolating!!!!!!!!" << '\n';
+  // const glm::dvec3 direction = glm::normalize(point - connected_on_screen_point);
+  // const glm::dvec3 point_on_line = connected_on_screen_point + direction;
+  // return -point_on_line;
+
+  // if (point.z == connected_on_screen_point.z && point.y == connected_on_screen_point.y) {
+  //   return (glm::normalize(glm::dvec3(point.x, connected_on_screen_point.y, z_target)));
+  // }
+  // if (point.z == connected_on_screen_point.z && point.x == connected_on_screen_point.x) {
+  //   return (glm::normalize(glm::dvec3(connected_on_screen_point.x, point.y, z_target)));
+  // }
+
   const glm::dvec3 direction = glm::normalize(point - connected_on_screen_point);
-  // std::cout << "point: "<<point.x << ", "<< point.y << ", "<< point.z << '\n';
-  // std::cout << "screenpoint: "
-            // << connected_on_screen_point.x << ", "
-            // << connected_on_screen_point.y << ", "
-            // << connected_on_screen_point.z << '\n';
+  std::cout << "direction: "
+            << direction.x << ", "
+            << direction.y << ", "
+            << direction.z << '\n';
+  std::cout << "point: "<<point.x << ", "<< point.y << ", "<< point.z << '\n';
+  std::cout << "screenpoint: "
+            << connected_on_screen_point.x << ", "
+            << connected_on_screen_point.y << ", "
+            << connected_on_screen_point.z << '\n';
+
   double t = (z_target - connected_on_screen_point.z) / direction.z;
-  // glm::dvec3 psuedo_intersection_point = glm::dvec3(-(point.x + t * direction.x), -(point.y + t * direction.y), z_target);
-  // glm::dvec3 psuedo_intersection_point = glm::dvec3((point.x + t * direction.x), -(point.y + t * direction.y), z_target);
-  glm::dvec3 psuedo_intersection_point = glm::dvec3((point.x + t * direction.x), abs(point.y + t * direction.y) * pce::math::sign(point.y), z_target);
+  // glm::dvec3 psuedo_intersection_point = glm::dvec3(abs(point.x + t * direction.x) * pce::math::sign(point.x), abs(point.y + t * direction.y) * pce::math::sign(point.y), z_target);
+  glm::dvec3 psuedo_intersection_point = glm::dvec3(point.x + t * direction.x, point.y + t * direction.y, z_target);
+  // glm::dvec3 psuedo_intersection_point = glm::dvec3(abs(connected_on_screen_point.x + t * direction.x) * pce::math::sign(point.x), 
+                                                    // abs(connected_on_screen_point.y + t * direction.y) * pce::math::sign(point.y), 
+                                                    // z_target);
   glm::dvec3 unit_psuedo_int_point = glm::normalize(psuedo_intersection_point);
-  // std::cout << "unit_psuedo_int_point: "
-  //           << unit_psuedo_int_point.x << ", "
-  //           << unit_psuedo_int_point.y << ", "
-  //           << unit_psuedo_int_point.z << '\n';
+  std::cout << "unit_psuedo_int_point: "
+            << unit_psuedo_int_point.x << ", "
+            << unit_psuedo_int_point.y << ", "
+            << unit_psuedo_int_point.z << '\n';
 
   return unit_psuedo_int_point;
+
 }
 
 
