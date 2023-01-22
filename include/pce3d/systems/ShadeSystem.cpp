@@ -73,6 +73,30 @@ public:
       /* update spheres */
       else if (rigid_object.vertices.size() == 1)
       {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // std::cout << "calculating sphere pixel brightness (SMART)" << '\n';
+        // using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
+        // const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
+        // PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
+                                                                          // ncenter_point.y,
+                                                                          // rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
+        // shade::calculateBrightnessForSpherePixelsSmart(ROTATED_LIGHT_FLOW_DIRECTION_,
+        //                                                position.center_of_mass_relative_to_camera,
+        //                                                rigid_object.radius,
+        //                                                rigid_object.vertex_distance_map.at(1),
+        //                                                outline_pixels,
+        //                                                face_shade.pixel_shade_map,
+        //                                                face_shade.virtual_pixel_ratio
+        //                                               );
+
+        // shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
+        //                                                position.center_of_mass_relative_to_camera,
+        //                                                rigid_object.radius,
+        //                                                outline_pixels,
+        //                                                face_shade.pixel_shade_map
+        //                                               );
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
         /* if close to sphere, do shortcut alg to avoid exp complexity */
         if (rigid_object.vertex_distance_map.at(1) < 20.0) { 
           

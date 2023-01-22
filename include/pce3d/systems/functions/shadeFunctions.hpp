@@ -27,11 +27,24 @@ using SurfaceZoneBrightnessMap = std::unordered_map<glm::dvec3, double>;
 
 double calculateFaceBrightness(const glm::dvec3& light_direction, const glm::dvec3& plane_normal_vec);
 
+double calculatePixelBrightness(const glm::dvec3& light_direction,
+                                const glm::dvec3& sphere_center,
+                                const double sphere_radius,
+                                const glm::dvec2& pixel);
+
 void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
                                             const glm::dvec3& sphere_center,
                                             const double sphere_radius,
                                             const PixelMap& outline_pixels,
                                             pce::PixelShadeMap& pixel_shades);
+
+void calculateBrightnessForSpherePixelsSmart(const glm::dvec3& light_direction,
+                                             const glm::dvec3& sphere_center,
+                                             const double sphere_radius,
+                                             const int distance_from_camera,
+                                             const PixelMap& outline_pixels,
+                                             pce::PixelShadeMap& pixel_shades,
+                                             double& ratio);
 
 void mapSpherePixelsToBrightnessZones(
     pce::PixelShadeMap& pixel_shade_map

@@ -9,17 +9,40 @@ namespace shade {
 const double PI = 3.14159265;
 
 double calculateFaceBrightness(const glm::dvec3& light_direction, const glm::dvec3& plane_normal_vec) {
-/* returns a double between 0 and 1 */
-/* 0 = black */
-/* 1 = pure natural color */
+  /* returns a double between 0 and 1 */
+  /* 0 = black */
+  /* 1 = pure natural color */
 
   double angle_light_hits_face = acos(glm::dot(light_direction, plane_normal_vec) 
                                     / (sqrt(glm::dot(light_direction, light_direction))
-                                       * sqrt(glm::dot(plane_normal_vec, plane_normal_vec))));
+                                     * sqrt(glm::dot(plane_normal_vec, plane_normal_vec))));
   
-  // std::cout << "angle light hits face: " << (angle_light_hits_face / PI * 180.0) << '\n';
+  return (sqrt(angle_light_hits_face/PI));
+}
 
-  return (angle_light_hits_face/PI);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+double calculatePixelBrightness(const glm::dvec3& light_direction,
+                                const glm::dvec3& sphere_center,
+                                const double sphere_radius,
+                                const glm::dvec2& pixel)
+{
+  // std::cout << "[shadeFunctions.cpp] calculating pixel brightness" << '\n';
+  const glm::dvec3 viewsphere_point = glm::normalize(radar::convertPixelToPointOnViewSphere(pixel / pce3d::Core3D::ORDINARY_ZOOM_INDEX_));
+  glm::dvec3 entity_sphere_point;
+
+  try 
+  {
+  entity_sphere_point = pce::maths::calculateClosestPointVectorIntersectsSphere(
+    glm::dvec3(0, 0, 0),
+    viewsphere_point,
+    sphere_center,
+    sphere_radius
+  );
+  } catch (double discriminant) {}
+
+  const glm::dvec3 normal_vect = entity_sphere_point - sphere_center;  
+  return calculateFaceBrightness(light_direction, normal_vect);
 }
 
 
@@ -127,6 +150,55 @@ void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
     }
   }
 }
+
+
+
+
+void calculateBrightnessForSpherePixelsSmart(const glm::dvec3& light_direction,
+                                             const glm::dvec3& sphere_center,
+                                             const double sphere_radius,
+                                             const int distance_from_camera,
+                                             const PixelMap& outline_pixels,
+                                             pce::PixelShadeMap& pixel_shades,
+                                             double& ratio)
+{
+  pixel_shades.clear();
+  /* first: determine the number of pixels per virtual pixel */
+  /* NOTE: this will have to be played with in order to get right */
+  double px_vpx_ratio = 1.0;
+  if (distance_from_camera < 100.0) px_vpx_ratio = 4.0;
+  // if (distance_from_camera < 200.0) px_vpx_ratio = 9.0;
+  // if (distance_from_camera < 150.0) px_vpx_ratio = 16.0;
+  // if (distance_from_camera < 100.0) px_vpx_ratio = 32.0;
+  // if (distance_from_camera < 75.0) px_vpx_ratio = 64.0;
+
+  std::cout << "distance from camera: " << distance_from_camera <<'\n';
+  ratio = px_vpx_ratio;
+  std::cout << "virtual pixel ratio: "  << ratio << '\n';
+
+  int current_interval = 0;
+  int next_interval = int(sqrt(px_vpx_ratio));
+  const int interval = next_interval;
+  
+  for (auto const& [A, B] : outline_pixels)
+  {
+    std::cout << "interval: " << current_interval <<'\n';
+    // skip intervals we don't care about
+    if (current_interval != 0 && current_interval != next_interval)
+    {
+      ++current_interval;
+      continue;
+    }
+
+    for (double i = A.x; i <= B.x; i += interval)
+    {
+      const auto px = glm::dvec2(i, A.y);
+      pixel_shades[px] = calculatePixelBrightness(light_direction, sphere_center, sphere_radius, px);
+    }
+    ++current_interval;
+    next_interval += interval;
+  }
+}                                            
 
 
 

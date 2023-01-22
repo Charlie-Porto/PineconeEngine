@@ -48,6 +48,7 @@ void renderFilledCircle(int xc, int yc, int r, const std::vector<int>& color) {
 
 void renderFilledCircleShaded(const PixelShadeMap& pixel_shade_map, const std::vector<int>& color) {
   for (auto const& [pixel, shade_amount] : pixel_shade_map) {
+    // the casting is necessary here
     SDL_SetRenderDrawColor(Simulation::renderer, int(double(color[0]) * pixel_shade_map.at(pixel)),
                                                  int(double(color[1]) * pixel_shade_map.at(pixel)),
                                                  int(double(color[2]) * pixel_shade_map.at(pixel)),
@@ -58,6 +59,26 @@ void renderFilledCircleShaded(const PixelShadeMap& pixel_shade_map, const std::v
   SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
 }
 
+void renderFilledCircleShadedWithVirtualPixels(const PixelShadeMap& pixel_shade_map, const std::vector<int>& color,
+                                               const int virtual_pixel_side_length)
+{
+  std::cout << "rendering circle with virtual pixels: " << virtual_pixel_side_length <<'\n';
+  for (auto const& [pixel, shade_amount] : pixel_shade_map)
+  {
+    SDL_SetRenderDrawColor(Simulation::renderer, int(double(color[0]) * shade_amount),
+                                                 int(double(color[1]) * shade_amount),
+                                                 int(double(color[2]) * shade_amount),
+                                                 255);
+
+    int ticks = 0;
+    for (double i = pixel.y; ticks != (virtual_pixel_side_length + int(virtual_pixel_side_length * .66)); --i)
+    {
+      ++ticks;
+      renderLineAsRendererIs(glm::dvec2(pixel.x, i), glm::dvec2(pixel.x + virtual_pixel_side_length, i));
+    }
+  }
+  SDL_SetRenderDrawColor(Simulation::renderer, 0, 0, 0, 255);
+}
 
 void renderLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::vector<int>& color) {
   const glm::dvec2 sdl_pixel_a = pce::convert::convertCartesianCoordinatesToSDL(point_a);
