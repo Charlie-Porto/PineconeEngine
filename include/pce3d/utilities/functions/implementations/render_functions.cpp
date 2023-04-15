@@ -60,9 +60,9 @@ void renderFilledCircleShaded(const PixelShadeMap& pixel_shade_map, const std::v
 }
 
 void renderFilledCircleShadedWithVirtualPixels(const PixelShadeMap& pixel_shade_map, const std::vector<int>& color,
-                                               const int virtual_pixel_side_length)
+                                               const int virtual_pixel_side_length, const PixelMap& outlinePixels)
 {
-  std::cout << "rendering circle with virtual pixels: " << virtual_pixel_side_length <<'\n';
+  // std::cout << "rendering circle with virtual pixels: " << virtual_pixel_side_length <<'\n';
   for (auto const& [pixel, shade_amount] : pixel_shade_map)
   {
     SDL_SetRenderDrawColor(Simulation::renderer, int(double(color[0]) * shade_amount),

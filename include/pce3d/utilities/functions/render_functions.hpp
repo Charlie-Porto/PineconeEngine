@@ -20,8 +20,11 @@ functions to render things
 
 extern glm::vec2 convertCartesianCoordinatesToSDL(glm::vec2 point);
 
+
 namespace pce {
 namespace render {
+
+using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
 
 void renderPixelList(const std::vector<glm::dvec2>& pixels, const std::vector<int>& color);
 
@@ -34,7 +37,7 @@ void renderFilledCircle(int xc, int yc, int r, const std::vector<int>& color);
 void renderFilledCircleShaded(const PixelShadeMap& pixel_shade_map, const std::vector<int>& color);
 
 void renderFilledCircleShadedWithVirtualPixels(const PixelShadeMap& pixel_shade_map, const std::vector<int>& color,
-                                               const int virtual_pixel_side_length);
+                                               const int virtual_pixel_side_length, const PixelMap& outlinePixels);
 
 void renderLine(const glm::dvec2& point_a, const glm::dvec2& point_b, const std::vector<int>& color);
 

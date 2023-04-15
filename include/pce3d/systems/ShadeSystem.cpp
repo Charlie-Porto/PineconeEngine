@@ -59,6 +59,7 @@ public:
       auto const& position = control.GetComponent<pce::Position>(entity);
       auto& face_shade = control.GetComponent<pce::FaceShade>(entity); 
       
+      ///////////////////////////////////////////////////////////////////////////////////////////////
       /* update non-spheres */
       if (rigid_object.vertices.size() > 1 && rigid_object.radius == 0) {
         for (auto& [face, vertices] : rigid_object.face_vertex_map) {
@@ -69,6 +70,7 @@ public:
           face_shade.face_shade_map[face] = shade::calculateFaceBrightness(LIGHT_FLOW_DIRECTION_, normal_vect);
         }
       }
+      /////////////////////////////////////////////////////////////////////////////////////////////
 
       /* update spheres */
       else if (rigid_object.vertices.size() == 1)
@@ -78,8 +80,9 @@ public:
         // using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
         // const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
         // PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
-                                                                          // ncenter_point.y,
-                                                                          // rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
+        //                                                                   ncenter_point.y,
+        //                                                                   rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
+        // face_shade.outline_pixels = outline_pixels;
         // shade::calculateBrightnessForSpherePixelsSmart(ROTATED_LIGHT_FLOW_DIRECTION_,
         //                                                position.center_of_mass_relative_to_camera,
         //                                                rigid_object.radius,
@@ -89,44 +92,45 @@ public:
         //                                                face_shade.virtual_pixel_ratio
         //                                               );
 
-        // shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
-        //                                                position.center_of_mass_relative_to_camera,
-        //                                                rigid_object.radius,
-        //                                                outline_pixels,
-        //                                                face_shade.pixel_shade_map
-        //                                               );
-        ///////////////////////////////////////////////////////////////////////////////////////////////
+        shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
+                                                       position.center_of_mass_relative_to_camera,
+                                                       rigid_object.radius,
+                                                       outline_pixels,
+                                                       face_shade.pixel_shade_map
+                                                      );
+        // ///////////////////////////////////////////////////////////////////////////////////////////////
 
         /* if close to sphere, do shortcut alg to avoid exp complexity */
-        if (rigid_object.vertex_distance_map.at(1) < 20.0) { 
+        // if (rigid_object.vertex_distance_map.at(1) < 20.0) { 
           
-          std::unordered_map<glm::dvec2, glm::dvec2> center_pixel 
-                                     = {{position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_,
-                                         position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_}};
-          shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
-                                                        position.center_of_mass_relative_to_camera,
-                                                        rigid_object.radius,
-                                                        center_pixel,
-                                                        face_shade.pixel_shade_map);
-          continue;
-        } 
-        // /* do pixel color calculation */
-        using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
-        const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
-        PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
-                                                                          ncenter_point.y,
-                                                                          rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
+        //   std::unordered_map<glm::dvec2, glm::dvec2> center_pixel 
+        //                              = {{position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_,
+        //                                  position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_}};
+        //   shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
+        //                                                 position.center_of_mass_relative_to_camera,
+        //                                                 rigid_object.radius,
+        //                                                 center_pixel,
+        //                                                 face_shade.pixel_shade_map);
+        //   continue;
+        // } 
+        // // /* do pixel color calculation */
+        // using PixelMap = std::unordered_map<glm::dvec2, glm::dvec2>;
+        // const glm::vec2 ncenter_point = position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_;
+        // PixelMap outline_pixels = pce::raster::getCircleOutlinePixelPairs(ncenter_point.x,
+        //                                                                   ncenter_point.y,
+        //                                                                   rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
 
-        if (rigid_object.vertex_distance_map.at(1) > 20.0)
-        { 
-          shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
-                                                      position.center_of_mass_relative_to_camera,
-                                                      rigid_object.radius,
-                                                      outline_pixels,
-                                                      face_shade.pixel_shade_map);
-          continue;
-        }
+        // if (rigid_object.vertex_distance_map.at(1) > 20.0)
+        // { 
+        //   shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
+        //                                               position.center_of_mass_relative_to_camera,
+        //                                               rigid_object.radius,
+        //                                               outline_pixels,
+        //                                               face_shade.pixel_shade_map);
+        //   continue;
+        // }
 
+        // ///////////////////////////////////////////////////////////////////////////////////////////////
         // face_shade.pixel_shade_map.clear();
         // face_shade.camera_transformed_surface_zone_brightness_map.clear();
 
@@ -168,6 +172,7 @@ public:
         //   rigid_object.radius,
         //   ZONE_GRANULARITY
         // );
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
       }

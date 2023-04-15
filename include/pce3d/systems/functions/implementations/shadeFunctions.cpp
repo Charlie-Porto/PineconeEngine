@@ -17,7 +17,8 @@ double calculateFaceBrightness(const glm::dvec3& light_direction, const glm::dve
                                     / (sqrt(glm::dot(light_direction, light_direction))
                                      * sqrt(glm::dot(plane_normal_vec, plane_normal_vec))));
   
-  return (sqrt(angle_light_hits_face/PI));
+  // return (sqrt(angle_light_hits_face/PI));
+  return pow(angle_light_hits_face/PI, 2.0);
 }
 
 
@@ -143,10 +144,11 @@ void calculateFaceBrightnessForSpherePixels(const glm::dvec3& light_direction,
                                                   viewsphere_point,
                                                   sphere_center,
                                                   sphere_radius);
-      } catch (double discriminant) {}
-      const glm::dvec3 normal_vect = entity_sphere_point - sphere_center;  
-      pixel_shades[p] = calculateFaceBrightness(light_direction, normal_vect);
-      // std::cout << "pixel: " << p.x << ", " << p.y << ", " << "shading: " << pixel_shades.at(p) << '\n';
+        const glm::dvec3 normal_vect = entity_sphere_point - sphere_center;  
+        pixel_shades[p] = calculateFaceBrightness(light_direction, normal_vect);
+      } catch (double discriminant) {
+        pixel_shades[p] = 0.0;
+      }
     }
   }
 }
@@ -167,7 +169,7 @@ void calculateBrightnessForSpherePixelsSmart(const glm::dvec3& light_direction,
   /* NOTE: this will have to be played with in order to get right */
   double px_vpx_ratio = 1.0;
   if (distance_from_camera < 100.0) px_vpx_ratio = 4.0;
-  // if (distance_from_camera < 200.0) px_vpx_ratio = 9.0;
+  if (distance_from_camera < 200.0) px_vpx_ratio = 9.0;
   // if (distance_from_camera < 150.0) px_vpx_ratio = 16.0;
   // if (distance_from_camera < 100.0) px_vpx_ratio = 32.0;
   // if (distance_from_camera < 75.0) px_vpx_ratio = 64.0;
