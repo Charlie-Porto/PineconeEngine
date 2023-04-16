@@ -97,16 +97,8 @@ std::vector<glm::ivec2> getEllipseRasterPoints(
   std::vector<glm::ivec2> pixels_other_side = {};
 
   glm::dvec2 ellipse_point = glm::normalize(b_focus - a_focus) * semi_major_axis;
-  const double b_focus_distance = pce3d::maths::calcMagV2((b_focus - center) - ellipse_point);
-  // std::cout << "b_focus_distance: " << b_focus_distance << '\n';
-  // const double l = b_focus_distance + pce3d::maths::calcMagV2(b_focus - a_focus) + b_focus_distance;
-  // std::cout << "l: "  << l << '\n';
-
-  // rotate ellipse point  
-  // const glm::dvec2 a_point = ellipse_point;
-  // const glm::dvec2 b_point = glm::dvec2(calcMagV2(b_focus - center), 0.0);
-  // const std::complex<double> rotator_complex_num = pce3d::maths::calculateRotationComplexNumGivenVec2s(
-    // b_point, a_point);
+  // const double b_focus_distance = pce3d::maths::calcMagV2((b_focus - center) - ellipse_point);
+  
   const glm::dvec2 unit_b_focus = glm::dvec2(1, 0);
   const glm::dvec2 rotated_b_focus = unit_b_focus * pce3d::maths::calcMagV2(b_focus - center);
   const std::complex<double> rotator_complex_num = pce3d::maths::calculateRotationComplexNumGivenVec2s(

@@ -20,9 +20,9 @@ uint32_t forgeCylinder(
 )
 {
   // 1: set up cylinder points 
-  const glm::dvec3 center_point = center; 
-  const glm::dvec3 upper_face_center_point = glm::dvec3(0, h/2.0, 0);
-  const glm::dvec3 lower_face_center_point = glm::dvec3(0, -h/2.0, 0);
+  // const glm::dvec3 center_point = center; 
+  // const glm::dvec3 upper_face_center_point = glm::dvec3(0, h/2.0, 0);
+  // const glm::dvec3 lower_face_center_point = glm::dvec3(0, -h/2.0, 0);
 
   std::vector<glm::dvec3> face_points{};
   std::vector<std::pair<uint32_t, uint32_t>> sidelines{};

@@ -125,7 +125,7 @@ void Core3D::UpdateCore3D() {
   render_order_system_->UpdateEntities(register_for_render_order_system_->order_of_ordering_);
   // std::cout << "render order system updated" << '\n';
   render_system_->UpdateEntities(render_order_system_->order_list_);
- // std::cout << "render system updated" << '\n';
+  // std::cout << "render system updated" << '\n';
   // space_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // mass_map_system_->drawMapPointsInSpace(camera_.rotation_versor, -camera_.position);
   // dev_render_system.RenderPoints(-camera_.position, camera_.rotation_versor);

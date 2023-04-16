@@ -103,36 +103,10 @@ std::pair<double, glm::dvec3> estimateDistanceAndMidPointOfClosestPointsOnLines(
   const glm::dvec3& C, const glm::dvec3& D
 )
 {
-  // const double ab_length = calculateDistanceBetweenVectors(A, B);
-  // const double cd_length = calculateDistanceBetweenVectors(C, D);
-  // const double a_rope_length = calculateDistanceBetweenVectors(A, C) 
-  //                            + calculateDistanceBetweenVectors(A, D);
-  // const double b_rope_length = calculateDistanceBetweenVectors(B, C) 
-  //                            + calculateDistanceBetweenVectors(B, D);
-  // const double c_rope_length = calculateDistanceBetweenVectors(C, B) 
-  //                            + calculateDistanceBetweenVectors(C, A);
-  // const double d_rope_length = calculateDistanceBetweenVectors(D, B) 
-  //                            + calculateDistanceBetweenVectors(D, A);
-  // const double ab_rope_length = a_rope_length + b_rope_length;  
-  // const double cd_rope_length = c_rope_length + d_rope_length;  
-
-  // const double a_rope_percentage = a_rope_length / ab_rope_length;
-  // const double c_rope_percentage = c_rope_length / cd_rope_length;
-
-  // const glm::dvec3 ab_closest_point = A + ((B - A) * a_rope_percentage);
-  // const glm::dvec3 cd_closest_point = C + ((D - C) * c_rope_percentage);
-  
-  // const glm::dvec3 midpoint = glm::dvec3((ab_closest_point + cd_closest_point) / 2.0);
-  // const double distance = calculateDistanceBetweenVectors(ab_closest_point, cd_closest_point);
-
-  // return std::make_pair(distance, midpoint);
-
-  /* attempt #2 */
   const glm::dvec3 AB_c_point = findClosestPointOnVec3LineToVec3(A, B, C);
   const glm::dvec3 AB_d_point = findClosestPointOnVec3LineToVec3(A, B, D);
-  const double AB_c_point_weight = calcMagV3(AB_c_point - C);
+  // const double AB_c_point_weight = calcMagV3(AB_c_point - C);
   const double AB_d_point_weight = calcMagV3(AB_d_point - D);
-  const double total_weight = AB_c_point_weight + AB_d_point_weight;
   const glm::dvec3 normed_AB_c_point = AB_c_point - AB_d_point;
 
   const glm::dvec3 scaled_normed_AB_d_point = -normed_AB_c_point / AB_d_point_weight;
@@ -147,14 +121,6 @@ std::pair<double, glm::dvec3> estimateDistanceAndMidPointOfClosestPointsOnLines(
   const glm::dvec3 midpoint = (re_scaled_AB_midpoint + scaled_CD_midpoint) / 2.0;
   const double distance = calcMagV3(re_scaled_AB_midpoint - scaled_CD_midpoint);
   
-  // if (distance < 5.0)
-  // {
-  // const std::vector<int> red = {255, 255, 255, 255};
-  // const std::vector<int> green = {255, 25, 55, 255};
-  // dev_render_system.AddUnRotatedPointToPointColorMap(scaled_AB_midpoint, red, 10.0);
-  // dev_render_system.AddUnRotatedPointToPointColorMap(scaled_CD_midpoint, green, 10.0);
-  // }
-
   return std::make_pair(distance, midpoint);
 }
 

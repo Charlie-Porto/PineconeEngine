@@ -51,7 +51,7 @@ public:
       /* handle rendering of sphere entities */ 
       if (rigid_object.radius != 0 && rigid_object.vertices.size() == 1) {
         // render::renderSphereObject(surface, shade, rigid_object, position);
-        if (rigid_object.vertex_distance_map.at(1) < 20.0) {
+        if (rigid_object.vertex_distance_map.at(1) < (20.0 * rigid_object.radius)) {
           const std::vector<int> ncolor 
             = {int(surface.color[0] * shade.pixel_shade_map.at(position.center_of_mass_radar_pixel 
                                                                * ORDINARY_ZOOM_INDEX_)),
