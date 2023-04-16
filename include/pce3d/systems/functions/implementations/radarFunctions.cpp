@@ -6,10 +6,8 @@
 namespace pce3d {
 namespace radar {
 
-const double LENSE_INDEX = 0.1;
 const double PIXEL_ANGLE = 1.0;
 const double Y_PIXEL_STRETCH = 52.0;
-const double SCREEN_X = 1000.0;
 
 const double PI = 3.14159265;
 
@@ -22,26 +20,26 @@ glm::dvec2 convertPointOnViewSphereToPixel(const glm::dvec3& point, bool is_cent
       {
         return glm::dvec2(0, 0); 
       }
-      to_interpolate = true;
+      // to_interpolate = true;
     }
     if (abs(atan(point.x/point.z) / PI * 180.0) > 70.0) {
       if (is_center_of_gravity) 
       {
         return glm::dvec2(0, 0); 
       }
-      to_interpolate = true;
+      // to_interpolate = true;
     }
     if (abs(atan(point.y/point.z) / PI * 180.0) > 50.0) {
       if (is_center_of_gravity) 
       {
         return glm::dvec2(0, 0); 
       }
-      to_interpolate = true;
+      // to_interpolate = true;
     }
-    if (to_interpolate)
-    {
-      mpoint = interpolateViewSphereIntersectionPoint(point, 1, glm::dvec3(0, 10.0, 10.0));
-    }
+    // if (to_interpolate)
+    // {
+    //   mpoint = interpolateViewSphereIntersectionPoint(point, 1, glm::dvec3(0, 10.0, 10.0));
+    // }
   }
   const double y_pixel = Y_PIXEL_STRETCH * atan(mpoint.y / mpoint.z);
   const double x_pixel = atan(mpoint.x / mpoint.z) / (PIXEL_ANGLE * PI / 180.0);
