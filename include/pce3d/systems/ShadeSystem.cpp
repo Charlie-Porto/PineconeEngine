@@ -76,7 +76,7 @@ public:
       else if (rigid_object.vertices.size() == 1)
       {
         /* if close to sphere, do shortcut alg to avoid exp complexity */
-        if (rigid_object.vertex_distance_map.at(1) < 20.0) { 
+        if (rigid_object.vertex_distance_map.at(1) < (20.0 * rigid_object.radius)) { 
           
           std::unordered_map<glm::dvec2, glm::dvec2> center_pixel 
                                      = {{position.center_of_mass_radar_pixel * ORDINARY_ZOOM_INDEX_,
@@ -95,7 +95,7 @@ public:
                                                                           ncenter_point.y,
                                                                           rigid_object.radius * 800.0 / rigid_object.vertex_distance_map.at(1));
 
-        if (rigid_object.vertex_distance_map.at(1) > 20.0)
+        if (rigid_object.vertex_distance_map.at(1) > (20.0 * rigid_object.radius))
         { 
           shade::calculateFaceBrightnessForSpherePixels(ROTATED_LIGHT_FLOW_DIRECTION_,
                                                       position.center_of_mass_relative_to_camera,
